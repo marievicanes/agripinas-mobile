@@ -32,7 +32,6 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
           ],
         ),
       ),
-
       body: Container(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -55,7 +54,8 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                         children: [
                           Text(
                             'Post Title',
-                            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 18.0, fontWeight: FontWeight.bold),
                           ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
@@ -65,7 +65,8 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     IconButton(
-                                      icon: Icon(Icons.edit,
+                                      icon: Icon(
+                                        Icons.edit,
                                         color: Color(0xFF9DC08B).withAlpha(180),
                                       ),
                                       onPressed: () {
@@ -76,16 +77,16 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                               title: Text('Edit Post'),
                                               content: TextField(
                                                 maxLines: null,
-                                              decoration: InputDecoration(
-                                              hintText: 'Edit here here...',
-                                              border: OutlineInputBorder(),
-                                              ),
+                                                decoration: InputDecoration(
+                                                  hintText: 'Edit here here...',
+                                                  border: OutlineInputBorder(),
+                                                ),
                                               ),
                                               actions: [
                                                 TextButton(
                                                   child: Text('Cancel',
-                                                      style: TextStyle(color:Colors.black)
-                                                  ),
+                                                      style: TextStyle(
+                                                          color: Colors.black)),
                                                   onPressed: () {
                                                     Navigator.of(context).pop();
                                                   },
@@ -93,12 +94,15 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                                 ElevatedButton(
                                                   child: Text('Post'),
                                                   onPressed: () {
-                                                    String postContent = _postController.text;
+                                                    String postContent =
+                                                        _postController.text;
                                                     print(postContent);
                                                     Navigator.of(context).pop();
                                                   },
-                                                  style: ElevatedButton.styleFrom(
-                                                    primary: Color.fromRGBO(157, 192, 139, 1),
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    primary: Color.fromRGBO(
+                                                        157, 192, 139, 1),
                                                     onPrimary: Colors.white,
                                                   ),
                                                 )
@@ -108,13 +112,13 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                         );
                                       },
                                     ),
-
                                     IconButton(
-                                      icon: Icon(Icons.delete,
+                                      icon: Icon(
+                                        Icons.delete,
                                         color: Color(0xFF9DC08B),
                                       ),
                                       onPressed: () {
-                                        // handle delete button pressed
+                                      
                                       },
                                     ),
                                   ],
@@ -122,7 +126,6 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                               ),
                             ],
                           ),
-
                           SizedBox(height: 8.0),
                           Text(
                             'This is the content of the post.',
@@ -135,21 +138,19 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                 radius: 14.0,
                                 backgroundImage: AssetImage('assets/user.png'),
                               ),
-
                               SizedBox(width: 8.0),
                               Text(
                                 'Posted by: Arriane Gatpo',
                                 style: TextStyle(fontSize: 14.0),
                               ),
                             ],
-                          ),SizedBox(height: 8.0),
+                          ),
+                          SizedBox(height: 8.0),
                           Row(
                             children: [
                               IconButton(
                                 icon: Icon(Icons.thumb_up),
-                                onPressed: () {
-
-                                },
+                                onPressed: () {},
                               ),
                               IconButton(
                                 icon: Icon(Icons.comment),
@@ -162,15 +163,16 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                         content: TextField(
                                           maxLines: null,
                                           decoration: InputDecoration(
-                                            hintText: 'Add your comment here...',
+                                            hintText:
+                                                'Add your comment here...',
                                             border: OutlineInputBorder(),
                                           ),
                                         ),
                                         actions: [
                                           TextButton(
                                             child: Text('Cancel',
-                                                style: TextStyle(color:Colors.black)
-                                            ),
+                                                style: TextStyle(
+                                                    color: Colors.black)),
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
@@ -178,15 +180,17 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                           ElevatedButton(
                                             child: Text("Reply"),
                                             onPressed: () {
-                                              // handle adding the comment
-                                              String postContent = _postController.text;
+                                              
+                                              String postContent =
+                                                  _postController.text;
                                               print(postContent);
                                               Navigator.pop(context);
                                             },
-                                      style: ElevatedButton.styleFrom(
-                                      primary: Color.fromRGBO(157, 192, 139, 1),
-                                      onPrimary: Colors.white,
-                                          ),
+                                            style: ElevatedButton.styleFrom(
+                                              primary: Color.fromRGBO(
+                                                  157, 192, 139, 1),
+                                              onPrimary: Colors.white,
+                                            ),
                                           )
                                         ],
                                       );
@@ -196,7 +200,6 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                               ),
                             ],
                           ),
-
                         ],
                       ),
                     ),
@@ -204,7 +207,6 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                 },
               ),
             ),
-
             Center(
               child: MaterialButton(
                 onPressed: () {
@@ -224,8 +226,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                         actions: [
                           TextButton(
                             child: Text('Cancel',
-                               style: TextStyle(color:Colors.black)
-                            ),
+                                style: TextStyle(color: Colors.black)),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
@@ -233,15 +234,15 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                           ElevatedButton(
                             child: Text('Post'),
                             onPressed: () {
-                              // Handle post submission
+                              
                               String postContent = _postController.text;
                               print(postContent);
                               Navigator.of(context).pop();
                             },
-                      style: ElevatedButton.styleFrom(
-                      primary: Color.fromRGBO(157, 192, 139, 1),
-                      onPrimary: Colors.white,
-                          ),
+                            style: ElevatedButton.styleFrom(
+                              primary: Color.fromRGBO(157, 192, 139, 1),
+                              onPrimary: Colors.white,
+                            ),
                           )
                         ],
                       );

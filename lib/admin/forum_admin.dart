@@ -15,7 +15,8 @@ class _AdminForumState extends State<AdminForum> {
         DataCell(Text('B008')),
         DataCell(Text('Buyer')),
         DataCell(Text('Daniella Marie Tungol')),
-        DataCell(Text('Is 300Php for a 1 kilo of onion is a reasonable price?')),
+        DataCell(
+            Text('Is 300Php for a 1 kilo of onion is a reasonable price?')),
         DataCell(
           Image.asset(
             'assets/onion.png',
@@ -30,7 +31,8 @@ class _AdminForumState extends State<AdminForum> {
           ),
         ),
         DataCell(
-          Icon(Icons.delete,
+          Icon(
+            Icons.delete,
             color: Color(0xFF9DC08B),
           ),
         ),
@@ -56,7 +58,8 @@ class _AdminForumState extends State<AdminForum> {
           ),
         ),
         DataCell(
-          Icon(Icons.delete,
+          Icon(
+            Icons.delete,
             color: Color(0xFF9DC08B),
           ),
         ),
@@ -72,55 +75,68 @@ class _AdminForumState extends State<AdminForum> {
 
   @override
   Widget build(BuildContext context) {
-    List<DataRow> filteredRows = _rows.where((row) =>
-        row.toString().toLowerCase().contains(_searchText.toLowerCase())).toList();
+    List<DataRow> filteredRows = _rows
+        .where((row) =>
+            row.toString().toLowerCase().contains(_searchText.toLowerCase()))
+        .toList();
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Color(0xFFA9AF7E),
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/logo.png',
-              height: 32.0,
-            ),
-            SizedBox(width: 8.0),
-            Text(
-              'AgriPinas',
-              style: TextStyle(
-                fontSize: 17.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Color(0xFFA9AF7E),
+          title: Row(
+            children: [
+              Image.asset(
+                'assets/logo.png',
+                height: 32.0,
+              ),
+              SizedBox(width: 8.0),
+              Text(
+                'AgriPinas',
+                style: TextStyle(
+                  fontSize: 17.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Container(
+                width: 200.0,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search',
+                    prefixIcon: Icon(Icons.search),
+                    border: InputBorder.none,
+                  ),
+                  onChanged: searchItem,
+                ),
               ),
             ),
           ],
         ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Container(
-              width: 200.0,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25.0),
-              ),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  prefixIcon: Icon(Icons.search),
-                  border: InputBorder.none,
+        body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  '',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                onChanged: searchItem,
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
           Row(
             children: [
               Expanded(
@@ -157,8 +173,7 @@ class _AdminForumState extends State<AdminForum> {
                           child: Text('50'),
                         ),
                       ],
-                      onChanged: (value) {
-                      },
+                      onChanged: (value) {},
                     ),
                   ],
                 ),
@@ -265,15 +280,9 @@ class _AdminForumState extends State<AdminForum> {
                     ),
                   ],
                 ),
-
               ),
-
             ),
           ),
-
-        ]
-      )
-    );
+        ]));
   }
 }
-

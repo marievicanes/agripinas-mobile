@@ -536,9 +536,7 @@ class Register extends StatelessWidget {
                       child: Text("Buyer"),
                     ),
                   ],
-                  onChanged: (value) {
-                    // Handle the selected value
-                  },
+                  onChanged: (value) {},
                 ),
               ],
             ),
@@ -547,13 +545,21 @@ class Register extends StatelessWidget {
             ),
             TextField(
               obscureText: true,
+              maxLength: 16,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.password),
                   labelText: "Password",
+                  helperText:
+                      "Use a strong password with 16 characters, uppercase, lowercase, number, and symbol",
                   border: OutlineInputBorder(
                       borderSide:
                           const BorderSide(width: 3, color: Colors.green),
                       borderRadius: BorderRadius.circular(15))),
+              onChanged: (value) {
+                bool isValid =
+                    RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9!#%]).{16}$')
+                        .hasMatch(value);
+              },
             ),
             SizedBox(
               height: 10,

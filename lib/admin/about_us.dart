@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'contact_us.dart';
 import 'admin_navbar.dart';
 
-//sample
 class AboutUsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
