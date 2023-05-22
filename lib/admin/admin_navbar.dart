@@ -1,14 +1,13 @@
 import 'package:capstone/admin/dashboard.dart';
 import 'package:capstone/admin/profile_screen.dart';
-import 'package:capstone/admin/transactions_buyer.dart';
+import 'package:capstone/admin/transactions.dart';
 import 'package:capstone/admin/forum_admin.dart';
-import 'package:capstone/admin/accounts_management_buyer.dart';
+import 'package:capstone/admin/accounts_management.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-
 
 class AdminNavBar extends StatefulWidget {
   @override
@@ -21,8 +20,8 @@ class _AdminNavBarState extends State<AdminNavBar> {
   final List<Widget> _children = [
     AdminDashboard(),
     AdminForum(),
-    BuyerTransaction(),
-    BuyerAccountsManagement(),
+    Transaction(),
+    AccountsManagement(),
     ProfileScreen(),
   ];
 

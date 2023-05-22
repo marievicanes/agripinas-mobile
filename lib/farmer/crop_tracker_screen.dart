@@ -12,7 +12,9 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
   List<DataRow> _rows = [
     DataRow(
       cells: [
-        DataCell(Text('Rice')),
+        DataCell(Text(
+          'Rice',
+        )),
         DataCell(
           Image.asset(
             'assets/rice.png',
@@ -34,9 +36,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
                 child: Text('Harvested'),
               ),
             ],
-            onChanged: (value) {
-              // Handle status change
-            },
+            onChanged: (value) {},
           ),
         ),
         DataCell(
@@ -46,13 +46,13 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
           ),
         ),
         DataCell(
-          Icon(Icons.delete,
+          Icon(
+            Icons.delete,
             color: Color(0xFF9DC08B),
           ),
         ),
       ],
     ),
-
     DataRow(
       cells: [
         DataCell(Text('Rice')),
@@ -77,9 +77,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
                 child: Text('Harvested'),
               ),
             ],
-            onChanged: (value) {
-
-            },
+            onChanged: (value) {},
           ),
         ),
         DataCell(
@@ -89,7 +87,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
           ),
         ),
         DataCell(
-          Icon(Icons.delete,
+          Icon(
+            Icons.delete,
             color: Color(0xFF9DC08B),
           ),
         ),
@@ -105,8 +104,10 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<DataRow> filteredRows = _rows.where((row) =>
-        row.toString().toLowerCase().contains(_searchText.toLowerCase())).toList();
+    List<DataRow> filteredRows = _rows
+        .where((row) =>
+            row.toString().toLowerCase().contains(_searchText.toLowerCase()))
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -159,13 +160,9 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
               Expanded(
                 child: Text(
                   '    Crop Tracker',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                      fontWeight: FontWeight.bold
-                  ),
+                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                 ),
               ),
-
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -191,15 +188,13 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
                           child: Text('50'),
                         ),
                       ],
-                      onChanged: (value) {
-                      },
+                      onChanged: (value) {},
                     ),
                   ],
                 ),
               ),
             ],
           ),
-
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
@@ -219,7 +214,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
                 child: DataTable(
                   columns: [
                     DataColumn(
-                      label: Text('Crops',
+                      label: Text(
+                        'Crops',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -227,7 +223,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Image',
+                      label: Text(
+                        'Image',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -235,7 +232,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Quantity',
+                      label: Text(
+                        'Quantity',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -243,7 +241,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Status',
+                      label: Text(
+                        'Status',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -251,7 +250,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Edit',
+                      label: Text(
+                        'Edit',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -259,7 +259,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Delete',
+                      label: Text(
+                        'Delete',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -272,8 +273,6 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
               ),
             ),
           ),
-
-
         ],
       ),
     );

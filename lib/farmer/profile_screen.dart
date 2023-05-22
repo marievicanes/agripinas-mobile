@@ -24,7 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _nameController.text = "Arriane Gatpo";
     _emailController.text = "ag@gatpo.com";
-    _addressController.text ="Quezon City";
+    _addressController.text = "Quezon City";
     _phoneController.text = "+639675046713";
   }
 
@@ -59,7 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             UserAccountsDrawerHeader(
               accountName: Text('Arriane Gatpo'),
               accountEmail: Text('ag@gatpo.com'),
-              currentAccountPicture:  CircleAvatar(
+              currentAccountPicture: CircleAvatar(
                 radius: 14.0,
                 backgroundImage: AssetImage('assets/user.png'),
               ),
@@ -69,18 +69,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               otherAccountsPictures: [
                 IconButton(
                   icon: Icon(Icons.notifications),
-                  onPressed: () {
-                  },
+                  onPressed: () {},
                 ),
                 IconButton(
                   icon: Icon(Icons.message),
-                  onPressed: () {
-                  },
+                  onPressed: () {},
                 ),
               ],
             ),
-
-
             ListTile(
               leading: Icon(Icons.info_outline),
               title: Text('About us'),
@@ -89,7 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AboutUsScreen(), // Replace with your desired screen
+                    builder: (context) => AboutUsScreen(),
                   ),
                 );
               },
@@ -102,7 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ContactUsScreen(), // Replace with your desired screen
+                    builder: (context) => ContactUsScreen(),
                   ),
                 );
               },
@@ -110,11 +106,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ListTile(
               leading: Icon(Icons.logout),
               title: Text('Logout'),
-              onTap: () {
-
-              },
+              onTap: () {},
             ),
-
           ],
         ),
       ),
@@ -203,48 +196,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(height: 16.0),
               _isEditing
                   ? Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  OutlinedButton(
-                    onPressed: () {
-                      setState(() {
-                        _isEditing = false;
-                      });
-                    },
-                    child: Text('Cancel'),
-                    style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all<Color>(Color(0xFF9DC08B)),
-                      side: MaterialStateProperty.all<BorderSide>(
-                        BorderSide(
-                          color: Color(0xFF9DC08B),
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        OutlinedButton(
+                          onPressed: () {
+                            setState(() {
+                              _isEditing = false;
+                            });
+                          },
+                          child: Text('Cancel'),
+                          style: ButtonStyle(
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                                Color(0xFF9DC08B)),
+                            side: MaterialStateProperty.all<BorderSide>(
+                              BorderSide(
+                                color: Color(0xFF9DC08B),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _isEditing = false;
-                      });
-                      _saveInformation();
-                    },
-                    child: Text('Save'),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF9DC08B)),
-                    ),
-                  ),
-                ],
-              )
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _isEditing = false;
+                            });
+                            _saveInformation();
+                          },
+                          child: Text('Save'),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Color(0xFF9DC08B)),
+                          ),
+                        ),
+                      ],
+                    )
                   : MaterialButton(
-                onPressed: () {
-                  setState(() {
-                    _isEditing = true;
-                  });
-                },
-                child: Text('Edit Information'),
-                color: Color.fromRGBO(157, 192, 139, 1),
-                textColor: Colors.white,
-              ),
+                      onPressed: () {
+                        setState(() {
+                          _isEditing = true;
+                        });
+                      },
+                      child: Text('Edit Information'),
+                      color: Color.fromRGBO(157, 192, 139, 1),
+                      textColor: Colors.white,
+                    ),
             ],
           ),
         ),
@@ -252,8 +247,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _saveInformation() {
-
-  }
+  void _saveInformation() {}
 }
-
