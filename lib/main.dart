@@ -450,7 +450,7 @@ class AdminLogin extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => SignInAs()));
                 },
                 child: Text(
-                  "Not Admim?",
+                  "Not Admin?",
                   style: TextStyle(color: Color(0xFF27AE60)),
                 )),
           ],
