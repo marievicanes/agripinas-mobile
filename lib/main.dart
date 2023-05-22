@@ -1,8 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:capstone/admin/admin_navbar.dart';
 import 'package:flutter/material.dart';
+import 'helper.dart';
 import 'package:capstone/farmer/farmer_nav.dart';
 
 main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MaterialApp(
     home: WelcomePage(),
   ));
@@ -192,6 +196,7 @@ class SignInAs extends StatelessWidget {
 }
 
 class LoginBuyer extends StatelessWidget {
+  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -222,6 +227,7 @@ class LoginBuyer extends StatelessWidget {
                         color: Color.fromARGB(255, 85, 113, 83)),
                   )),
               TextField(
+                controller: authService.email,
                 decoration: InputDecoration(
                     prefixIcon: Icon(Icons.people),
                     labelText: "E-mail",
@@ -235,6 +241,7 @@ class LoginBuyer extends StatelessWidget {
               ),
               TextField(
                 obscureText: true,
+                controller: authService.password,
                 decoration: InputDecoration(
                     prefixIcon: Icon(Icons.password),
                     labelText: "Password",
@@ -245,7 +252,11 @@ class LoginBuyer extends StatelessWidget {
               ),
               SizedBox(height: 30),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (authService.email != "" && authService.password != "") {
+                    authService.loginUser(context);
+                  }
+                },
                 child: Text('Login'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF27AE60),
@@ -284,6 +295,7 @@ class LoginBuyer extends StatelessWidget {
 }
 
 class LoginFarmer extends StatelessWidget {
+  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -314,6 +326,7 @@ class LoginFarmer extends StatelessWidget {
                         color: Color.fromARGB(255, 85, 113, 83)),
                   )),
               TextField(
+                controller: authService.email,
                 decoration: InputDecoration(
                     prefixIcon: Icon(Icons.people),
                     labelText: "E-mail",
@@ -327,6 +340,7 @@ class LoginFarmer extends StatelessWidget {
               ),
               TextField(
                 obscureText: true,
+                controller: authService.password,
                 decoration: InputDecoration(
                     prefixIcon: Icon(Icons.password),
                     labelText: "Password",
@@ -338,8 +352,9 @@ class LoginFarmer extends StatelessWidget {
               SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => BottomNavBar()));
+                  if (authService.email != "" && authService.password != "") {
+                    authService.loginUser(context);
+                  }
                 },
                 child: Text('Login'),
                 style: ElevatedButton.styleFrom(
@@ -379,6 +394,7 @@ class LoginFarmer extends StatelessWidget {
 }
 
 class AdminLogin extends StatelessWidget {
+  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -461,6 +477,7 @@ class AdminLogin extends StatelessWidget {
 }
 
 class Register extends StatelessWidget {
+  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
