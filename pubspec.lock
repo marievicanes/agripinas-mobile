@@ -10,7 +10,7 @@ packages:
     source: hosted
     version: "1.3.1"
   animated_bottom_navigation_bar:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: animated_bottom_navigation_bar
       sha256: "241307d13d3b1eeb2768017af906a0132e7a4569298d9e96a111faf154d6bf26"
@@ -90,7 +90,7 @@ packages:
     source: hosted
     version: "1.0.5"
   curved_navigation_bar:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: curved_navigation_bar
       sha256: ea6412d00c5d83501bbf1cf9d1ac2ff11a20fbaf910c103c95ace7de82910334
@@ -106,7 +106,7 @@ packages:
     source: hosted
     version: "1.3.1"
   firebase_auth:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: firebase_auth
       sha256: "64ac4dc04b51aab9d17c23b496c90f948b9ce2065d7b83e0829c7a497d88f9ce"
@@ -130,7 +130,7 @@ packages:
     source: hosted
     version: "5.5.1"
   firebase_core:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: firebase_core
       sha256: "250678b816279b3240c3a33e1f76bf712c00718f1fbeffc85873a5da8c077379"
@@ -159,7 +159,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_chart:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: flutter_chart
       sha256: "0779f7e5526a6d2cfb45838bff2cb7c4d72514c1986f020de982ebb3ced6f8b6"
@@ -193,7 +193,7 @@ packages:
     source: hosted
     version: "4.0.2"
   intl:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: intl
       sha256: "3bc132a9dbce73a7e4a21a17d06e1878839ffbf975568bc875c60537824b0c4d"
@@ -302,7 +302,7 @@ packages:
     source: hosted
     version: "1.2.0"
   table_calendar:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: table_calendar
       sha256: "1e3521a3e6d3fc7f645a58b135ab663d458ab12504f1ea7f9b4b81d47086c478"

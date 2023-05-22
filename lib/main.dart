@@ -254,7 +254,7 @@ class LoginBuyer extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   if (authService.email != "" && authService.password != "") {
-                    authService.loginUser(context);
+                    authService.loginFarmer(context);
                   }
                 },
                 child: Text('Login'),
@@ -353,7 +353,7 @@ class LoginFarmer extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   if (authService.email != "" && authService.password != "") {
-                    authService.loginUser(context);
+                    authService.loginFarmer(context);
                   }
                 },
                 child: Text('Login'),
@@ -425,6 +425,7 @@ class AdminLogin extends StatelessWidget {
                       color: Color.fromARGB(255, 85, 113, 83)),
                 )),
             TextField(
+              controller: authService.email,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.people),
                   labelText: "E-mail",
@@ -438,6 +439,7 @@ class AdminLogin extends StatelessWidget {
             ),
             TextField(
               obscureText: true,
+              controller: authService.password,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.password),
                   labelText: "Password",
@@ -507,6 +509,7 @@ class Register extends StatelessWidget {
                       color: Color.fromARGB(255, 85, 113, 83)),
                 )),
             TextField(
+              controller: authService.fullname,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.person),
                   labelText: "Full Name",
@@ -519,6 +522,7 @@ class Register extends StatelessWidget {
               height: 15,
             ),
             TextField(
+              controller: authService.email,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.email),
                   labelText: "E-mail",
@@ -564,6 +568,7 @@ class Register extends StatelessWidget {
             ),
             TextField(
               obscureText: true,
+              controller: authService.password,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.password),
                   labelText: "Password",
@@ -577,6 +582,7 @@ class Register extends StatelessWidget {
             ),
             TextField(
               obscureText: true,
+              controller: authService.password,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.password),
                   labelText: "Confirm Password",
@@ -587,7 +593,11 @@ class Register extends StatelessWidget {
             ),
             SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                if (authService.email != "" && authService.password != "") {
+                  authService.RegisterFarmer(context);
+                }
+              },
               child: Text('Register'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF27AE60),

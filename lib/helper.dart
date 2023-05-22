@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'farmer/farmer_nav.dart';
+import 'admin/admin_navbar.dart';
 import 'main.dart';
 
 class AuthService {
@@ -12,11 +14,10 @@ class AuthService {
   TextEditingController password = TextEditingController();
   TextEditingController adminemail = TextEditingController();
   TextEditingController adminpassword = TextEditingController();
-  TextEditingController name = TextEditingController();
-  TextEditingController contact = TextEditingController();
+  TextEditingController fullname = TextEditingController();
 
   final firestore = FirebaseFirestore.instance;
-  void loginUser(context) async {
+  void loginFarmer(context) async {
     try {
       showDialog(
           context: context,
@@ -31,13 +32,10 @@ class AuthService {
           .signInWithEmailAndPassword(
               email: email.text, password: password.text)
           .then((value) => {
-                print("User is Logged In"),
+                print("Farmer is Logged In"),
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => MyNavPage(
-                              title: '',
-                            )),
+                    MaterialPageRoute(builder: (context) => BottomNavBar()),
                     (route) => false),
               });
     } catch (e) {
@@ -65,7 +63,7 @@ class AuthService {
             element.data()?['adminPassword'] == adminpassword.text) {
           Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => AdminNav(title: '')),
+              MaterialPageRoute(builder: (context) => AdminNavBar()),
               (route) => false);
         }
       });
@@ -74,7 +72,7 @@ class AuthService {
     }
   }
 
-  void RegisterUser(context) async {
+  void RegisterFarmer(context) async {
     try {
       showDialog(
           context: context,
@@ -92,11 +90,11 @@ class AuthService {
         print("User is Registered");
         firestore.collection("user").add({
           "email": email.text,
-          "name": name.text,
-          "contact": contact.text,
+          "fullname": fullname.text,
           "uid": auth.currentUser!.uid
         });
-        Navigator.push(context, MaterialPageRoute(builder: (c) => Login()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (c) => LoginFarmer()));
       });
     } catch (e) {
       print(e);
@@ -105,7 +103,7 @@ class AuthService {
 
   void logOutUser(context) async {
     await auth.signOut();
-    Navigator.pushAndRemoveUntil(
-        context, MaterialPageRoute(builder: (C) => Login()), (route) => false);
+    Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(builder: (C) => WelcomePage()), (route) => false);
   }
 }
