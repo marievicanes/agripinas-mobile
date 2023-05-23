@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1073034058383",
+    "project_id": "agripinas-1883d",
+    "storage_bucket": "agripinas-1883d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1073034058383:android:296955eccaf5e0e2942efa",
+        "android_client_info": {
+          "package_name": "com.example.capstone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1073034058383-60aufcg1og969q1m9hsf2vmpvdqquni5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOi2HCSqBTe4W9g741UosuOlLjz8yf0kI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1073034058383-60aufcg1og969q1m9hsf2vmpvdqquni5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
