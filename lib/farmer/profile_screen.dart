@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'about_us.dart';
 import 'contact_us.dart';
+import 'package:capstone/helper.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -28,6 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _phoneController.text = "+639675046713";
   }
 
+  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,7 +108,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ListTile(
               leading: Icon(Icons.logout),
               title: Text('Logout'),
-              onTap: () {},
+              onTap: () {
+                AuthService authService = AuthService();
+                authService.logOutUser(context);
+              },
             ),
           ],
         ),

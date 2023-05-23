@@ -1,8 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:capstone/admin/admin_navbar.dart';
 import 'package:flutter/material.dart';
+import 'helper.dart';
 import 'package:capstone/farmer/farmer_nav.dart';
 
 main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MaterialApp(
     home: WelcomePage(),
   ));
@@ -81,7 +85,118 @@ class WelcomePage extends StatelessWidget {
   }
 }
 
-class Login extends StatelessWidget {
+class SignInAs extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 0),
+                child: Hero(
+                  tag: 'hero',
+                  child: SizedBox(
+                    height: 100,
+                    child: Image.asset('assets/logo.png'),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                child: Text(
+                  "Sign in as",
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 85, 113, 83),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                child: Text(
+                  "Select your account type",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(39, 174, 96, 1),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => LoginBuyer()));
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    Color(0xFFA9AF7E),
+                  ),
+                ),
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 40.0, vertical: 16.0),
+                  child: Text(
+                    'BUYER',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => LoginFarmer()));
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    Color(0xFFA9AF7E),
+                  ),
+                ),
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 40.0, vertical: 16.0),
+                  child: Text(
+                    'FARMER',
+                    style: TextStyle(fontSize: 20.0),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AdminLogin()));
+                },
+                child: Text("Login as Admin",
+                    style: TextStyle(
+                        color: Color.fromARGB(
+                      255,
+                      85,
+                      113,
+                      83,
+                    ))),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class LoginBuyer extends StatelessWidget {
+  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,13 +220,14 @@ class Login extends StatelessWidget {
               Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   child: Text(
-                    "Login your account",
+                    "Login as Buyer",
                     style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(255, 85, 113, 83)),
                   )),
               TextField(
+                controller: authService.email,
                 decoration: InputDecoration(
                     prefixIcon: Icon(Icons.people),
                     labelText: "E-mail",
@@ -125,6 +241,7 @@ class Login extends StatelessWidget {
               ),
               TextField(
                 obscureText: true,
+                controller: authService.password,
                 decoration: InputDecoration(
                     prefixIcon: Icon(Icons.password),
                     labelText: "Password",
@@ -133,49 +250,111 @@ class Login extends StatelessWidget {
                             const BorderSide(width: 3, color: Colors.green),
                         borderRadius: BorderRadius.circular(15))),
               ),
+              SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: () {
+                  if (authService.email != "" && authService.password != "") {
+                    authService.loginFarmer(context);
+                  }
+                },
+                child: Text('Login'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF27AE60),
+                ),
+              ),
               SizedBox(
                 height: 10,
               ),
-              Column(
-                children: [
-                  SizedBox(height: 15),
-                  DropdownButtonFormField(
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.arrow_drop_down),
-                      labelText: "Roles",
-                      border: OutlineInputBorder(
+              TextButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Register()));
+                  },
+                  child: Text(
+                    "Don't have an account? Register",
+                    style: TextStyle(color: Color(0xFF27AE60)),
+                  )),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AdminLogin()));
+                },
+                child: Text("Login as Admin",
+                    style: TextStyle(
+                        color: Color.fromARGB(
+                      255,
+                      85,
+                      113,
+                      83,
+                    ))),
+              ),
+            ]),
+      ),
+    );
+  }
+}
+
+class LoginFarmer extends StatelessWidget {
+  AuthService authService = AuthService();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Padding(
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 0),
+                child: Hero(
+                    tag: 'hero',
+                    child: SizedBox(
+                      height: 250,
+                      width: 300,
+                      child: Image.asset('assets/logo.png'),
+                    )),
+              ),
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  child: Text(
+                    "Login as Farmer",
+                    style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 85, 113, 83)),
+                  )),
+              TextField(
+                controller: authService.email,
+                decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.people),
+                    labelText: "E-mail",
+                    border: OutlineInputBorder(
                         borderSide:
                             const BorderSide(width: 3, color: Colors.green),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                    items: [
-                      DropdownMenuItem(
-                        value: "Farmer",
-                        child: Text("Farmer"),
-                      ),
-                      DropdownMenuItem(
-                        value: "Buyer",
-                        child: Text("Buyer"),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      if (value == "Farmer") {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BottomNavBar()),
-                        );
-                      } else if (value == "Buyer") {}
-                    },
-                  ),
-                ],
+                        borderRadius: BorderRadius.circular(15))),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              TextField(
+                obscureText: true,
+                controller: authService.password,
+                decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.password),
+                    labelText: "Password",
+                    border: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 3, color: Colors.green),
+                        borderRadius: BorderRadius.circular(15))),
               ),
               SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => BottomNavBar()));
+                  if (authService.email != "" && authService.password != "") {
+                    authService.loginFarmer(context);
+                  }
                 },
                 child: Text('Login'),
                 style: ElevatedButton.styleFrom(
@@ -215,6 +394,7 @@ class Login extends StatelessWidget {
 }
 
 class AdminLogin extends StatelessWidget {
+  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -245,6 +425,7 @@ class AdminLogin extends StatelessWidget {
                       color: Color.fromARGB(255, 85, 113, 83)),
                 )),
             TextField(
+              controller: authService.email,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.people),
                   labelText: "E-mail",
@@ -258,6 +439,7 @@ class AdminLogin extends StatelessWidget {
             ),
             TextField(
               obscureText: true,
+              controller: authService.password,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.password),
                   labelText: "Password",
@@ -283,10 +465,10 @@ class AdminLogin extends StatelessWidget {
             TextButton(
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Login()));
+                      MaterialPageRoute(builder: (context) => SignInAs()));
                 },
                 child: Text(
-                  "Not Admim?",
+                  "Not Admin?",
                   style: TextStyle(color: Color(0xFF27AE60)),
                 )),
           ],
@@ -297,6 +479,7 @@ class AdminLogin extends StatelessWidget {
 }
 
 class Register extends StatelessWidget {
+  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -326,6 +509,7 @@ class Register extends StatelessWidget {
                       color: Color.fromARGB(255, 85, 113, 83)),
                 )),
             TextField(
+              controller: authService.fullname,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.person),
                   labelText: "Full Name",
@@ -338,6 +522,7 @@ class Register extends StatelessWidget {
               height: 15,
             ),
             TextField(
+              controller: authService.email,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.email),
                   labelText: "E-mail",
@@ -372,7 +557,9 @@ class Register extends StatelessWidget {
                       child: Text("Buyer"),
                     ),
                   ],
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    // Handle the selected value
+                  },
                 ),
               ],
             ),
@@ -381,27 +568,21 @@ class Register extends StatelessWidget {
             ),
             TextField(
               obscureText: true,
-              maxLength: 16,
+              controller: authService.password,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.password),
                   labelText: "Password",
-                  helperText:
-                      "Use a strong password with 16 characters, uppercase, lowercase, number, and symbol",
                   border: OutlineInputBorder(
                       borderSide:
                           const BorderSide(width: 3, color: Colors.green),
                       borderRadius: BorderRadius.circular(15))),
-              onChanged: (value) {
-                bool isValid =
-                    RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9!#%]).{16}$')
-                        .hasMatch(value);
-              },
             ),
             SizedBox(
               height: 10,
             ),
             TextField(
               obscureText: true,
+              controller: authService.password,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.password),
                   labelText: "Confirm Password",
@@ -412,7 +593,11 @@ class Register extends StatelessWidget {
             ),
             SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                if (authService.email != "" && authService.password != "") {
+                  authService.RegisterFarmer(context);
+                }
+              },
               child: Text('Register'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF27AE60),
@@ -423,8 +608,8 @@ class Register extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Login()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SignInAs()));
               },
               child: Text("Already have an account? Login",
                   style: TextStyle(
