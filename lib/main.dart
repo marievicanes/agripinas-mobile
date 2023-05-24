@@ -1,6 +1,7 @@
 import 'package:capstone/admin/admin_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone/farmer/farmer_nav.dart';
+import 'package:capstone/buyer/buyer_nav.dart';
 
 main() async {
   runApp(MaterialApp(
@@ -160,17 +161,23 @@ class Login extends StatelessWidget {
                       ),
                     ],
                     onChanged: (value) {
-                      if (value == "Farmer") {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BottomNavBar()),
-                        );
-                      } else if (value == "Buyer") {}
-                    },
-                  ),
-                ],
-              ),
+                    if (value == "Farmer") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BottomNavBar(),
+        ),
+      );
+    } else if (value == "Buyer") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BuyerNavBar(),
+        ),
+      );
+    }
+  },
+),
               SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
@@ -209,6 +216,7 @@ class Login extends StatelessWidget {
                     ))),
               ),
             ]),
+  ]),
       ),
     );
   }

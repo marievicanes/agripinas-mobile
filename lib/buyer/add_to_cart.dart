@@ -6,19 +6,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Marketplace',
+      title: 'AddToCart',
       theme: ThemeData(),
-      home: MarketplaceScreen(),
+      home: AddToCart(),
     );
   }
 }
-
-class MarketplaceScreen extends StatefulWidget {
+class AddToCart extends StatefulWidget {
   @override
-  _MarketplaceScreenState createState() => _MarketplaceScreenState();
+  _AddToCartState createState() => _AddToCartState();
 }
 
-class _MarketplaceScreenState extends State<MarketplaceScreen> {
+class _AddToCartState extends State<AddToCart> {
   final List<String> _items = ['Onion', 'Corn', 'Rice', 'Eggplant'];
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
@@ -42,7 +41,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Edit Crop Details'),
+          title: Text('Chat'),
           content: SingleChildScrollView(
             child: Column(
               children: [
@@ -248,37 +247,23 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                 '',
                                 style: TextStyle(fontSize: 14.0),
                               ),
-                              Row(
-                                children: [
-                                  OutlinedButton.icon(
+                          Column(
+                            children: [
+                                 
+                                   ElevatedButton.icon(
                                     onPressed: editCropDetails,
-                                    icon: Icon(Icons.edit),
-                                    label: Text('Edit'),
-                                    style: OutlinedButton.styleFrom(
-                                      side: BorderSide(color: Color(0xFF9DC08B), width: 2),
-                                      primary: Color(                                      0xFF9DC08B),
-                                      textStyle: TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                  
-                                  SizedBox(width: 10.0),
-                                  ElevatedButton.icon(
-                                    icon: Icon(Icons.delete),
-                                    label: Text('Delete'),
-                                    onPressed: () {
-
-                                    },
-                                    style: ButtonStyle(
-                                      backgroundColor:
-                                      MaterialStateProperty.all<Color>(Color(0xFF9DC08B)),
+                                    icon: Icon(Icons.shopping_cart_checkout_outlined),
+                                    label: Text('Buy Now!'),
+                                    style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xFF9DC08B),
                                     ),
                                   ),
                                 ],
                               ),
                             ],
-                          ),
-                        ],
-                      ),
+                          )
+                         ]
+                       ),
                     ),
                   );
                 },
@@ -287,8 +272,6 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
           ],
         ),
       ),
-    );
+        );
   }
-}
-
-
+  }

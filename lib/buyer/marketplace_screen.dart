@@ -1,3 +1,5 @@
+import 'package:capstone/buyer/add_to_cart.dart';
+import 'package:capstone/buyer/chat_page.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -12,7 +14,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 class MarketplaceScreen extends StatefulWidget {
   @override
   _MarketplaceScreenState createState() => _MarketplaceScreenState();
@@ -42,7 +43,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Edit Crop Details'),
+          title: Text('Chat'),
           content: SingleChildScrollView(
             child: Column(
               children: [
@@ -248,37 +249,46 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                 '',
                                 style: TextStyle(fontSize: 14.0),
                               ),
-                              Row(
-                                children: [
+                          Column(
+                            children: [
                                   OutlinedButton.icon(
-                                    onPressed: editCropDetails,
-                                    icon: Icon(Icons.edit),
-                                    label: Text('Edit'),
+                                    icon: Icon(Icons.chat_bubble_outline),
+                                    label: Text('Chat'),
                                     style: OutlinedButton.styleFrom(
                                       side: BorderSide(color: Color(0xFF9DC08B), width: 2),
                                       primary: Color(                                      0xFF9DC08B),
-                                      textStyle: TextStyle(fontSize: 16),
-                                    ),
+                                      textStyle: TextStyle(fontSize: 16),), 
+                                    onPressed: () { Navigator.of(context).push(MaterialPageRoute(builder: 
+                                      (context) => ChatScreen()));
+                                     },
+                                
                                   ),
-                                  
-                                  SizedBox(width: 10.0),
-                                  ElevatedButton.icon(
-                                    icon: Icon(Icons.delete),
-                                    label: Text('Delete'),
-                                    onPressed: () {
-
-                                    },
-                                    style: ButtonStyle(
-                                      backgroundColor:
-                                      MaterialStateProperty.all<Color>(Color(0xFF9DC08B)),
+                                  OutlinedButton.icon(
+                                    icon: Icon(Icons.shopping_cart_checkout_outlined),
+                                    label: Text('Add to Cart'),
+                                    style: OutlinedButton.styleFrom(
+                                      side: BorderSide(color: Color(0xFF9DC08B), width: 2),
+                                      primary: Color(                                      0xFF9DC08B),
+                                      textStyle: TextStyle(fontSize: 16),),
+                                    onPressed: () { 
+                                      Navigator.of(context).push(MaterialPageRoute(builder: 
+                                      (context) => AddToCart()));
+                                     },
+                                  ),
+                                   ElevatedButton.icon(
+                                    onPressed: editCropDetails,
+                                    icon: Icon(Icons.shopping_cart_checkout_outlined),
+                                    label: Text('Buy Now!'),
+                                    style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xFF9DC08B),
                                     ),
                                   ),
                                 ],
                               ),
                             ],
-                          ),
-                        ],
-                      ),
+                          )
+                         ]
+                       ),
                     ),
                   );
                 },
@@ -287,8 +297,6 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
           ],
         ),
       ),
-    );
+        );
   }
-}
-
-
+  }
