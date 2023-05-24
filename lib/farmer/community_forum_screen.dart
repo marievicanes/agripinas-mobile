@@ -1,3 +1,4 @@
+import 'package:capstone/farmer/comment_section.dart';
 import 'package:flutter/material.dart';
 
 class CommunityForumScreen extends StatefulWidget {
@@ -52,11 +53,6 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Post Title',
-                            style: TextStyle(
-                                fontSize: 18.0, fontWeight: FontWeight.bold),
-                          ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
@@ -78,7 +74,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                               content: TextField(
                                                 maxLines: null,
                                                 decoration: InputDecoration(
-                                                  hintText: 'Edit here here...',
+                                                  hintText: 'Edit post here...',
                                                   border: OutlineInputBorder(),
                                                 ),
                                               ),
@@ -117,9 +113,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                         Icons.delete,
                                         color: Color(0xFF9DC08B),
                                       ),
-                                      onPressed: () {
-                                      
-                                      },
+                                      onPressed: () {},
                                     ),
                                   ],
                                 ),
@@ -152,51 +146,23 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                 icon: Icon(Icons.thumb_up),
                                 onPressed: () {},
                               ),
-                              IconButton(
-                                icon: Icon(Icons.comment),
+                              TextButton(
                                 onPressed: () {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text("Add a comment"),
-                                        content: TextField(
-                                          maxLines: null,
-                                          decoration: InputDecoration(
-                                            hintText:
-                                                'Add your comment here...',
-                                            border: OutlineInputBorder(),
-                                          ),
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            child: Text('Cancel',
-                                                style: TextStyle(
-                                                    color: Colors.black)),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                          ElevatedButton(
-                                            child: Text("Reply"),
-                                            onPressed: () {
-                                              
-                                              String postContent =
-                                                  _postController.text;
-                                              print(postContent);
-                                              Navigator.pop(context);
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              primary: Color.fromRGBO(
-                                                  157, 192, 139, 1),
-                                              onPrimary: Colors.white,
-                                            ),
-                                          )
-                                        ],
+                                      return Dialog(
+                                        child: CommentSection(),
                                       );
                                     },
                                   );
                                 },
+                                style: ButtonStyle(
+                                  foregroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.black),
+                                ),
+                                child: Icon(Icons.comment),
                               ),
                             ],
                           ),
@@ -219,7 +185,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                           controller: _postController,
                           maxLines: null,
                           decoration: InputDecoration(
-                            hintText: 'Enter post here...',
+                            hintText: 'Something in your mind?',
                             border: OutlineInputBorder(),
                           ),
                         ),
@@ -234,7 +200,6 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                           ElevatedButton(
                             child: Text('Post'),
                             onPressed: () {
-                              
                               String postContent = _postController.text;
                               print(postContent);
                               Navigator.of(context).pop();
