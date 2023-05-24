@@ -1,8 +1,8 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:capstone/admin/admin_navbar.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+
 import 'helper.dart';
-import 'package:capstone/farmer/farmer_nav.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -85,275 +85,95 @@ class WelcomePage extends StatelessWidget {
   }
 }
 
-class SignInAs extends StatelessWidget {
+class Login extends StatelessWidget {
+  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-          child: Column(
+      resizeToAvoidBottomInset: false,
+      body: Padding(
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+        child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 40, vertical: 0),
                 child: Hero(
-                  tag: 'hero',
-                  child: SizedBox(
-                    height: 100,
-                    child: Image.asset('assets/logo.png'),
-                  ),
-                ),
+                    tag: 'hero',
+                    child: SizedBox(
+                      height: 250,
+                      width: 300,
+                      child: Image.asset('assets/logo.png'),
+                    )),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: Text(
-                  "Sign in as",
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 85, 113, 83),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: Text(
-                  "Select your account type",
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(39, 174, 96, 1),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginBuyer()));
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    Color(0xFFA9AF7E),
-                  ),
-                ),
-                child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 40.0, vertical: 16.0),
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   child: Text(
-                    'BUYER',
+                    "Sign in",
                     style: TextStyle(
-                      fontSize: 20.0,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 85, 113, 83)),
+                  )),
+              TextField(
+                controller: authService.email,
+                decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.people),
+                    labelText: "E-mail",
+                    border: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 3, color: Colors.green),
+                        borderRadius: BorderRadius.circular(15))),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              TextField(
+                obscureText: true,
+                controller: authService.password,
+                decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.password),
+                    labelText: "Password",
+                    border: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 3, color: Colors.green),
+                        borderRadius: BorderRadius.circular(15))),
+              ),
+              Column(
+                children: [
+                  SizedBox(height: 15),
+                  DropdownButtonFormField(
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.arrow_drop_down),
+                      labelText: "Roles",
+                      border: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 3, color: Colors.green),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                     ),
+                    items: [
+                      DropdownMenuItem(
+                        value: "Farmer",
+                        child: Text("Farmer"),
+                      ),
+                      DropdownMenuItem(
+                        value: "Buyer",
+                        child: Text("Buyer"),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      authService.role.text = value as String;
+                    },
                   ),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginFarmer()));
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    Color(0xFFA9AF7E),
-                  ),
-                ),
-                child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 40.0, vertical: 16.0),
-                  child: Text(
-                    'FARMER',
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AdminLogin()));
-                },
-                child: Text("Login as Admin",
-                    style: TextStyle(
-                        color: Color.fromARGB(
-                      255,
-                      85,
-                      113,
-                      83,
-                    ))),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class LoginBuyer extends StatelessWidget {
-  AuthService authService = AuthService();
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 0),
-                child: Hero(
-                    tag: 'hero',
-                    child: SizedBox(
-                      height: 250,
-                      width: 300,
-                      child: Image.asset('assets/logo.png'),
-                    )),
-              ),
-              Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                  child: Text(
-                    "Login as Buyer",
-                    style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 85, 113, 83)),
-                  )),
-              TextField(
-                controller: authService.email,
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.people),
-                    labelText: "E-mail",
-                    border: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.green),
-                        borderRadius: BorderRadius.circular(15))),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              TextField(
-                obscureText: true,
-                controller: authService.password,
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.password),
-                    labelText: "Password",
-                    border: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.green),
-                        borderRadius: BorderRadius.circular(15))),
+                ],
               ),
               SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
                   if (authService.email != "" && authService.password != "") {
-                    authService.loginFarmer(context);
-                  }
-                },
-                child: Text('Login'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF27AE60),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Register()));
-                  },
-                  child: Text(
-                    "Don't have an account? Register",
-                    style: TextStyle(color: Color(0xFF27AE60)),
-                  )),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AdminLogin()));
-                },
-                child: Text("Login as Admin",
-                    style: TextStyle(
-                        color: Color.fromARGB(
-                      255,
-                      85,
-                      113,
-                      83,
-                    ))),
-              ),
-            ]),
-      ),
-    );
-  }
-}
-
-class LoginFarmer extends StatelessWidget {
-  AuthService authService = AuthService();
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 0),
-                child: Hero(
-                    tag: 'hero',
-                    child: SizedBox(
-                      height: 250,
-                      width: 300,
-                      child: Image.asset('assets/logo.png'),
-                    )),
-              ),
-              Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                  child: Text(
-                    "Login as Farmer",
-                    style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 85, 113, 83)),
-                  )),
-              TextField(
-                controller: authService.email,
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.people),
-                    labelText: "E-mail",
-                    border: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.green),
-                        borderRadius: BorderRadius.circular(15))),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              TextField(
-                obscureText: true,
-                controller: authService.password,
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.password),
-                    labelText: "Password",
-                    border: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.green),
-                        borderRadius: BorderRadius.circular(15))),
-              ),
-              SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  if (authService.email != "" && authService.password != "") {
-                    authService.loginFarmer(context);
+                    authService.login(context);
                   }
                 },
                 child: Text('Login'),
@@ -425,7 +245,7 @@ class AdminLogin extends StatelessWidget {
                       color: Color.fromARGB(255, 85, 113, 83)),
                 )),
             TextField(
-              controller: authService.email,
+              controller: authService.adminemail,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.people),
                   labelText: "E-mail",
@@ -439,7 +259,7 @@ class AdminLogin extends StatelessWidget {
             ),
             TextField(
               obscureText: true,
-              controller: authService.password,
+              controller: authService.adminpassword,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.password),
                   labelText: "Password",
@@ -465,7 +285,7 @@ class AdminLogin extends StatelessWidget {
             TextButton(
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SignInAs()));
+                      MaterialPageRoute(builder: (context) => Login()));
                 },
                 child: Text(
                   "Not Admin?",
@@ -558,7 +378,7 @@ class Register extends StatelessWidget {
                     ),
                   ],
                   onChanged: (value) {
-                    // Handle the selected value
+                    authService.role.text = value as String;
                   },
                 ),
               ],
@@ -595,7 +415,7 @@ class Register extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 if (authService.email != "" && authService.password != "") {
-                  authService.RegisterFarmer(context);
+                  authService.Register(context);
                 }
               },
               child: Text('Register'),
@@ -608,8 +428,8 @@ class Register extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SignInAs()));
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Login()));
               },
               child: Text("Already have an account? Login",
                   style: TextStyle(
