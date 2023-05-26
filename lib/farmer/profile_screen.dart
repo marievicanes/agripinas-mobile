@@ -12,6 +12,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _bdateController = TextEditingController();
+  TextEditingController _ageController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
@@ -23,6 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _nameController.text = "Arriane Gatpo";
+    _ageController.text = "23";
     _emailController.text = "ag@gatpo.com";
     _addressController.text = "Quezon City";
     _phoneController.text = "+639675046713";
@@ -152,6 +154,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         DateFormat('MM/dd/yyyy').format(_selectedDate!);
                   }
                 },
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _ageController,
+                enabled: _isEditing,
+                decoration: InputDecoration(
+                  labelText: 'Age',
+                  hintText: 'Your age',
+                  border: OutlineInputBorder(),
+                ),
               ),
               SizedBox(height: 16.0),
               TextField(
