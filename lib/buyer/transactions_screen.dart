@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class Transaction extends StatefulWidget {
+class TransactionBuyer extends StatefulWidget {
   @override
-  _TransactionState createState() => _TransactionState();
+  _TransactionBuyerState createState() => _TransactionBuyerState();
 }
 
-class _TransactionState extends State<Transaction> {
+class _TransactionBuyerState extends State<TransactionBuyer> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
 

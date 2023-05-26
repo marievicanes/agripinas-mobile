@@ -23,7 +23,7 @@ class _BuyerNavBarState extends State<BuyerNavBar> {
     MarketplaceScreen(),
     AddToCart(),
     CommunityForumScreen(),
-    Transaction(),
+    TransactionBuyer(),
     ProfileScreen(),
     
   ];

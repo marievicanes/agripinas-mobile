@@ -1,4 +1,5 @@
-import 'package:capstone/buyer/placeorder.dart';
+import 'package:capstone/admin/transactions.dart';
+import 'package:capstone/buyer/transactions_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -7,19 +8,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AddToCart',
+      title: 'PlaceOrder',
       theme: ThemeData(),
-      home: AddToCart(),
+      home: PlaceOrder(),
     );
   }
 }
-class AddToCart extends StatefulWidget {
+class PlaceOrder extends StatefulWidget {
   @override
-  _AddToCartState createState() => _AddToCartState();
+  _PlaceOrderState createState() => _PlaceOrderState();
 }
 
-class _AddToCartState extends State<AddToCart> {
-  final List<String> _items = ['Onion','Rice', 'Eggplant'];
+class _PlaceOrderState extends State<PlaceOrder> {
+  final List<String> _items = ['Onion', 'Corn', 'Rice', 'Eggplant'];
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
 
@@ -254,14 +255,13 @@ class _AddToCartState extends State<AddToCart> {
                                  
                                    ElevatedButton.icon(
                                     icon: Icon(Icons.check_outlined),
-                                    label: Text('CHECKOUT'),
+                                    label: Text('PLACEORDER'),
                                     style: ElevatedButton.styleFrom(
                                     backgroundColor: Color(0xFF9DC08B),),
                                     onPressed: () { 
                                       Navigator.of(context).push(MaterialPageRoute(builder: 
-                                      (context) => PlaceOrder()));
+                                      (context) => TransactionBuyer()));
                                      },
-                                    
                                   ),
                                 ],
                               ),
