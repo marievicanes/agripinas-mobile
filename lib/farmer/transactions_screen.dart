@@ -8,96 +8,190 @@ class TransactionsScreen extends StatefulWidget {
 class _TransactionsScreenState extends State<TransactionsScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
+  String? _status;
 
-  List<DataRow> _rows = [
-    DataRow(
-      cells: [
-        DataCell(Text('N0034')),
-        DataCell(Text('Corn')),
-        DataCell(Text('01/02/2023')),
-        DataCell(Text('5000')),
-        DataCell(Text('2')),
-        DataCell(Text('10000')),
-        DataCell(Text('Ryan Amador')),
-        DataCell(
-          DropdownButton<String>(
-            value: 'pending',
-            items: [
-              DropdownMenuItem<String>(
-                value: 'pending',
-                child: Text('Pending'),
-              ),
-              DropdownMenuItem<String>(
-                value: 'cancelled',
-                child: Text('Cancelled'),
-              ),
-              DropdownMenuItem<String>(
-                value: 'completed',
-                child: Text('Completed'),
-              ),
-            ],
-            onChanged: (value) {
-            },
-          ),
-        ),
-        DataCell(
-          Icon(
-            Icons.edit,
-            color: Color(0xFF9DC08B).withAlpha(160),
-          ),
-        ),
-        DataCell(
-          Icon(Icons.delete,
-            color: Color(0xFF9DC08B),
-          ),
-        ),
-      ],
-    ),
-    DataRow(
-      cells: [
-        DataCell(Text('N001')),
-        DataCell(Text('Rice')),
-        DataCell(Text('01/02/2023')),
-        DataCell(Text('5000')),
-        DataCell(Text('2')),
-        DataCell(Text('10000')),
-        DataCell(Text('Ryan Amador')),
-        DataCell(
-          DropdownButton<String>(
-            value: 'pending',
-            items: [
-              DropdownMenuItem<String>(
-                value: 'pending',
-                child: Text('Pending'),
-              ),
-              DropdownMenuItem<String>(
-                value: 'cancelled',
-                child: Text('Cancelled'),
-              ),
-              DropdownMenuItem<String>(
-                value: 'completed',
-                child: Text('Completed'),
-              ),
-            ],
-            onChanged: (value) {
-            },
-          ),
-        ),
-        DataCell(
-          Icon(
-            Icons.edit,
-            color: Color(0xFF9DC08B).withAlpha(160),
-          ),
-        ),
-        DataCell(
-          Icon(Icons.delete,
-            color: Color(0xFF9DC08B),
-          ),
-        ),
-      ],
-    ),
+  TextEditingController _userController = TextEditingController();
+  TextEditingController _idController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _dateController = TextEditingController();
+  TextEditingController _priceController = TextEditingController();
+  TextEditingController _quantityController = TextEditingController();
+  TextEditingController _amountController = TextEditingController();
+  TextEditingController _buyerController = TextEditingController();
+  TextEditingController _statusController = TextEditingController();
 
-  ];
+  List<DataRow> _rows = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeRows();
+  }
+
+  void _initializeRows() {
+    List<DataRow> rows = [
+      DataRow(
+        cells: [
+          DataCell(Text(
+            'B001',
+          )),
+          DataCell(Text('N001')),
+          DataCell(Text('Onion')),
+          DataCell(Text('02 / 01 / 2023')),
+          DataCell(Text('400')),
+          DataCell(Text('2')),
+          DataCell(Text('800')),
+          DataCell(Text('Ryan Amador')),
+          DataCell(
+            DropdownButton<String>(
+              value: 'pending',
+              items: [
+                DropdownMenuItem<String>(
+                  value: 'pending',
+                  child: Text('Pending'),
+                ),
+                DropdownMenuItem<String>(
+                  value: 'cancelled',
+                  child: Text('Cancelled'),
+                ),
+                DropdownMenuItem<String>(
+                  value: 'completed',
+                  child: Text('Completed'),
+                ),
+              ],
+              onChanged: (value) {},
+            ),
+          ),
+          DataCell(
+            IconButton(
+              icon: Icon(
+                Icons.edit,
+                color: Color(0xFF9DC08B).withAlpha(160),
+              ),
+              onPressed: _showEditDialog,
+            ),
+          ),
+          DataCell(
+            Icon(
+              Icons.delete,
+              color: Color(0xFF9DC08B),
+            ),
+          ),
+        ],
+      ),
+    ];
+    setState(() {
+      _rows = rows;
+    });
+  }
+
+  void _showEditDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Transactions'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextField(
+                  controller: _userController,
+                  decoration: InputDecoration(labelText: 'User ID'),
+                ),
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _idController,
+                  decoration: InputDecoration(labelText: 'Item ID'),
+                ),
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(labelText: 'Item Name'),
+                ),
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _dateController,
+                  decoration: InputDecoration(labelText: 'Date Ordered'),
+                ),
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _priceController,
+                  decoration: InputDecoration(labelText: 'Unit Price'),
+                ),
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _quantityController,
+                  decoration: InputDecoration(labelText: 'Quantity Order'),
+                ),
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _amountController,
+                  decoration: InputDecoration(labelText: 'Total Amount'),
+                ),
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _buyerController,
+                  decoration: InputDecoration(labelText: 'Buyer Name'),
+                ),
+                SizedBox(height: 16.0),
+                DropdownButtonFormField<String>(
+                  value: _status,
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: 'pending',
+                      child: Text('Pending'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'cancelled',
+                      child: Text('Cancelled'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'cancelled',
+                      child: Text('Cancelled'),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      _status = value;
+                    });
+                  },
+                  decoration: InputDecoration(labelText: 'Status'),
+                ),
+                SizedBox(height: 16.0),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _searchText = _userController.text;
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Save',
+                style: TextStyle(
+                  color: Color(0xFF42931B),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void searchItem(String text) {
     setState(() {
@@ -107,8 +201,10 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<DataRow> filteredRows = _rows.where((row) =>
-        row.toString().toLowerCase().contains(_searchText.toLowerCase())).toList();
+    List<DataRow> filteredRows = _rows
+        .where((row) =>
+            row.toString().toLowerCase().contains(_searchText.toLowerCase()))
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -160,15 +256,10 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             children: [
               Expanded(
                 child: Text(
-                  '    Transactions',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  '   Transactions',
+                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                 ),
               ),
-
-
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -194,8 +285,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                           child: Text('50'),
                         ),
                       ],
-                      onChanged: (value) {
-                      },
+                      onChanged: (value) {},
                     ),
                   ],
                 ),
@@ -222,6 +312,15 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   columns: [
                     DataColumn(
                       label: Text(
+                        'User ID',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF718C53),
+                        ),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
                         'Item ID',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -239,7 +338,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Date Ordered',
+                      label: Text(
+                        'Date Ordered',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -247,7 +347,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Unit Price',
+                      label: Text(
+                        'Unit Price',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -255,7 +356,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Quantity Order',
+                      label: Text(
+                        'Quantity Order',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -263,7 +365,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Total Amount',
+                      label: Text(
+                        'Total Amount',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -271,7 +374,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Buyer’s Name',
+                      label: Text(
+                        'Buyer Name',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -279,7 +383,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Status',
+                      label: Text(
+                        'Status',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -287,7 +392,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Edit',
+                      label: Text(
+                        'Edit',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -295,7 +401,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Delete',
+                      label: Text(
+                        'Delete',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -303,15 +410,13 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                   ],
-                  rows: filteredRows,
+                  rows: _rows,
                 ),
               ),
             ),
           ),
-
         ],
       ),
     );
   }
 }
-
