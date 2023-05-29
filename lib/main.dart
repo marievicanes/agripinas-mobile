@@ -112,41 +112,27 @@ class Login extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(255, 85, 113, 83)),
                   )),
-              TextFormField(
+              TextField(
                 decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.email),
-                  labelText: "E-mail",
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(width: 3, color: Colors.green),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
+                    prefixIcon: Icon(Icons.people),
+                    labelText: "E-mail",
+                    border: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 3, color: Colors.green),
+                        borderRadius: BorderRadius.circular(15))),
               ),
               SizedBox(
                 height: 15,
               ),
-              TextFormField(
+              TextField(
                 obscureText: true,
                 decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.password),
-                  labelText: "Password",
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(width: 3, color: Colors.green),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please enter a password';
-                  }
-                  return null;
-                },
+                    prefixIcon: Icon(Icons.password),
+                    labelText: "Password",
+                    border: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(width: 3, color: Colors.green),
+                        borderRadius: BorderRadius.circular(15))),
               ),
               SizedBox(
                 height: 10,
@@ -318,195 +304,146 @@ class AdminLogin extends StatelessWidget {
   }
 }
 
-class Register extends StatefulWidget {
-  @override
-  _RegisterState createState() => _RegisterState();
-}
-
-class _RegisterState extends State<Register> {
-  final _formKey = GlobalKey<FormState>();
-
+class Register extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 0),
-                child: Hero(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 0),
+              child: Hero(
                   tag: 'hero',
                   child: SizedBox(
                     height: 100,
                     child: Image.asset('assets/logo.png'),
-                  ),
-                ),
-              ),
-              Padding(
+                  )),
+            ),
+            Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                 child: Text(
                   "Let's get started!",
                   style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 85, 113, 83),
-                  ),
-                ),
-              ),
-              TextFormField(
-                decoration: InputDecoration(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 85, 113, 83)),
+                )),
+            TextField(
+              decoration: InputDecoration(
                   prefixIcon: Icon(Icons.person),
                   labelText: "Full Name",
                   border: OutlineInputBorder(
-                    borderSide: const BorderSide(width: 3, color: Colors.green),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please enter your full name';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
+                      borderSide:
+                          const BorderSide(width: 3, color: Colors.green),
+                      borderRadius: BorderRadius.circular(15))),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            TextField(
+              decoration: InputDecoration(
                   prefixIcon: Icon(Icons.email),
                   labelText: "E-mail",
                   border: OutlineInputBorder(
-                    borderSide: const BorderSide(width: 3, color: Colors.green),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Column(
-                children: [
-                  SizedBox(height: 15),
-                  DropdownButtonFormField(
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.arrow_drop_down),
-                      labelText: "Roles",
-                      border: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.green),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
+                      borderSide:
+                          const BorderSide(width: 3, color: Colors.green),
+                      borderRadius: BorderRadius.circular(15))),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Column(
+              children: [
+                SizedBox(height: 15),
+                DropdownButtonFormField(
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.arrow_drop_down),
+                    labelText: "Roles",
+                    border: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(width: 3, color: Colors.green),
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                    items: [
-                      DropdownMenuItem(
-                        value: "Farmer",
-                        child: Text("Farmer"),
-                      ),
-                      DropdownMenuItem(
-                        value: "Buyer",
-                        child: Text("Buyer"),
-                      ),
-                    ],
-                    onChanged: (value) {},
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select a role';
-                      }
-                      return null;
-                    },
                   ),
-                ],
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              TextFormField(
-                obscureText: true,
-                maxLength: 16,
-                decoration: InputDecoration(
+                  items: [
+                    DropdownMenuItem(
+                      value: "Farmer",
+                      child: Text("Farmer"),
+                    ),
+                    DropdownMenuItem(
+                      value: "Buyer",
+                      child: Text("Buyer"),
+                    ),
+                  ],
+                  onChanged: (value) {},
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            TextField(
+              obscureText: true,
+              maxLength: 16,
+              decoration: InputDecoration(
                   prefixIcon: Icon(Icons.password),
                   labelText: "Password",
                   helperText:
                       "Use a strong password with 16 characters, uppercase, lowercase, number, and symbol",
                   border: OutlineInputBorder(
-                    borderSide: const BorderSide(width: 3, color: Colors.green),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                onChanged: (value) {
-                  bool isValid =
-                      RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9!#%]).{16}$')
-                          .hasMatch(value);
-                },
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please enter a password';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextFormField(
-                obscureText: true,
-                decoration: InputDecoration(
+                      borderSide:
+                          const BorderSide(width: 3, color: Colors.green),
+                      borderRadius: BorderRadius.circular(15))),
+              onChanged: (value) {
+                bool isValid =
+                    RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9!#%]).{16}$')
+                        .hasMatch(value);
+              },
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            TextField(
+              obscureText: true,
+              decoration: InputDecoration(
                   prefixIcon: Icon(Icons.password),
                   labelText: "Confirm Password",
                   border: OutlineInputBorder(
-                    borderSide: const BorderSide(width: 3, color: Colors.green),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please confirm your password';
-                  }
-                  return null;
-                },
+                      borderSide:
+                          const BorderSide(width: 3, color: Colors.green),
+                      borderRadius: BorderRadius.circular(15))),
+            ),
+            SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {},
+              child: Text('Register'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF27AE60),
               ),
-              SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {}
-                },
-                child: Text('Register'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF27AE60),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Login()),
-                  );
-                },
-                child: Text(
-                  "Already have an account? Login",
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Login()));
+              },
+              child: Text("Already have an account? Login",
                   style: TextStyle(
-                    color: Color.fromARGB(255, 85, 113, 83),
-                  ),
-                ),
-              ),
-            ],
-          ),
+                      color: Color.fromARGB(
+                    255,
+                    85,
+                    113,
+                    83,
+                  ))),
+            )
+          ],
         ),
       ),
     );

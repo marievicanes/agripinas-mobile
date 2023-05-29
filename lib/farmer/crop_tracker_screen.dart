@@ -8,153 +8,93 @@ class CropTrackerScreen extends StatefulWidget {
 class _CropTrackerScreenState extends State<CropTrackerScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
-  String? _status;
 
-  TextEditingController _cropsController = TextEditingController();
-  TextEditingController _imageController = TextEditingController();
-  TextEditingController _quantityController = TextEditingController();
-  TextEditingController _statusController = TextEditingController();
-
-  List<DataRow> _rows = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeRows();
-  }
-
-  void _initializeRows() {
-    List<DataRow> rows = [
-      DataRow(
-        cells: [
-          DataCell(Text(
-            'Rice',
-          )),
-          DataCell(
-            Image.asset(
-              'assets/rice.png',
-              height: 20,
-              width: 20,
-            ),
+  List<DataRow> _rows = [
+    DataRow(
+      cells: [
+        DataCell(Text(
+          'Rice',
+        )),
+        DataCell(
+          Image.asset(
+            'assets/rice.png',
+            height: 20,
+            width: 20,
           ),
-          DataCell(Text('55kg')),
-          DataCell(
-            DropdownButton<String>(
-              value: 'harvest',
-              items: [
-                DropdownMenuItem<String>(
-                  value: 'harvest',
-                  child: Text('Harvest'),
-                ),
-                DropdownMenuItem<String>(
-                  value: 'harvested',
-                  child: Text('Harvested'),
-                ),
-              ],
-              onChanged: (value) {},
-            ),
-          ),
-          DataCell(
-            IconButton(
-              icon: Icon(
-                Icons.edit,
-                color: Color(0xFF9DC08B).withAlpha(160),
+        ),
+        DataCell(Text('55kg')),
+        DataCell(
+          DropdownButton<String>(
+            value: 'harvest',
+            items: [
+              DropdownMenuItem<String>(
+                value: 'harvest',
+                child: Text('Harvest'),
               ),
-              onPressed: _showEditDialog,
-            ),
-          ),
-          DataCell(
-            Icon(
-              Icons.delete,
-              color: Color(0xFF9DC08B),
-            ),
-          ),
-        ],
-      ),
-    ];
-    setState(() {
-      _rows = rows;
-    });
-  }
-
-  void _showEditDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Edit Crop Details'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                TextField(
-                  controller: _cropsController,
-                  decoration: InputDecoration(labelText: 'Crops'),
-                ),
-                SizedBox(height: 16.0),
-                TextField(
-                  controller: _imageController,
-                  decoration: InputDecoration(labelText: 'Image'),
-                ),
-                SizedBox(height: 16.0),
-                TextField(
-                  controller: _quantityController,
-                  decoration: InputDecoration(labelText: 'Quantity'),
-                ),
-                SizedBox(height: 16.0),
-                DropdownButtonFormField<String>(
-                  value: _status,
-                  items: [
-                    DropdownMenuItem<String>(
-                      value: 'harvest',
-                      child: Text('Harvest'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'harvested',
-                      child: Text('Harvested'),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      _status = value;
-                    });
-                  },
-                  decoration: InputDecoration(labelText: 'Status'),
-                ),
-                SizedBox(height: 16.0),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Cancel',
-                style: TextStyle(
-                  color: Colors.black,
-                ),
+              DropdownMenuItem<String>(
+                value: 'harvested',
+                child: Text('Harvested'),
               ),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _searchText = _cropsController.text;
-                });
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Save',
-                style: TextStyle(
-                  color: Color(0xFF42931B),
-                ),
+            ],
+            onChanged: (value) {},
+          ),
+        ),
+        DataCell(
+          Icon(
+            Icons.edit,
+            color: Color(0xFF9DC08B).withAlpha(160),
+          ),
+        ),
+        DataCell(
+          Icon(
+            Icons.delete,
+            color: Color(0xFF9DC08B),
+          ),
+        ),
+      ],
+    ),
+    DataRow(
+      cells: [
+        DataCell(Text('Rice')),
+        DataCell(
+          Image.asset(
+            'assets/rice.png',
+            height: 20,
+            width: 20,
+          ),
+        ),
+        DataCell(Text('55kg')),
+        DataCell(
+          DropdownButton<String>(
+            value: 'harvest',
+            items: [
+              DropdownMenuItem<String>(
+                value: 'harvest',
+                child: Text('Harvest'),
               ),
-            ),
-          ],
-        );
-      },
-    );
-  }
+              DropdownMenuItem<String>(
+                value: 'harvested',
+                child: Text('Harvested'),
+              ),
+            ],
+            onChanged: (value) {},
+          ),
+        ),
+        DataCell(
+          Icon(
+            Icons.edit,
+            color: Color(0xFF9DC08B).withAlpha(160),
+          ),
+        ),
+        DataCell(
+          Icon(
+            Icons.delete,
+            color: Color(0xFF9DC08B),
+          ),
+        ),
+      ],
+    ),
+  ];
 
   void searchItem(String text) {
     setState(() {
@@ -166,7 +106,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
   Widget build(BuildContext context) {
     List<DataRow> filteredRows = _rows
         .where((row) =>
-        row.toString().toLowerCase().contains(_searchText.toLowerCase()))
+            row.toString().toLowerCase().contains(_searchText.toLowerCase()))
         .toList();
 
     return Scaffold(
@@ -328,7 +268,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen> {
                       ),
                     ),
                   ],
-                  rows: _rows,
+                  rows: filteredRows,
                 ),
               ),
             ),
