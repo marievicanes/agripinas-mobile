@@ -106,7 +106,7 @@ class Login extends StatelessWidget {
               Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   child: Text(
-                    "Login your account",
+                    "AgriPinas",
                     style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -137,86 +137,48 @@ class Login extends StatelessWidget {
               SizedBox(
                 height: 10,
               ),
-              Column(
-                children: [
-                  SizedBox(height: 15),
-                  DropdownButtonFormField(
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.arrow_drop_down),
-                      labelText: "Roles",
-                      border: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.green),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                    items: [
-                      DropdownMenuItem(
-                        value: "Farmer",
-                        child: Text("Farmer"),
-                      ),
-                      DropdownMenuItem(
-                        value: "Buyer",
-                        child: Text("Buyer"),
-                      ),
-                    ],
-                    onChanged: (value) {
-                    if (value == "Farmer") {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BottomNavBar(),
-        ),
-      );
-    } else if (value == "Buyer") {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BuyerNavBar(),
-        ),
-      );
-    }
-  },
-),
-              SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => BottomNavBar()));
-                },
-                child: Text('Login'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF27AE60),
+              Column(children: [
+                SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => BottomNavBar()));
+                  },
+                  child: Text('Login'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF27AE60),
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextButton(
+                SizedBox(
+                  height: 10,
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Register()));
+                    },
+                    child: Text(
+                      "Don't have an account? Register",
+                      style: TextStyle(color: Color(0xFF27AE60)),
+                    )),
+                TextButton(
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Register()));
+                        MaterialPageRoute(builder: (context) => AdminLogin()));
                   },
-                  child: Text(
-                    "Don't have an account? Register",
-                    style: TextStyle(color: Color(0xFF27AE60)),
-                  )),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AdminLogin()));
-                },
-                child: Text("Login as Admin",
-                    style: TextStyle(
-                        color: Color.fromARGB(
-                      255,
-                      85,
-                      113,
-                      83,
-                    ))),
-              ),
+                  child: Text("Login as Admin",
+                      style: TextStyle(
+                          color: Color.fromARGB(
+                        255,
+                        85,
+                        113,
+                        83,
+                      ))),
+                ),
+              ]),
             ]),
-  ]),
       ),
     );
   }
