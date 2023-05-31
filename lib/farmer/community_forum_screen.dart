@@ -60,60 +60,89 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.edit,
-                                        color: Color(0xFF9DC08B).withAlpha(180),
-                                      ),
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: Text('Edit Post'),
-                                              content: TextField(
-                                                maxLines: null,
-                                                decoration: InputDecoration(
-                                                  hintText: 'Edit post here...',
-                                                  border: OutlineInputBorder(),
-                                                ),
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  child: Text('Cancel',
-                                                      style: TextStyle(
-                                                          color: Colors.black)),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                                ElevatedButton(
-                                                  child: Text('Post'),
-                                                  onPressed: () {
-                                                    String postContent =
-                                                        _postController.text;
-                                                    print(postContent);
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    primary: Color.fromRGBO(
-                                                        157, 192, 139, 1),
-                                                    onPrimary: Colors.white,
+                                    PopupMenuButton<String>(
+                                      onSelected: (value) {
+                                        if (value == 'edit') {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text('Edit Post'),
+                                                content: TextField(
+                                                  maxLines: null,
+                                                  decoration: InputDecoration(
+                                                    hintText:
+                                                        'Edit post here...',
+                                                    border:
+                                                        OutlineInputBorder(),
                                                   ),
-                                                )
-                                              ],
-                                            );
-                                          },
-                                        );
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                    child: Text(
+                                                      'Cancel',
+                                                      style: TextStyle(
+                                                          color: Colors.black),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                  ElevatedButton(
+                                                    child: Text('Post'),
+                                                    onPressed: () {
+                                                      String postContent =
+                                                          _postController.text;
+                                                      print(postContent);
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      primary: Color.fromRGBO(
+                                                          157, 192, 139, 1),
+                                                      onPrimary: Colors.white,
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        } else if (value == 'delete') {
+                                          // Handle delete operation
+                                        }
                                       },
-                                    ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.delete,
-                                        color: Color(0xFF9DC08B),
-                                      ),
-                                      onPressed: () {},
+                                      itemBuilder: (BuildContext context) =>
+                                          <PopupMenuEntry<String>>[
+                                        PopupMenuItem<String>(
+                                          value: 'edit',
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.edit,
+                                                color: Color(0xFF9DC08B)
+                                                    .withAlpha(180),
+                                              ),
+                                              SizedBox(width: 8.0),
+                                              Text('Edit Post'),
+                                            ],
+                                          ),
+                                        ),
+                                        PopupMenuItem<String>(
+                                          value: 'delete',
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.delete,
+                                                color: Color(0xFF9DC08B),
+                                              ),
+                                              SizedBox(width: 8.0),
+                                              Text('Delete Post'),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),

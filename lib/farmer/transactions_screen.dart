@@ -36,8 +36,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 child: Text('Completed'),
               ),
             ],
-            onChanged: (value) {
-            },
+            onChanged: (value) {},
           ),
         ),
         DataCell(
@@ -47,7 +46,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           ),
         ),
         DataCell(
-          Icon(Icons.delete,
+          Icon(
+            Icons.delete,
             color: Color(0xFF9DC08B),
           ),
         ),
@@ -79,8 +79,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 child: Text('Completed'),
               ),
             ],
-            onChanged: (value) {
-            },
+            onChanged: (value) {},
           ),
         ),
         DataCell(
@@ -90,13 +89,13 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           ),
         ),
         DataCell(
-          Icon(Icons.delete,
+          Icon(
+            Icons.delete,
             color: Color(0xFF9DC08B),
           ),
         ),
       ],
     ),
-
   ];
 
   void searchItem(String text) {
@@ -107,8 +106,10 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<DataRow> filteredRows = _rows.where((row) =>
-        row.toString().toLowerCase().contains(_searchText.toLowerCase())).toList();
+    List<DataRow> filteredRows = _rows
+        .where((row) =>
+            row.toString().toLowerCase().contains(_searchText.toLowerCase()))
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -167,8 +168,6 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   ),
                 ),
               ),
-
-
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -194,8 +193,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                           child: Text('50'),
                         ),
                       ],
-                      onChanged: (value) {
-                      },
+                      onChanged: (value) {},
                     ),
                   ],
                 ),
@@ -239,7 +237,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Date Ordered',
+                      label: Text(
+                        'Date Ordered',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -247,7 +246,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Unit Price',
+                      label: Text(
+                        'Unit Price',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -255,7 +255,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Quantity Order',
+                      label: Text(
+                        'Quantity Order',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -263,7 +264,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Total Amount',
+                      label: Text(
+                        'Total Amount',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -271,7 +273,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Buyer’s Name',
+                      label: Text(
+                        'Buyer’s Name',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -279,7 +282,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Status',
+                      label: Text(
+                        'Status',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -287,7 +291,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Edit',
+                      label: Text(
+                        '',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -295,7 +300,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                     DataColumn(
-                      label: Text('Delete',
+                      label: Text(
+                        '',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF718C53),
@@ -308,10 +314,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               ),
             ),
           ),
-
         ],
       ),
     );
   }
 }
-
