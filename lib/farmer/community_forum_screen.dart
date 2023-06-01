@@ -7,7 +7,16 @@ class CommunityForumScreen extends StatefulWidget {
 }
 
 class _CommunityForumScreenState extends State<CommunityForumScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchText = '';
   final _postController = TextEditingController();
+  bool _isButtonVisible = true;
+
+  void searchItem(String text) {
+    setState(() {
+      _searchText = text;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +41,27 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
             ),
           ],
         ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Container(
+              width: 200.0,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25.0),
+              ),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  prefixIcon: Icon(Icons.search),
+                  border: InputBorder.none,
+                ),
+                onChanged: searchItem,
+              ),
+            ),
+          ),
+        ],
       ),
       body: Container(
         padding: EdgeInsets.all(16.0),
@@ -58,9 +88,31 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                             children: [
                               Expanded(
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
+                                    Row(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 15.0,
+                                          backgroundImage:
+                                              AssetImage('assets/user.png'),
+                                        ),
+                                        SizedBox(width: 8.0),
+                                        Text(
+                                          'Arriane Gatpo',
+                                          style: TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                     PopupMenuButton<String>(
+                                      icon: Icon(
+                                        Icons.more_horiz,
+                                        color: Color(0xFF9DC08B),
+                                      ),
                                       onSelected: (value) {
                                         if (value == 'edit') {
                                           showDialog(
@@ -82,7 +134,8 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                                     child: Text(
                                                       'Cancel',
                                                       style: TextStyle(
-                                                          color: Colors.black),
+                                                        color: Colors.black,
+                                                      ),
                                                     ),
                                                     onPressed: () {
                                                       Navigator.of(context)
@@ -110,7 +163,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                             },
                                           );
                                         } else if (value == 'delete') {
-                                          // Handle delete operation
+                                          // Handle delete action
                                         }
                                       },
                                       itemBuilder: (BuildContext context) =>
@@ -157,20 +210,6 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                           SizedBox(height: 8.0),
                           Row(
                             children: [
-                              CircleAvatar(
-                                radius: 14.0,
-                                backgroundImage: AssetImage('assets/user.png'),
-                              ),
-                              SizedBox(width: 8.0),
-                              Text(
-                                'Posted by: Arriane Gatpo',
-                                style: TextStyle(fontSize: 14.0),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8.0),
-                          Row(
-                            children: [
                               IconButton(
                                 icon: Icon(Icons.thumb_up),
                                 onPressed: () {},
@@ -189,7 +228,8 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                 style: ButtonStyle(
                                   foregroundColor:
                                       MaterialStateProperty.all<Color>(
-                                          Colors.black),
+                                    Colors.black,
+                                  ),
                                 ),
                                 child: Icon(Icons.comment),
                               ),
@@ -202,53 +242,58 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                 },
               ),
             ),
-            Center(
-              child: MaterialButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Write a Post'),
-                        content: TextField(
-                          controller: _postController,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            hintText: 'Something in your mind?',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        actions: [
-                          TextButton(
-                            child: Text('Cancel',
-                                style: TextStyle(color: Colors.black)),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          ElevatedButton(
-                            child: Text('Post'),
-                            onPressed: () {
-                              String postContent = _postController.text;
-                              print(postContent);
-                              Navigator.of(context).pop();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: Color.fromRGBO(157, 192, 139, 1),
-                              onPrimary: Colors.white,
-                            ),
-                          )
-                        ],
-                      );
-                    },
-                  );
-                },
-                child: Text('Write a Post'),
-                color: Color.fromRGBO(157, 192, 139, 1),
-                textColor: Colors.white,
-              ),
-            ),
           ],
+        ),
+      ),
+      floatingActionButton: AnimatedPositioned(
+        duration: Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        right: 16.0,
+        bottom: _isButtonVisible ? 16.0 : -100.0,
+        child: FloatingActionButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Write a Post'),
+                  content: TextField(
+                    controller: _postController,
+                    maxLines: null,
+                    decoration: InputDecoration(
+                      hintText: 'Something in your mind?',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    ElevatedButton(
+                      child: Text('Post'),
+                      onPressed: () {
+                        String postContent = _postController.text;
+                        print(postContent);
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color.fromRGBO(157, 192, 139, 1),
+                        onPrimary: Colors.white,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          child: Icon(Icons.add),
+          backgroundColor: Color.fromRGBO(157, 192, 139, 1),
         ),
       ),
     );
