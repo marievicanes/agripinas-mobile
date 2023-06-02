@@ -228,129 +228,133 @@ class _ProfileWallState extends State<ProfileWall>
               ),
               Expanded(
                 child: TabBarView(children: [
-                  GridView.builder(
-                    padding: EdgeInsets.all(10),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 15,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 4.1 / 6.8,
-                    ),
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      return GestureDetector(
-                        onTap: () {},
-                        child: Card(
-                          child: Stack(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                  Stack(
+                    children: [
+                      GridView.builder(
+                        padding: EdgeInsets.all(10),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 15,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 4.1 / 6.8,
+                        ),
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          final item = items[index];
+                          return GestureDetector(
+                            onTap: () {},
+                            child: Card(
+                              child: Stack(
                                 children: [
-                                  Expanded(
-                                    child: Center(
-                                      child: Image.asset(
-                                        item.imageUrl,
-                                        fit: BoxFit.cover,
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Center(
+                                          child: Image.asset(
+                                            item.imageUrl,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.all(8),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Center(
-                                          child: Text(
-                                            item.title,
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          item.price,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          item.farmer,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          item.description,
-                                          style: TextStyle(fontSize: 14),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Positioned(
-                                top: 0,
-                                right: 8,
-                                child: PopupMenuButton<String>(
-                                  icon: Icon(
-                                    Icons.more_horiz,
-                                    color: Color(0xFF9DC08B),
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  itemBuilder: (BuildContext context) => [
-                                    PopupMenuItem<String>(
-                                      value: 'edit',
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.edit,
-                                            color: Color(0xFF9DC08B)
-                                                .withAlpha(180),
-                                          ),
-                                          SizedBox(width: 8),
-                                          Text('Edit'),
-                                        ],
-                                      ),
-                                    ),
-                                    PopupMenuItem<String>(
-                                      value: 'delete',
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.delete,
-                                            color: Color(0xFF9DC08B),
-                                          ),
-                                          SizedBox(width: 8),
-                                          Text('Delete'),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                  onSelected: (String value) {
-                                    if (value == 'edit') {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                              title: Center(
-                                                child: Text(
-                                                  'Edit Details',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20.0,
-                                                  ),
+                                      Padding(
+                                        padding: EdgeInsets.all(8),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Center(
+                                              child: Text(
+                                                item.title,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                              content: Column(
+                                            ),
+                                            SizedBox(height: 4),
+                                            Text(
+                                              item.price,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            SizedBox(height: 4),
+                                            Text(
+                                              item.farmer,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            SizedBox(height: 4),
+                                            Text(
+                                              item.description,
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Positioned(
+                                    top: 0,
+                                    right: 8,
+                                    child: PopupMenuButton<String>(
+                                      icon: Icon(
+                                        Icons.more_horiz,
+                                        color: Color(0xFF9DC08B),
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      itemBuilder: (BuildContext context) => [
+                                        PopupMenuItem<String>(
+                                          value: 'edit',
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.edit,
+                                                color: Color(0xFF9DC08B)
+                                                    .withAlpha(180),
+                                              ),
+                                              SizedBox(width: 8),
+                                              Text('Edit'),
+                                            ],
+                                          ),
+                                        ),
+                                        PopupMenuItem<String>(
+                                          value: 'delete',
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.delete,
+                                                color: Color(0xFF9DC08B),
+                                              ),
+                                              SizedBox(width: 8),
+                                              Text('Delete'),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                      onSelected: (String value) {
+                                        if (value == 'edit') {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Center(
+                                                  child: Text(
+                                                    'Edit Details',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 20.0,
+                                                    ),
+                                                  ),
+                                                ),
+                                                content: Column(
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
@@ -488,217 +492,402 @@ class _ProfileWallState extends State<ProfileWall>
                                                         ),
                                                       ],
                                                     ),
-                                                  ]));
-                                        },
-                                      );
-                                    }
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  Column(
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: 5,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Card(
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Expanded(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  CircleAvatar(
-                                                    radius: 15.0,
-                                                    backgroundImage: AssetImage(
-                                                        'assets/user.png'),
-                                                  ),
-                                                  SizedBox(width: 8.0),
-                                                  Text(
-                                                    'Arriane Gatpo',
-                                                    style: TextStyle(
-                                                      fontSize: 18.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              PopupMenuButton<String>(
-                                                icon: Icon(
-                                                  Icons.more_horiz,
-                                                  color: Color(0xFF9DC08B),
+                                                  ],
                                                 ),
-                                                onSelected: (value) {
-                                                  if (value == 'edit') {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return AlertDialog(
-                                                          title:
-                                                              Text('Edit Post'),
-                                                          content: TextField(
-                                                            maxLines: null,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              hintText:
-                                                                  'Edit post here...',
-                                                              border:
-                                                                  OutlineInputBorder(),
-                                                            ),
-                                                          ),
-                                                          actions: [
-                                                            TextButton(
-                                                              child: Text(
-                                                                'Cancel',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .black,
-                                                                ),
-                                                              ),
-                                                              onPressed: () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
-                                                            ),
-                                                            ElevatedButton(
-                                                              child:
-                                                                  Text('Post'),
-                                                              onPressed: () {
-                                                                String
-                                                                    postContent =
-                                                                    _postController
-                                                                        .text;
-                                                                print(
-                                                                    postContent);
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
-                                                              style:
-                                                                  ElevatedButton
-                                                                      .styleFrom(
-                                                                primary: Color
-                                                                    .fromRGBO(
-                                                                        157,
-                                                                        192,
-                                                                        139,
-                                                                        1),
-                                                                onPrimary:
-                                                                    Colors
-                                                                        .white,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      },
-                                                    );
-                                                  } else if (value ==
-                                                      'delete') {
-                                                    // Handle delete action
-                                                  }
-                                                },
-                                                itemBuilder: (BuildContext
-                                                        context) =>
-                                                    <PopupMenuEntry<String>>[
-                                                  PopupMenuItem<String>(
-                                                    value: 'edit',
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(
-                                                          Icons.edit,
-                                                          color: Color(
-                                                                  0xFF9DC08B)
-                                                              .withAlpha(180),
-                                                        ),
-                                                        SizedBox(width: 8.0),
-                                                        Text('Edit Post'),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  PopupMenuItem<String>(
-                                                    value: 'delete',
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(
-                                                          Icons.delete,
-                                                          color:
-                                                              Color(0xFF9DC08B),
-                                                        ),
-                                                        SizedBox(width: 8.0),
-                                                        Text('Delete Post'),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
+                                              );
+                                            },
+                                          );
+                                        }
+                                      },
                                     ),
-                                    SizedBox(height: 8.0),
-                                    Text(
-                                      'This is the content of the post.',
-                                      style: TextStyle(fontSize: 16.0),
-                                    ),
-                                    SizedBox(height: 8.0),
-                                    Row(
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      Positioned(
+                        bottom: 16.0,
+                        right: 16.0,
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Dialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 10.0),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        IconButton(
-                                          icon: Icon(Icons.thumb_up),
-                                          onPressed: () {},
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return Dialog(
-                                                  child: CommentSection(),
-                                                );
-                                              },
-                                            );
-                                          },
-                                          style: ButtonStyle(
-                                            foregroundColor:
-                                                MaterialStateProperty.all<
-                                                    Color>(
-                                              Colors.black,
+                                        SizedBox(height: 16.0),
+                                        Center(
+                                          child: Text(
+                                            'Add New Product',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20.0,
                                             ),
                                           ),
-                                          child: Icon(Icons.comment),
+                                        ),
+                                        SizedBox(height: 16.0),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Add photo: ',
+                                              style: TextStyle(
+                                                fontSize: 16.5,
+                                              ),
+                                            ),
+                                            IconButton(
+                                              onPressed: _selectImage,
+                                              icon: Icon(Icons.image),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 5),
+                                        _selectedImage != null
+                                            ? Image.file(
+                                                _selectedImage!,
+                                                width: 100,
+                                                height: 100,
+                                              )
+                                            : SizedBox(height: 8),
+                                        TextField(
+                                          decoration: InputDecoration(
+                                            labelText: "Crop's Name",
+                                            labelStyle:
+                                                TextStyle(color: Colors.black),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Color(0xFFA9AF7E)),
+                                            ),
+                                          ),
+                                        ),
+                                        TextField(
+                                          decoration: InputDecoration(
+                                            labelText: 'Price',
+                                            labelStyle:
+                                                TextStyle(color: Colors.black),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Color(0xFFA9AF7E)),
+                                            ),
+                                          ),
+                                        ),
+                                        TextField(
+                                          decoration: InputDecoration(
+                                            labelText: "Farmer's Name",
+                                            labelStyle:
+                                                TextStyle(color: Colors.black),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Color(0xFFA9AF7E)),
+                                            ),
+                                          ),
+                                        ),
+                                        TextField(
+                                          decoration: InputDecoration(
+                                            labelText: 'Description',
+                                            labelStyle:
+                                                TextStyle(color: Colors.black),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Color(0xFFA9AF7E)),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 16.0),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text(
+                                                'Cancel',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                String postContent =
+                                                    _postController.text;
+                                                print(postContent);
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text('Save'),
+                                              style: TextButton.styleFrom(
+                                                backgroundColor: Color.fromRGBO(
+                                                    157, 192, 139, 1),
+                                                primary: Colors.white,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  ],
-                                ),
-                              ),
+                                  ),
+                                );
+                              },
                             );
                           },
+                          child: Icon(Icons.add),
+                          backgroundColor: Color.fromRGBO(157, 192, 139, 1),
                         ),
                       ),
                     ],
                   ),
+                  Stack(
+                    children: [
+                      ListView.builder(
+                        itemCount: 5,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Card(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: 15.0,
+                                                  backgroundImage: AssetImage(
+                                                      'assets/user.png'),
+                                                ),
+                                                SizedBox(width: 8.0),
+                                                Text(
+                                                  'Arriane Gatpo',
+                                                  style: TextStyle(
+                                                    fontSize: 18.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            PopupMenuButton<String>(
+                                              icon: Icon(
+                                                Icons.more_horiz,
+                                                color: Color(0xFF9DC08B),
+                                              ),
+                                              onSelected: (value) {
+                                                if (value == 'edit') {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title:
+                                                            Text('Edit Post'),
+                                                        content: TextField(
+                                                          maxLines: null,
+                                                          decoration:
+                                                              InputDecoration(
+                                                            hintText:
+                                                                'Edit post here...',
+                                                            border:
+                                                                OutlineInputBorder(),
+                                                          ),
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            child: Text(
+                                                              'Cancel',
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                              ),
+                                                            ),
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                          ElevatedButton(
+                                                            child: Text('Post'),
+                                                            onPressed: () {
+                                                              String
+                                                                  postContent =
+                                                                  _postController
+                                                                      .text;
+                                                              print(
+                                                                  postContent);
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                            style:
+                                                                ElevatedButton
+                                                                    .styleFrom(
+                                                              primary: Color
+                                                                  .fromRGBO(
+                                                                      157,
+                                                                      192,
+                                                                      139,
+                                                                      1),
+                                                              onPrimary:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                } else if (value == 'delete') {
+                                                  // Handle delete action
+                                                }
+                                              },
+                                              itemBuilder:
+                                                  (BuildContext context) =>
+                                                      <PopupMenuEntry<String>>[
+                                                PopupMenuItem<String>(
+                                                  value: 'edit',
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.edit,
+                                                        color: Color(0xFF9DC08B)
+                                                            .withAlpha(180),
+                                                      ),
+                                                      SizedBox(width: 8.0),
+                                                      Text('Edit Post'),
+                                                    ],
+                                                  ),
+                                                ),
+                                                PopupMenuItem<String>(
+                                                  value: 'delete',
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.delete,
+                                                        color:
+                                                            Color(0xFF9DC08B),
+                                                      ),
+                                                      SizedBox(width: 8.0),
+                                                      Text('Delete Post'),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8.0),
+                                  Text(
+                                    'This is the content of the post.',
+                                    style: TextStyle(fontSize: 16.0),
+                                  ),
+                                  SizedBox(height: 8.0),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(Icons.thumb_up),
+                                        onPressed: () {},
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return Dialog(
+                                                child: CommentSection(),
+                                              );
+                                            },
+                                          );
+                                        },
+                                        style: ButtonStyle(
+                                          foregroundColor:
+                                              MaterialStateProperty.all<Color>(
+                                            Colors.black,
+                                          ),
+                                        ),
+                                        child: Icon(Icons.comment),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      Positioned(
+                        bottom: 16.0,
+                        right: 16.0,
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Write a Post'),
+                                  content: TextField(
+                                    controller: _postController,
+                                    maxLines: null,
+                                    decoration: InputDecoration(
+                                      hintText: 'Something in your mind?',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      child: Text(
+                                        'Cancel',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    ElevatedButton(
+                                      child: Text('Post'),
+                                      onPressed: () {
+                                        String postContent =
+                                            _postController.text;
+                                        print(postContent);
+                                        Navigator.of(context).pop();
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        primary:
+                                            Color.fromRGBO(157, 192, 139, 1),
+                                        onPrimary: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: Icon(Icons.add),
+                          backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                        ),
+                      ),
+                    ],
+                  )
                 ]),
               )
             ])));
