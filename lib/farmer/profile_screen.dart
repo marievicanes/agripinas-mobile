@@ -1,9 +1,16 @@
+import 'dart:io';
+
+import 'package:capstone/helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
+
 import 'about_us.dart';
 import 'contact_us.dart';
-import 'package:capstone/helper.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -11,31 +18,110 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _bdateController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passController = TextEditingController();
-  TextEditingController _addressController = TextEditingController();
-  TextEditingController _phoneController = TextEditingController();
+  firebase_storage.FirebaseStorage storage =
+      firebase_storage.FirebaseStorage.instance;
+  String imageUrl = '';
+
+  final TextEditingController _fullnameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _bdateController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _contactController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  final CollectionReference _users =
+      FirebaseFirestore.instance.collection('Users');
+
   bool _isEditing = false;
   DateTime? _selectedDate;
 
-  @override
-  void initState() {
-    super.initState();
-    _nameController.text = "Arriane Gatpo";
-    _emailController.text = "ag@gatpo.com";
-    _addressController.text = "Quezon City";
-    _phoneController.text = "+639675046713";
+  XFile? file;
+  final ImagePicker _picker = ImagePicker();
+
+  Future imgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
   }
 
+  Future UimgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future UimgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future imgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future uploadFile() async {
+    if (file == null) return;
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+
+    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+
+    try {
+      await referenceImageToUpload.putFile(File(file!.path));
+      imageUrl = await referenceImageToUpload.getDownloadURL();
+    } catch (error) {}
+  }
+
+  final currentUser = FirebaseAuth.instance;
   AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFA9AF7E),
-        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         title: Row(
           children: [
             Image.asset(
@@ -58,27 +144,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            UserAccountsDrawerHeader(
-              accountName: Text('Arriane Gatpo'),
-              accountEmail: Text('ag@gatpo.com'),
-              currentAccountPicture: CircleAvatar(
-                radius: 14.0,
-                backgroundImage: AssetImage('assets/user.png'),
-              ),
-              decoration: BoxDecoration(
-                color: Color(0xFFA9AF7E),
-              ),
-              otherAccountsPictures: [
-                IconButton(
-                  icon: Icon(Icons.notifications),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Icon(Icons.message),
-                  onPressed: () {},
-                ),
-              ],
-            ),
+            StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection("Users")
+                    .where("uid", isEqualTo: currentUser.currentUser!.uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, i) {
+                          var data = snapshot.data!.docs[i];
+                          return UserAccountsDrawerHeader(
+                            accountName: Text(data['fullname']),
+                            accountEmail: Text(data['email']),
+                            currentAccountPicture: CircleAvatar(
+                              radius: 14.0,
+                              backgroundImage: AssetImage('assets/user.png'),
+                            ),
+                            decoration: BoxDecoration(
+                              color: Color(0xFFA9AF7E),
+                            ),
+                            otherAccountsPictures: [
+                              IconButton(
+                                icon: Icon(Icons.notifications),
+                                onPressed: () {},
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.message),
+                                onPressed: () {},
+                              ),
+                            ],
+                          );
+                        });
+                  } else {
+                    return CircularProgressIndicator();
+                  }
+                }),
             ListTile(
               leading: Icon(Icons.info_outline),
               title: Text('About us'),
@@ -128,7 +231,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               SizedBox(height: 16.0),
               TextField(
-                controller: _nameController,
+                controller: _fullnameController,
                 enabled: _isEditing,
                 decoration: InputDecoration(
                   labelText: 'Name',
@@ -170,7 +273,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               SizedBox(height: 16.0),
               TextField(
-                controller: _passController,
+                controller: _passwordController,
                 enabled: _isEditing,
                 decoration: InputDecoration(
                   labelText: 'Password',
@@ -190,7 +293,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               SizedBox(height: 16.0),
               TextField(
-                controller: _phoneController,
+                controller: _contactController,
                 enabled: _isEditing,
                 decoration: InputDecoration(
                   labelText: 'Phone',

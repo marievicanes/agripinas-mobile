@@ -43,6 +43,11 @@ dependencies:
   cloud_firestore: ^4.7.1
   firebase_core: ^2.13.0
   firebase_auth: ^4.6.1
+  image_picker: ^0.8.7
+  permission_handler: ^10.2.0
+  cached_network_image: ^3.2.3
+  firebase_storage: ^11.0.15
+  firebase_admin: ^0.2.0-dev.7
 
 
 dev_dependencies:
@@ -94,10 +99,18 @@ fonts:
         fonts:
           - asset: assets/fonts/OpenSans_Condensed-Bold.ttf
 
+      - family: Sanchez
+        fonts:
+          - asset: assets/fonts/Sanchezregular.otf
+
+      - family: Poetsen-One
+        fonts:
+          - asset: assets/fonts/PoetsenOne-Regular.ttf
 
       - family: Averta-ExtraBold
         fonts:
           - asset: assets/fonts/AvertaDemoPE-ExtraBold.otf
+
       - family: Averta-Regular
         fonts:
           - asset: assets/fonts/AvertaDemoPECuttedDemo-Regular.otf

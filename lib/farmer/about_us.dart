@@ -1,7 +1,4 @@
-import 'package:capstone/farmer/profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'contact_us.dart';
-import 'farmer_nav.dart';
 
 class AboutUsScreen extends StatelessWidget {
   @override

@@ -1,14 +1,10 @@
-import 'package:capstone/farmer/marketplace_screen.dart';
-import 'package:capstone/farmer/profile_screen.dart';
-import 'package:capstone/farmer/crop_tracker_screen.dart';
 import 'package:capstone/farmer/community_forum_screen.dart';
+import 'package:capstone/farmer/crop_tracker_screen.dart';
+import 'package:capstone/farmer/marketplace_screen.dart';
+import 'package:capstone/farmer/profile_wall.dart';
 import 'package:capstone/farmer/transactions_screen.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-
+import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatefulWidget {
   @override
@@ -23,7 +19,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     CommunityForumScreen(),
     CropTrackerScreen(),
     TransactionsScreen(),
-    ProfileScreen(),
+    ProfileWall(),
   ];
 
   @override

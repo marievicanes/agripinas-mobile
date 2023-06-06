@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'admin/admin_navbar.dart';
+import 'buyer/buyer_nav.dart';
 import 'farmer/farmer_nav.dart';
 import 'main.dart';
 
@@ -20,44 +21,53 @@ class AuthService {
 
   final firestore = FirebaseFirestore.instance;
 
-  void login(BuildContext context) async {
+  void loginBuyer(context) async {
     try {
       showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        },
-      );
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          });
+      await auth
+          .signInWithEmailAndPassword(
+              email: email.text, password: password.text)
+          .then((value) => {
+                print("Buyer is Logged In"),
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => BuyerNavBar()),
+                    (route) => false),
+              });
+    } catch (e) {
+      print(e);
+    }
+  }
 
-      if (role.text == "Farmer") {
-        await auth
-            .signInWithEmailAndPassword(
-                email: email.text, password: password.text)
-            .then((value) {
-          print("Farmer is Logged In");
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => BottomNavBar()),
-            (route) => false,
-          );
-        });
-      } else if (role.text == "Buyer") {
-        await auth
-            .signInWithEmailAndPassword(
-                email: email.text, password: password.text)
-            .then((value) {
-          print("Buyer is Logged In");
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => AdminNavBar()),
-            (route) => false,
-          );
-        });
-      }
+  void loginFarmer(context) async {
+    try {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          });
+      await auth
+          .signInWithEmailAndPassword(
+              email: email.text, password: password.text)
+          .then((value) => {
+                print("Farmer is Logged In"),
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => BottomNavBar()),
+                    (route) => false),
+              });
     } catch (e) {
       print(e);
     }
