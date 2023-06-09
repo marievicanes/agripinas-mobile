@@ -4,26 +4,25 @@ import 'package:table_calendar/table_calendar.dart';
 import 'about_us.dart';
 import 'contact_us.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileEdit extends StatefulWidget {
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  _ProfileEditState createState() => _ProfileEditState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileEditState extends State<ProfileEdit> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _bdateController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
-  bool _isEditing = true;
+  bool _isEditing = false;
   DateTime? _selectedDate;
 
   @override
   void initState() {
     super.initState();
     _nameController.text = "Arriane Gatpo";
-    _bdateController.text = "01/01/1990";
     _emailController.text = "ag@gatpo.com";
     _passController.text = "**********";
     _addressController.text = "Quezon City";
@@ -131,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(height: 16.0),
               TextField(
                 controller: _nameController,
-                enabled: false,
+                enabled: _isEditing,
                 decoration: InputDecoration(
                   labelText: 'Name',
                   hintText: 'Enter your name',
@@ -141,17 +140,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(height: 16.0),
               TextField(
                 controller: _bdateController,
-                enabled: false,
+                enabled: _isEditing,
                 decoration: InputDecoration(
                   labelText: 'Birth Date',
                   hintText: 'Enter your birthdate',
                   border: OutlineInputBorder(),
                 ),
+                onTap: () async {
+                  if (_isEditing) {
+                    _selectedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    );
+                    _bdateController.text =
+                        DateFormat('MM/dd/yyyy').format(_selectedDate!);
+                  }
+                },
               ),
               SizedBox(height: 16.0),
               TextField(
                 controller: _emailController,
-                enabled: false,
+                enabled: _isEditing,
                 decoration: InputDecoration(
                   labelText: 'Email',
                   hintText: 'Enter your email address',
@@ -161,7 +172,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(height: 16.0),
               TextField(
                 controller: _passController,
-                enabled: false,
+                enabled: _isEditing,
+                obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   hintText: 'Enter your password',
@@ -171,7 +183,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(height: 16.0),
               TextField(
                 controller: _addressController,
-                enabled: false,
+                enabled: _isEditing,
                 decoration: InputDecoration(
                   labelText: 'Address',
                   hintText: 'Enter your Address',
@@ -181,13 +193,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(height: 16.0),
               TextField(
                 controller: _phoneController,
-                enabled: false,
+                enabled: _isEditing,
                 decoration: InputDecoration(
                   labelText: 'Phone',
                   hintText: 'Enter your phone number',
                   border: OutlineInputBorder(),
                 ),
               ),
+              SizedBox(height: 16.0),
+              _isEditing
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        OutlinedButton(
+                          onPressed: () {
+                            setState(() {
+                              _isEditing = false;
+                            });
+                          },
+                          child: Text('Cancel'),
+                          style: ButtonStyle(
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                                Color(0xFF9DC08B)),
+                            side: MaterialStateProperty.all<BorderSide>(
+                              BorderSide(
+                                color: Color(0xFF9DC08B),
+                              ),
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _isEditing = false;
+                            });
+                            _saveInformation();
+                          },
+                          child: Text('Save'),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Color(0xFF9DC08B)),
+                          ),
+                        ),
+                      ],
+                    )
+                  : MaterialButton(
+                      onPressed: () {
+                        setState(() {
+                          _isEditing = true;
+                        });
+                      },
+                      child: Text('Edit Information'),
+                      color: Color.fromRGBO(157, 192, 139, 1),
+                      textColor: Colors.white,
+                    ),
             ],
           ),
         ),

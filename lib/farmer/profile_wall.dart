@@ -1,3 +1,5 @@
+import 'package:capstone/farmer/message.dart';
+import 'package:capstone/farmer/profile_edit.dart';
 import 'package:capstone/farmer/profile_screen.dart';
 import 'package:capstone/farmer/comment_section.dart';
 import 'package:flutter/material.dart';
@@ -157,7 +159,13 @@ class _ProfileWallState extends State<ProfileWall>
                       ),
                       IconButton(
                         icon: Icon(Icons.message),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TelegramApp()),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -170,6 +178,19 @@ class _ProfileWallState extends State<ProfileWall>
                         context,
                         MaterialPageRoute(
                           builder: (context) => ProfileScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.edit),
+                    title: Text('Edit Information'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfileEdit(),
                         ),
                       );
                     },
