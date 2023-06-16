@@ -52,68 +52,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               'AgriPinas',
               style: TextStyle(
                 fontSize: 17.0,
-                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins',
                 color: Colors.white,
               ),
-            ),
-          ],
-        ),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            UserAccountsDrawerHeader(
-              accountName: Text('Arriane Gatpo'),
-              accountEmail: Text('ag@gatpo.com'),
-              currentAccountPicture: CircleAvatar(
-                radius: 14.0,
-                backgroundImage: AssetImage('assets/user.png'),
-              ),
-              decoration: BoxDecoration(
-                color: Color(0xFFA9AF7E),
-              ),
-              otherAccountsPictures: [
-                IconButton(
-                  icon: Icon(Icons.notifications),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Icon(Icons.message),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-            ListTile(
-              leading: Icon(Icons.info_outline),
-              title: Text('About us'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AboutUsScreen(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.phone),
-              title: Text('Contact Us'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ContactUsScreen(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Logout'),
-              onTap: () {},
             ),
           ],
         ),
@@ -154,8 +95,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 enabled: false,
                 decoration: InputDecoration(
                   labelText: 'Email',
-                  hintText: 'Enter your email address',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),

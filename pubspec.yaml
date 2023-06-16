@@ -75,6 +75,18 @@ flutter:
     - assets/onion.png
     - assets/ellipse3.png
     - assets/user.png
+    - assets/calamansi.png
+    - assets/corn.png
+    - assets/tomato.png
+    - assets/pechay.png
+    - assets/kalabasa.png
+    - assets/pakwan.png
+    - assets/sili.png
+    - assets/user2.png
+    - assets/user3.png
+    - assets/user4.png
+    - assets/user5.png
+    
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -87,18 +99,26 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-fonts:
-      - family: OpenSans-Bold
-        fonts:
-          - asset: assets/fonts/OpenSans_Condensed-Bold.ttf
 
-
-      - family: Averta-ExtraBold
-        fonts:
-          - asset: assets/fonts/AvertaDemoPE-ExtraBold.otf
-      - family: Averta-Regular
-        fonts:
-          - asset: assets/fonts/AvertaDemoPECuttedDemo-Regular.otf
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+    - family: Poppins-Light
+      fonts:
+        - asset: assets/fonts/Poppins-Light.ttf
+    - family: Poppins-Bold
+      fonts:
+        - asset: assets/fonts/Poppins-Bold.ttf
+    - family: Poppins-ExtraLight
+      fonts:
+        - asset: assets/fonts/Poppins-ExtraLight.ttf
+    - family: Poppins-Regular
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+    - family: Poppins-Medium
+      fonts:
+        - asset: assets/fonts/Poppins-Medium.ttf
 
 
     #       - asset: fonts/TrajanPro_Bold.ttf

@@ -35,7 +35,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
               'AgriPinas',
               style: TextStyle(
                 fontSize: 17.0,
-                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins',
                 color: Colors.white,
               ),
             ),
@@ -70,7 +70,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
           children: [
             Text(
               'Community Forum',
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20.0, fontFamily: 'Poppins-Bold'),
             ),
             SizedBox(height: 16.0),
             Expanded(
@@ -102,9 +102,8 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                         Text(
                                           'Arriane Gatpo',
                                           style: TextStyle(
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                              fontSize: 16.5,
+                                              fontFamily: 'Poppins'),
                                         ),
                                       ],
                                     ),
@@ -119,9 +118,20 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
-                                                title: Text('Edit Post'),
+                                                title: Text(
+                                                  'Edit Post',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Poppins',
+                                                    fontSize: 20.0,
+                                                  ),
+                                                ),
                                                 content: TextField(
                                                   maxLines: null,
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    fontSize: 14.0,
+                                                  ),
                                                   decoration: InputDecoration(
                                                     hintText:
                                                         'Edit post here...',
@@ -134,8 +144,9 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                                     child: Text(
                                                       'Cancel',
                                                       style: TextStyle(
-                                                        color: Colors.black,
-                                                      ),
+                                                          color: Colors.black,
+                                                          fontFamily:
+                                                              'Poppins-Regular'),
                                                     ),
                                                     onPressed: () {
                                                       Navigator.of(context)
@@ -143,7 +154,13 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                                     },
                                                   ),
                                                   ElevatedButton(
-                                                    child: Text('Post'),
+                                                    child: Text(
+                                                      'Post',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            'Poppins-Regular',
+                                                      ),
+                                                    ),
                                                     onPressed: () {
                                                       String postContent =
                                                           _postController.text;
@@ -162,9 +179,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                               );
                                             },
                                           );
-                                        } else if (value == 'delete') {
-                                          // Handle delete action
-                                        }
+                                        } else if (value == 'delete') {}
                                       },
                                       itemBuilder: (BuildContext context) =>
                                           <PopupMenuEntry<String>>[
@@ -178,7 +193,12 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                                     .withAlpha(180),
                                               ),
                                               SizedBox(width: 8.0),
-                                              Text('Edit Post'),
+                                              Text(
+                                                'Edit',
+                                                style: TextStyle(
+                                                  fontFamily: 'Poppins-Regular',
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -191,7 +211,12 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                                 color: Color(0xFF9DC08B),
                                               ),
                                               SizedBox(width: 8.0),
-                                              Text('Delete Post'),
+                                              Text(
+                                                'Delete',
+                                                style: TextStyle(
+                                                  fontFamily: 'Poppins-Regular',
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -204,8 +229,9 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                           ),
                           SizedBox(height: 8.0),
                           Text(
-                            'This is the content of the post.',
-                            style: TextStyle(fontSize: 16.0),
+                            'What is the srp of onions?',
+                            style: TextStyle(
+                                fontSize: 15.0, fontFamily: 'Poppins-Regular'),
                           ),
                           SizedBox(height: 8.0),
                           Row(
@@ -256,10 +282,17 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: Text('Write a Post'),
+                  title: Text(
+                    'Write a Post',
+                    style: TextStyle(fontFamily: 'Poppins'),
+                  ),
                   content: TextField(
                     controller: _postController,
                     maxLines: null,
+                    style: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                      fontSize: 14.0,
+                    ),
                     decoration: InputDecoration(
                       hintText: 'Something in your mind?',
                       border: OutlineInputBorder(),
@@ -269,14 +302,18 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                     TextButton(
                       child: Text(
                         'Cancel',
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(
+                            color: Colors.black, fontFamily: 'Poppins-Regular'),
                       ),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
                     ),
                     ElevatedButton(
-                      child: Text('Post'),
+                      child: Text('Post',
+                          style: TextStyle(
+                            fontFamily: 'Poppins-Regular',
+                          )),
                       onPressed: () {
                         String postContent = _postController.text;
                         print(postContent);

@@ -1,51 +1,57 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(TelegramApp());
+  runApp(Message());
 }
 
-class TelegramApp extends StatelessWidget {
+class Message extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: ChatScreen(),
+      home: AgriMessage(),
     );
   }
 }
 
-class ChatScreen extends StatelessWidget {
+class AgriMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFA9AF7E),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+        title: Text(
+          'Messages',
+          style: TextStyle(fontFamily: 'Poppins'),
         ),
-        title: Text('Messages'),
       ),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: 3,
+              itemCount: users.length,
               itemBuilder: (context, index) {
+                User user = users[index];
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: AssetImage('assets/user.png'),
+                    backgroundImage: AssetImage(user.profile),
                   ),
-                  title: Text('User ${index + 1}'),
-                  subtitle: Text('Hi! Your app is great!'),
-                  trailing: Text('12:34 PM'),
+                  title: Text(
+                    user.name,
+                    style:
+                        TextStyle(fontFamily: 'Poppins-Medium', fontSize: 14.5),
+                  ),
+                  subtitle: Text(
+                    user.message,
+                    style: TextStyle(
+                        fontFamily: 'Poppins-Regular', fontSize: 12.5),
+                  ),
+                  trailing: Text(user.time),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ChatDetailScreen(
-                          userName: 'User ${index + 1}',
+                        builder: (context) => ChatAgriScreen(
+                          userName: user.name,
                         ),
                       ),
                     );
@@ -60,27 +66,31 @@ class ChatScreen extends StatelessWidget {
   }
 }
 
-class ChatDetailScreen extends StatelessWidget {
+class ChatAgriScreen extends StatelessWidget {
   final String userName;
 
-  ChatDetailScreen({required this.userName});
+  ChatAgriScreen({required this.userName});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFA9AF7E),
-        title: Text(userName),
+        title: Text(
+          userName,
+          style: TextStyle(fontFamily: 'Poppins', fontSize: 16.5),
+        ),
       ),
       body: Column(
         children: [
           Expanded(
             child: Container(
-              color: Colors.grey[200],
+              color: Colors.white,
               child: Center(
                 child: Text(
-                  'Chat details for $userName',
-                  style: TextStyle(fontSize: 18.0),
+                  'Chat with $userName',
+                  style:
+                      TextStyle(fontFamily: 'Poppins-Regular', fontSize: 16.5),
                 ),
               ),
             ),
@@ -91,16 +101,23 @@ class ChatDetailScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextField(
+                    style: TextStyle(
+                        fontFamily: 'Poppins-Regular', fontSize: 13.5),
                     decoration: InputDecoration(
                       hintText: 'Type a message',
-                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF9DC08B)),
+                      ),
                     ),
                   ),
                 ),
                 SizedBox(width: 8.0),
                 ElevatedButton(
                   onPressed: () {},
-                  child: Text('Send'),
+                  child: Text(
+                    'Send',
+                    style: TextStyle(fontFamily: 'Poppins-Regular'),
+                  ),
                   style: ElevatedButton.styleFrom(
                     primary: Color(0xFFA9AF7E),
                   ),
@@ -113,3 +130,51 @@ class ChatDetailScreen extends StatelessWidget {
     );
   }
 }
+
+class User {
+  final String name;
+  final String message;
+  final String time;
+  final String profile;
+
+  User({
+    required this.name,
+    required this.message,
+    required this.time,
+    required this.profile,
+  });
+}
+
+List<User> users = [
+  User(
+    name: 'Arriane Gatpo',
+    message:
+        'Ganda ng gawa mo teh! Sample sample qui dolorem ipsum, quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem',
+    time: '5:34 PM',
+    profile: 'assets/user.png',
+  ),
+  User(
+    name: 'Daniella Marie Tungol',
+    message: 'Nice one! Sample oks',
+    time: '7:23 PM',
+    profile: 'assets/user2.png',
+  ),
+  User(
+    name: 'Marievic Anes',
+    message: 'Kamusta? Uy!',
+    time: '8:45 PM',
+    profile: 'assets/user3.png',
+  ),
+  User(
+    name: 'Jenkins Mesina',
+    message: 'Pre',
+    time: '9:12 PM',
+    profile: 'assets/user4.png',
+  ),
+  User(
+    name: 'Romeo London',
+    message: 'Uy pre!',
+    time: '10:56 PM',
+    profile: 'assets/user5.png',
+  ),
+];

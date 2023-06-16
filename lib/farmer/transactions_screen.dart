@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class MarketplaceItem {
   final String userid;
   final String itemid;
-  final String itemname;
+  final String pendingitemname;
   final String dateordered;
   final String unitprice;
   final String quantity;
@@ -14,13 +14,61 @@ class MarketplaceItem {
   MarketplaceItem({
     required this.userid,
     required this.itemid,
-    required this.itemname,
+    required this.pendingitemname,
     required this.dateordered,
     required this.unitprice,
     required this.quantity,
     required this.totalamount,
     required this.buyername,
     required this.imageUrl,
+  });
+}
+
+class CancelledMarketplaceItem {
+  final String userid;
+  final String itemid;
+  final String cancelitemname;
+  final String dateordered;
+  final String unitprice;
+  final String quantity;
+  final String totalamount;
+  final String buyername;
+  final String imageUrl1;
+
+  CancelledMarketplaceItem({
+    required this.userid,
+    required this.itemid,
+    required this.cancelitemname,
+    required this.dateordered,
+    required this.unitprice,
+    required this.quantity,
+    required this.totalamount,
+    required this.buyername,
+    required this.imageUrl1,
+  });
+}
+
+class CompleteMarketplaceItem {
+  final String userid;
+  final String itemid;
+  final String completeitemname;
+  final String dateordered;
+  final String unitprice;
+  final String quantity;
+  final String totalamount;
+  final String buyername;
+  final String imageUrl2;
+
+  CompleteMarketplaceItem({
+    required this.userid,
+    required this.itemid,
+    required this.completeitemname,
+    required this.dateordered,
+    required this.unitprice,
+    required this.quantity,
+    required this.totalamount,
+    required this.buyername,
+    required this.imageUrl2,
   });
 }
 
@@ -42,68 +90,204 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     MarketplaceItem(
       userid: 'B001',
       itemid: 'N001',
-      itemname: 'Onion',
+      pendingitemname: 'Onion',
       dateordered: '02 / 01 / 2023',
-      unitprice: 'Php 400',
+      unitprice: '₱400',
       quantity: '5',
-      totalamount: 'Php 2,000',
+      totalamount: '₱2,000',
       buyername: 'Ryan Amador',
       imageUrl: 'assets/onion.png',
     ),
     MarketplaceItem(
       userid: 'B002',
       itemid: 'N002',
-      itemname: 'Onion',
+      pendingitemname: 'Rice',
       dateordered: '02 / 01 / 2023',
-      unitprice: 'Php 400',
+      unitprice: '₱500',
       quantity: '9',
-      totalamount: 'Php 3,600',
-      buyername: 'Ryan Amador',
+      totalamount: '₱3,600',
+      buyername: 'Daniel Ribaya',
       imageUrl: 'assets/rice.png',
     ),
     MarketplaceItem(
       userid: 'B003',
       itemid: 'N003',
-      itemname: 'Onion',
+      pendingitemname: 'Pechay',
       dateordered: '02 / 01 / 2023',
-      unitprice: 'Php 400',
+      unitprice: '₱600',
       quantity: '2',
-      totalamount: 'Php 800',
+      totalamount: 'Php 1200',
       buyername: 'Ryan Amador',
-      imageUrl: 'assets/onion.png',
+      imageUrl: 'assets/pechay.png',
     ),
     MarketplaceItem(
       userid: 'B004',
       itemid: 'N004',
-      itemname: 'Onion',
+      pendingitemname: 'Corn',
       dateordered: '02 / 01 / 2023',
-      unitprice: 'Php 400',
+      unitprice: '₱400',
       quantity: '10',
-      totalamount: 'Php 4,000',
-      buyername: 'Ryan Amador',
-      imageUrl: 'assets/onion.png',
+      totalamount: '₱4,000',
+      buyername: 'Jenkins Mesina',
+      imageUrl: 'assets/corn.png',
     ),
     MarketplaceItem(
       userid: 'B005',
       itemid: 'N005',
-      itemname: 'Onion',
+      pendingitemname: 'Tomato',
       dateordered: '02 / 01 / 2023',
-      unitprice: 'Php 400',
+      unitprice: '₱400',
       quantity: '11',
-      totalamount: 'Php 4,400',
+      totalamount: '₱4,400',
       buyername: 'Ryan Amador',
-      imageUrl: 'assets/rice.png',
+      imageUrl: 'assets/tomato.png',
     ),
     MarketplaceItem(
       userid: 'B006',
       itemid: 'N006',
-      itemname: 'Onion',
+      pendingitemname: 'Calamansi',
       dateordered: '02 / 01 / 2023',
-      unitprice: 'Php 400',
+      unitprice: '₱400',
       quantity: '12',
-      totalamount: 'Php 4,800',
+      totalamount: '₱4,800',
       buyername: 'Ryan Amador',
-      imageUrl: 'assets/onion.png',
+      imageUrl: 'assets/calamansi.png',
+    ),
+  ];
+  final List<CancelledMarketplaceItem> cancelitems = [
+    CancelledMarketplaceItem(
+      userid: 'B001',
+      itemid: 'N001',
+      cancelitemname: 'Pechay',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '5',
+      totalamount: '₱2,000',
+      buyername: 'Marievic Anes',
+      imageUrl1: 'assets/pechay.png',
+    ),
+    CancelledMarketplaceItem(
+      userid: 'B002',
+      itemid: 'N002',
+      cancelitemname: 'Onion',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱500',
+      quantity: '9',
+      totalamount: '₱3,600',
+      buyername: 'Daniel Ribaya',
+      imageUrl1: 'assets/onion.png',
+    ),
+    CancelledMarketplaceItem(
+      userid: 'B003',
+      itemid: 'N003',
+      cancelitemname: 'Squash',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱600',
+      quantity: '2',
+      totalamount: 'Php 1200',
+      buyername: 'Daniella Tungol',
+      imageUrl1: 'assets/kalabasa.png',
+    ),
+    CancelledMarketplaceItem(
+      userid: 'B004',
+      itemid: 'N004',
+      cancelitemname: 'Corn',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '10',
+      totalamount: '₱4,000',
+      buyername: 'Romeo London III',
+      imageUrl1: 'assets/corn.png',
+    ),
+    CancelledMarketplaceItem(
+      userid: 'B005',
+      itemid: 'N005',
+      cancelitemname: 'Calamansi',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '11',
+      totalamount: '₱4,400',
+      buyername: 'Jenkins Mesina',
+      imageUrl1: 'assets/calamansi.png',
+    ),
+    CancelledMarketplaceItem(
+      userid: 'B006',
+      itemid: 'N006',
+      cancelitemname: 'Siling Labuyo',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '12',
+      totalamount: '₱4,800',
+      buyername: 'Ryan Amador',
+      imageUrl1: 'assets/sili.png',
+    ),
+  ];
+  final List<CompleteMarketplaceItem> completeitems = [
+    CompleteMarketplaceItem(
+      userid: 'B001',
+      itemid: 'N001',
+      completeitemname: 'Squash',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '5',
+      totalamount: '₱2,000',
+      buyername: 'Marievic Anes',
+      imageUrl2: 'assets/kalabasa.png',
+    ),
+    CompleteMarketplaceItem(
+      userid: 'B002',
+      itemid: 'N002',
+      completeitemname: 'Watermelon',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱500',
+      quantity: '9',
+      totalamount: '₱3,600',
+      buyername: 'Daniel Ribaya',
+      imageUrl2: 'assets/pakwan.png',
+    ),
+    CompleteMarketplaceItem(
+      userid: 'B003',
+      itemid: 'N003',
+      completeitemname: 'Corn',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱600',
+      quantity: '2',
+      totalamount: 'Php 1200',
+      buyername: 'Daniella Tungol',
+      imageUrl2: 'assets/corn.png',
+    ),
+    CompleteMarketplaceItem(
+      userid: 'B004',
+      itemid: 'N004',
+      completeitemname: 'Pechay',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '10',
+      totalamount: '₱4,000',
+      buyername: 'Romeo London III',
+      imageUrl2: 'assets/pechay.png',
+    ),
+    CompleteMarketplaceItem(
+      userid: 'B005',
+      itemid: 'N005',
+      completeitemname: 'Calamansi',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '11',
+      totalamount: '₱4,400',
+      buyername: 'Jenkins Mesina',
+      imageUrl2: 'assets/calamansi.png',
+    ),
+    CompleteMarketplaceItem(
+      userid: 'B006',
+      itemid: 'N006',
+      completeitemname: 'Siling Labuyo',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '12',
+      totalamount: '₱4,800',
+      buyername: 'Ryan Amador',
+      imageUrl2: 'assets/sili.png',
     ),
   ];
 
@@ -146,7 +330,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                 'AgriPinas',
                 style: TextStyle(
                   fontSize: 17.0,
-                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
               ),
@@ -161,19 +345,25 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                 Tab(
                   child: Text(
                     'Pending',
-                    style: TextStyle(color: Color(0xFF718C53)),
+                    style: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        color: Color(0xFF718C53)),
                   ),
                 ),
                 Tab(
                   child: Text(
                     'Cancelled',
-                    style: TextStyle(color: Color(0xFF718C53)),
+                    style: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        color: Color(0xFF718C53)),
                   ),
                 ),
                 Tab(
                   child: Text(
                     'Completed',
-                    style: TextStyle(color: Color(0xFF718C53)),
+                    style: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        color: Color(0xFF718C53)),
                   ),
                 ),
               ],
@@ -196,10 +386,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                 Expanded(
                   child: Text(
                     '     Transactions',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style:
+                        TextStyle(fontSize: 20.0, fontFamily: 'Poppins-Bold'),
                   ),
                 ),
               ],
@@ -225,7 +413,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                     children: [
                       Text(
                         'Show:',
-                        style: TextStyle(fontSize: 16.0),
+                        style: TextStyle(
+                            fontSize: 15.0, fontFamily: 'Poppins-Regular'),
                       ),
                       SizedBox(width: 8.0),
                       DropdownButton<int>(
@@ -295,18 +484,21 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        item.itemname,
+                                        item.pendingitemname,
                                         style: TextStyle(
                                           fontSize: 16,
-                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Poppins',
                                         ),
                                       ),
                                       SizedBox(height: 8),
-                                      Image.asset(
-                                        item.imageUrl,
-                                        fit: BoxFit.cover,
-                                        width: 80,
-                                        height: 80,
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.asset(
+                                          item.imageUrl,
+                                          fit: BoxFit.cover,
+                                          width: 80,
+                                          height: 80,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -331,28 +523,28 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                       Text(
                                         item.itemid,
                                         style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       SizedBox(height: 2),
                                       Text(
                                         item.userid,
                                         style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       SizedBox(height: 4),
                                       Text(
                                         item.buyername,
                                         style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       Text(
                                         item.dateordered,
                                         style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       Text(
                                         item.unitprice,
@@ -363,8 +555,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                       Text(
                                         item.quantity,
                                         style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       Text(
                                         item.totalamount,
@@ -397,7 +589,12 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   .withAlpha(180),
                                             ),
                                             SizedBox(width: 8),
-                                            Text('Edit'),
+                                            Text(
+                                              'Edit',
+                                              style: TextStyle(
+                                                fontFamily: 'Poppins-Regular',
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -410,7 +607,12 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                               color: Color(0xFF9DC08B),
                                             ),
                                             SizedBox(width: 8),
-                                            Text('Delete'),
+                                            Text(
+                                              'Delete',
+                                              style: TextStyle(
+                                                fontFamily: 'Poppins-Regular',
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -425,10 +627,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   child: Text(
                                                     'Edit Details',
                                                     style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20.0,
-                                                    ),
+                                                        fontSize: 20.0,
+                                                        fontFamily: 'Poppins'),
                                                   ),
                                                 ),
                                                 content: Column(
@@ -448,8 +648,9 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                           InputDecoration(
                                                         labelText: 'Status',
                                                         labelStyle: TextStyle(
-                                                            color:
-                                                                Colors.black),
+                                                            color: Colors.black,
+                                                            fontFamily:
+                                                                'Poppins-Regular'),
                                                         focusedBorder:
                                                             OutlineInputBorder(
                                                           borderSide: BorderSide(
@@ -476,7 +677,13 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         return DropdownMenuItem<
                                                             String>(
                                                           value: value,
-                                                          child: Text(value),
+                                                          child: Text(
+                                                            value,
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Poppins-Regular',
+                                                            ),
+                                                          ),
                                                         );
                                                       }).toList(),
                                                     ),
@@ -494,9 +701,10 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                           child: Text(
                                                             'Cancel',
                                                             style: TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                            ),
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                    'Poppins-Regular'),
                                                           ),
                                                         ),
                                                         TextButton(
@@ -509,7 +717,13 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                     context)
                                                                 .pop();
                                                           },
-                                                          child: Text('Save'),
+                                                          child: Text(
+                                                            'Save',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Poppins-Regular',
+                                                            ),
+                                                          ),
                                                           style: TextButton
                                                               .styleFrom(
                                                             backgroundColor:
@@ -541,9 +755,9 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                   ),
                   ListView.builder(
                     padding: EdgeInsets.all(10),
-                    itemCount: items.length,
+                    itemCount: cancelitems.length,
                     itemBuilder: (context, index) {
-                      final item = items[index];
+                      final item = cancelitems[index];
                       return GestureDetector(
                         onTap: () {},
                         child: Card(
@@ -559,18 +773,21 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        item.itemname,
+                                        item.cancelitemname,
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       SizedBox(height: 8),
-                                      Image.asset(
-                                        item.imageUrl,
-                                        fit: BoxFit.cover,
-                                        width: 80,
-                                        height: 80,
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.asset(
+                                          item.imageUrl1,
+                                          fit: BoxFit.cover,
+                                          width: 80,
+                                          height: 80,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -595,28 +812,28 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                       Text(
                                         item.itemid,
                                         style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       SizedBox(height: 2),
                                       Text(
                                         item.userid,
                                         style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       SizedBox(height: 4),
                                       Text(
                                         item.buyername,
                                         style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       Text(
                                         item.dateordered,
                                         style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       Text(
                                         item.unitprice,
@@ -627,8 +844,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                       Text(
                                         item.quantity,
                                         style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       Text(
                                         item.totalamount,
@@ -661,7 +878,12 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   .withAlpha(180),
                                             ),
                                             SizedBox(width: 8),
-                                            Text('Edit'),
+                                            Text(
+                                              'Edit',
+                                              style: TextStyle(
+                                                fontFamily: 'Poppins-Regular',
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -674,7 +896,12 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                               color: Color(0xFF9DC08B),
                                             ),
                                             SizedBox(width: 8),
-                                            Text('Delete'),
+                                            Text(
+                                              'Delete',
+                                              style: TextStyle(
+                                                fontFamily: 'Poppins-Regular',
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -689,10 +916,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   child: Text(
                                                     'Edit Details',
                                                     style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20.0,
-                                                    ),
+                                                        fontSize: 20.0,
+                                                        fontFamily: 'Poppins'),
                                                   ),
                                                 ),
                                                 content: Column(
@@ -740,7 +965,13 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         return DropdownMenuItem<
                                                             String>(
                                                           value: value,
-                                                          child: Text(value),
+                                                          child: Text(
+                                                            value,
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Poppins-Regular',
+                                                            ),
+                                                          ),
                                                         );
                                                       }).toList(),
                                                     ),
@@ -758,9 +989,10 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                           child: Text(
                                                             'Cancel',
                                                             style: TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                            ),
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                    'Poppins-Regular'),
                                                           ),
                                                         ),
                                                         TextButton(
@@ -773,7 +1005,13 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                     context)
                                                                 .pop();
                                                           },
-                                                          child: Text('Save'),
+                                                          child: Text(
+                                                            'Save',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Poppins-Regular',
+                                                            ),
+                                                          ),
                                                           style: TextButton
                                                               .styleFrom(
                                                             backgroundColor:
@@ -805,9 +1043,9 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                   ),
                   ListView.builder(
                     padding: EdgeInsets.all(10),
-                    itemCount: items.length,
+                    itemCount: completeitems.length,
                     itemBuilder: (context, index) {
-                      final item = items[index];
+                      final item = completeitems[index];
                       return GestureDetector(
                         onTap: () {},
                         child: Card(
@@ -823,18 +1061,21 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        item.itemname,
+                                        item.completeitemname,
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       SizedBox(height: 8),
-                                      Image.asset(
-                                        item.imageUrl,
-                                        fit: BoxFit.cover,
-                                        width: 80,
-                                        height: 80,
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.asset(
+                                          item.imageUrl2,
+                                          fit: BoxFit.cover,
+                                          width: 80,
+                                          height: 80,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -859,28 +1100,28 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                       Text(
                                         item.itemid,
                                         style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       SizedBox(height: 2),
                                       Text(
                                         item.userid,
                                         style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       SizedBox(height: 4),
                                       Text(
                                         item.buyername,
                                         style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       Text(
                                         item.dateordered,
                                         style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       Text(
                                         item.unitprice,
@@ -891,8 +1132,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                       Text(
                                         item.quantity,
                                         style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       Text(
                                         item.totalamount,
@@ -925,7 +1166,12 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   .withAlpha(180),
                                             ),
                                             SizedBox(width: 8),
-                                            Text('Edit'),
+                                            Text(
+                                              'Edit',
+                                              style: TextStyle(
+                                                fontFamily: 'Poppins-Regular',
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -938,7 +1184,12 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                               color: Color(0xFF9DC08B),
                                             ),
                                             SizedBox(width: 8),
-                                            Text('Delete'),
+                                            Text(
+                                              'Delete',
+                                              style: TextStyle(
+                                                fontFamily: 'Poppins-Regular',
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -953,10 +1204,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   child: Text(
                                                     'Edit Details',
                                                     style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20.0,
-                                                    ),
+                                                        fontSize: 20.0,
+                                                        fontFamily: 'Poppins'),
                                                   ),
                                                 ),
                                                 content: Column(
@@ -1004,7 +1253,13 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         return DropdownMenuItem<
                                                             String>(
                                                           value: value,
-                                                          child: Text(value),
+                                                          child: Text(
+                                                            value,
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Poppins-Regular',
+                                                            ),
+                                                          ),
                                                         );
                                                       }).toList(),
                                                     ),
@@ -1022,9 +1277,10 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                           child: Text(
                                                             'Cancel',
                                                             style: TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                            ),
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                    'Poppins-Regular'),
                                                           ),
                                                         ),
                                                         TextButton(
@@ -1037,7 +1293,13 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                     context)
                                                                 .pop();
                                                           },
-                                                          child: Text('Save'),
+                                                          child: Text(
+                                                            'Save',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Poppins-Regular',
+                                                            ),
+                                                          ),
                                                           style: TextButton
                                                               .styleFrom(
                                                             backgroundColor:

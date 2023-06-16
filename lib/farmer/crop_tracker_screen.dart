@@ -14,6 +14,18 @@ class MarketplaceItem {
   });
 }
 
+class HarvestedItem {
+  final String cropsharvested;
+  final String cropsquantity;
+  final String imageUrl1;
+
+  HarvestedItem({
+    required this.cropsharvested,
+    required this.cropsquantity,
+    required this.imageUrl1,
+  });
+}
+
 class CropTrackerScreen extends StatefulWidget {
   @override
   _CropTrackerScreenState createState() => _CropTrackerScreenState();
@@ -42,34 +54,67 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
 
   final List<MarketplaceItem> items = [
     MarketplaceItem(
-      crops: 'Ampalaya',
-      quantity: '55kg',
+      crops: 'Tomato',
+      quantity: '10kg',
+      imageUrl: 'assets/tomato.png',
+    ),
+    MarketplaceItem(
+      crops: 'Onion',
+      quantity: '5kg',
       imageUrl: 'assets/onion.png',
     ),
     MarketplaceItem(
-      crops: 'Ampalaya',
+      crops: 'Pechay',
       quantity: '55kg',
-      imageUrl: 'assets/onion.png',
+      imageUrl: 'assets/pechay.png',
     ),
     MarketplaceItem(
-      crops: 'Ampalaya',
-      quantity: '55kg',
-      imageUrl: 'assets/onion.png',
+      crops: 'Rice',
+      quantity: '20kg',
+      imageUrl: 'assets/rice.png',
     ),
     MarketplaceItem(
-      crops: 'Ampalaya',
+      crops: 'Calamansi',
       quantity: '55kg',
-      imageUrl: 'assets/onion.png',
+      imageUrl: 'assets/calamansi.png',
     ),
     MarketplaceItem(
-      crops: 'Ampalaya',
-      quantity: '55kg',
-      imageUrl: 'assets/onion.png',
+      crops: 'Corn',
+      quantity: '30kg',
+      imageUrl: 'assets/corn.png',
     ),
-    MarketplaceItem(
-      crops: 'Ampalaya',
-      quantity: '55kg',
-      imageUrl: 'assets/onion.png',
+  ];
+
+  final List<HarvestedItem> harvesteditems = [
+    HarvestedItem(
+      cropsharvested: 'Squash',
+      cropsquantity: '20kg',
+      imageUrl1: 'assets/kalabasa.png',
+    ),
+    HarvestedItem(
+      cropsharvested: 'Corn',
+      cropsquantity: '10kg',
+      imageUrl1: 'assets/corn.png',
+    ),
+    HarvestedItem(
+      cropsharvested: 'Watermelon',
+      cropsquantity: '55kg',
+      imageUrl1: 'assets/pakwan.png',
+    ),
+    HarvestedItem(
+      cropsharvested: 'Siling Labuyo',
+      cropsquantity: '100kg',
+      imageUrl1: 'assets/sili.png',
+    ),
+    HarvestedItem(
+      cropsharvested: 'Pechay',
+      cropsquantity: '75kg',
+      imageUrl1: 'assets/pechay.png',
+    ),
+    HarvestedItem(
+      cropsharvested: 'Calamansi',
+      cropsquantity: '20kg',
+      imageUrl1: 'assets/calamansi.png',
     ),
   ];
 
@@ -112,7 +157,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                 'AgriPinas',
                 style: TextStyle(
                   fontSize: 17.0,
-                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
               ),
@@ -127,13 +172,19 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                 Tab(
                   child: Text(
                     'Harvest',
-                    style: TextStyle(color: Color(0xFF718C53)),
+                    style: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                      color: Color(0xFF718C53),
+                    ),
                   ),
                 ),
                 Tab(
                   child: Text(
                     'Harvested',
-                    style: TextStyle(color: Color(0xFF718C53)),
+                    style: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                      color: Color(0xFF718C53),
+                    ),
                   ),
                 ),
               ],
@@ -156,10 +207,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                 Expanded(
                   child: Text(
                     '     Crop Tracker',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style:
+                        TextStyle(fontSize: 20.0, fontFamily: 'Poppins-Bold'),
                   ),
                 ),
               ],
@@ -185,7 +234,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                     children: [
                       Text(
                         'Show:',
-                        style: TextStyle(fontSize: 16.0),
+                        style: TextStyle(
+                            fontSize: 15.0, fontFamily: 'Poppins-Regular'),
                       ),
                       SizedBox(width: 8.0),
                       DropdownButton<int>(
@@ -257,18 +307,23 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                 children: [
                                   Expanded(
                                     child: Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.only(bottom: 0),
-                                        child: Image.asset(
-                                          item.imageUrl,
-                                          fit: BoxFit.cover,
+                                      child: Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: Image.asset(
+                                            item.imageUrl,
+                                            fit: BoxFit.cover,
+                                            width: 200,
+                                            height: 148,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                        8, 0, 8, 20), // Adjusted padding
+                                    padding: EdgeInsets.fromLTRB(8, 5, 8, 20),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -276,15 +331,15 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                         Text(
                                           item.crops,
                                           style: TextStyle(
-                                            fontSize: 14,
-                                          ),
+                                              fontSize: 14,
+                                              fontFamily: 'Poppins'),
                                         ),
                                         SizedBox(height: 4),
                                         Text(
                                           item.quantity,
                                           style: TextStyle(
-                                            fontSize: 14,
-                                          ),
+                                              fontSize: 13,
+                                              fontFamily: 'Poppins-Light'),
                                         ),
                                       ],
                                     ),
@@ -313,7 +368,12 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                 .withAlpha(180),
                                           ),
                                           SizedBox(width: 8),
-                                          Text('Edit'),
+                                          Text(
+                                            'Edit',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins-Regular',
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -326,7 +386,12 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                             color: Color(0xFF9DC08B),
                                           ),
                                           SizedBox(width: 8),
-                                          Text('Delete'),
+                                          Text(
+                                            'Delete',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins-Regular',
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -341,7 +406,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                               child: Text(
                                                 'Edit Details',
                                                 style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'Poppins',
                                                   fontSize: 20.0,
                                                 ),
                                               ),
@@ -356,7 +421,9 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                     Text(
                                                       'Add photo: ',
                                                       style: TextStyle(
-                                                        fontSize: 16.5,
+                                                        fontFamily:
+                                                            'Poppins-Regular',
+                                                        fontSize: 15.5,
                                                       ),
                                                     ),
                                                     IconButton(
@@ -377,6 +444,9 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                   decoration: InputDecoration(
                                                     labelText: "Crop's Name",
                                                     labelStyle: TextStyle(
+                                                        fontFamily:
+                                                            'Poppins-Regular',
+                                                        fontSize: 15.5,
                                                         color: Colors.black),
                                                     focusedBorder:
                                                         OutlineInputBorder(
@@ -390,6 +460,9 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                   decoration: InputDecoration(
                                                     labelText: 'Quantity',
                                                     labelStyle: TextStyle(
+                                                        fontFamily:
+                                                            'Poppins-Regular',
+                                                        fontSize: 15.5,
                                                         color: Colors.black),
                                                     focusedBorder:
                                                         OutlineInputBorder(
@@ -418,7 +491,13 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                     return DropdownMenuItem<
                                                         String>(
                                                       value: value,
-                                                      child: Text(value),
+                                                      child: Text(
+                                                        value,
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Poppins-Regular',
+                                                        ),
+                                                      ),
                                                     );
                                                   }).toList(),
                                                 ),
@@ -436,6 +515,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                         'Cancel',
                                                         style: TextStyle(
                                                           color: Colors.black,
+                                                          fontFamily:
+                                                              'Poppins-Regular',
                                                         ),
                                                       ),
                                                     ),
@@ -448,7 +529,13 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                         Navigator.of(context)
                                                             .pop();
                                                       },
-                                                      child: Text('Save'),
+                                                      child: Text(
+                                                        'Save',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Poppins-Regular',
+                                                        ),
+                                                      ),
                                                       style:
                                                           TextButton.styleFrom(
                                                         backgroundColor:
@@ -482,9 +569,9 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                       mainAxisSpacing: 10,
                       childAspectRatio: 3 / 4,
                     ),
-                    itemCount: items.length,
+                    itemCount: harvesteditems.length,
                     itemBuilder: (context, index) {
-                      final item = items[index];
+                      final item = harvesteditems[index];
                       return GestureDetector(
                         onTap: () {},
                         child: Card(
@@ -496,33 +583,40 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                 children: [
                                   Expanded(
                                     child: Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.only(bottom: 0),
-                                        child: Image.asset(
-                                          item.imageUrl,
-                                          fit: BoxFit.cover,
+                                      child: Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: Image.asset(
+                                            item.imageUrl1,
+                                            fit: BoxFit.cover,
+                                            width: 200,
+                                            height: 140,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                        8, 0, 8, 20), // Adjusted padding
+                                    padding: EdgeInsets.fromLTRB(8, 8, 8, 20),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          item.crops,
+                                          item.cropsharvested,
                                           style: TextStyle(
                                             fontSize: 14,
+                                            fontFamily: 'Poppins',
                                           ),
                                         ),
                                         SizedBox(height: 4),
                                         Text(
-                                          item.quantity,
+                                          item.cropsquantity,
                                           style: TextStyle(
-                                            fontSize: 14,
+                                            fontSize: 13,
+                                            fontFamily: 'Poppins-Light',
                                           ),
                                         ),
                                       ],
@@ -531,7 +625,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                 ],
                               ),
                               Positioned(
-                                top: 0,
+                                top: 5,
                                 right: 8,
                                 child: PopupMenuButton<String>(
                                   icon: Icon(
@@ -552,7 +646,12 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                 .withAlpha(180),
                                           ),
                                           SizedBox(width: 8),
-                                          Text('Edit'),
+                                          Text(
+                                            'Edit',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins-Regular',
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -565,7 +664,12 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                             color: Color(0xFF9DC08B),
                                           ),
                                           SizedBox(width: 8),
-                                          Text('Delete'),
+                                          Text(
+                                            'Delete',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins-Regular',
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -580,7 +684,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                               child: Text(
                                                 'Edit Details',
                                                 style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'Poppins',
                                                   fontSize: 20.0,
                                                 ),
                                               ),
@@ -595,7 +699,9 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                     Text(
                                                       'Add photo: ',
                                                       style: TextStyle(
-                                                        fontSize: 16.5,
+                                                        fontFamily:
+                                                            'Poppins-Regular',
+                                                        fontSize: 15.5,
                                                       ),
                                                     ),
                                                     IconButton(
@@ -616,6 +722,9 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                   decoration: InputDecoration(
                                                     labelText: "Crop's Name",
                                                     labelStyle: TextStyle(
+                                                        fontFamily:
+                                                            'Poppins-Regular',
+                                                        fontSize: 15.5,
                                                         color: Colors.black),
                                                     focusedBorder:
                                                         OutlineInputBorder(
@@ -629,6 +738,9 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                   decoration: InputDecoration(
                                                     labelText: 'Quantity',
                                                     labelStyle: TextStyle(
+                                                        fontFamily:
+                                                            'Poppins-Regular',
+                                                        fontSize: 15.5,
                                                         color: Colors.black),
                                                     focusedBorder:
                                                         OutlineInputBorder(
@@ -657,7 +769,13 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                     return DropdownMenuItem<
                                                         String>(
                                                       value: value,
-                                                      child: Text(value),
+                                                      child: Text(
+                                                        value,
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Poppins-Regular',
+                                                        ),
+                                                      ),
                                                     );
                                                   }).toList(),
                                                 ),
@@ -675,6 +793,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                         'Cancel',
                                                         style: TextStyle(
                                                           color: Colors.black,
+                                                          fontFamily:
+                                                              'Poppins-Regular',
                                                         ),
                                                       ),
                                                     ),
@@ -687,7 +807,13 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                         Navigator.of(context)
                                                             .pop();
                                                       },
-                                                      child: Text('Save'),
+                                                      child: Text(
+                                                        'Save',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Poppins-Regular',
+                                                        ),
+                                                      ),
                                                       style:
                                                           TextButton.styleFrom(
                                                         backgroundColor:

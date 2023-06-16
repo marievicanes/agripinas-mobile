@@ -56,7 +56,7 @@ class _CommentSectionState extends State<CommentSection> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CircleAvatar(
-                        backgroundImage: AssetImage('assets/user.png'),
+                        backgroundImage: AssetImage('assets/user2.png'),
                       ),
                       SizedBox(width: 10),
                       Expanded(
@@ -68,12 +68,20 @@ class _CommentSectionState extends State<CommentSection> {
                                 Text(
                                   comment.username,
                                   style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Poppins',
                                   ),
                                 ),
                                 SizedBox(width: 5),
-                                Text(
-                                  comment.comment,
+                                Expanded(
+                                  child: Text(
+                                    comment.comment,
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins-Regular',
+                                      fontSize: 13,
+                                    ),
+                                    maxLines: 5000,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ],
                             ),
@@ -109,16 +117,17 @@ class _CommentSectionState extends State<CommentSection> {
                     child: TextField(
                       controller: commentController,
                       decoration: InputDecoration(
-                        hintText: 'Write a comment...',
+                        hintText: 'Reply here...',
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderSide: BorderSide(color: Color(0xFF9DC08B)),
                         ),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFF9DC08B)),
+                        ),
                       ),
                     ),
                   ),
-                  SizedBox(width: 0),
+                  SizedBox(width: 8),
                   ElevatedButton(
                     onPressed: () {
                       String commentText = commentController.text.trim();
@@ -126,9 +135,10 @@ class _CommentSectionState extends State<CommentSection> {
                         Comment newComment = Comment(
                           username: 'Arriane Gatpo',
                           comment: commentText,
-                          imageUrl: 'https://example.com/avatar.png',
+                          imageUrl: 'assets/user2.png',
                           time: DateTime.now(),
                         );
+
                         setState(() {
                           comments.add(newComment);
                           commentController.clear();

@@ -51,7 +51,7 @@ class _ProfileEditState extends State<ProfileEdit> {
               'AgriPinas',
               style: TextStyle(
                 fontSize: 17.0,
-                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins',
                 color: Colors.white,
               ),
             ),
@@ -135,6 +135,9 @@ class _ProfileEditState extends State<ProfileEdit> {
                   labelText: 'Name',
                   hintText: 'Enter your name',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),
@@ -167,6 +170,9 @@ class _ProfileEditState extends State<ProfileEdit> {
                   labelText: 'Email',
                   hintText: 'Enter your email address',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),
@@ -178,6 +184,9 @@ class _ProfileEditState extends State<ProfileEdit> {
                   labelText: 'Password',
                   hintText: 'Enter your password',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),
@@ -188,6 +197,9 @@ class _ProfileEditState extends State<ProfileEdit> {
                   labelText: 'Address',
                   hintText: 'Enter your Address',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),
@@ -198,6 +210,9 @@ class _ProfileEditState extends State<ProfileEdit> {
                   labelText: 'Phone',
                   hintText: 'Enter your phone number',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),
@@ -211,7 +226,12 @@ class _ProfileEditState extends State<ProfileEdit> {
                               _isEditing = false;
                             });
                           },
-                          child: Text('Cancel'),
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(
+                              fontFamily: 'Poppins-Regular',
+                            ),
+                          ),
                           style: ButtonStyle(
                             foregroundColor: MaterialStateProperty.all<Color>(
                                 Color(0xFF9DC08B)),
@@ -229,7 +249,12 @@ class _ProfileEditState extends State<ProfileEdit> {
                             });
                             _saveInformation();
                           },
-                          child: Text('Save'),
+                          child: Text(
+                            'Save',
+                            style: TextStyle(
+                              fontFamily: 'Poppins-Regular',
+                            ),
+                          ),
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
                                 Color(0xFF9DC08B)),
@@ -243,7 +268,10 @@ class _ProfileEditState extends State<ProfileEdit> {
                           _isEditing = true;
                         });
                       },
-                      child: Text('Edit Information'),
+                      child: Text(
+                        'Edit Information',
+                        style: TextStyle(fontFamily: 'Poppins'),
+                      ),
                       color: Color.fromRGBO(157, 192, 139, 1),
                       textColor: Colors.white,
                     ),

@@ -29,8 +29,8 @@ class WelcomePage extends StatelessWidget {
                 Text(
                   'AgriPinas',
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    fontFamily: 'Poppins',
                     color: Color.fromARGB(255, 85, 113, 83),
                   ),
                 ),
@@ -44,15 +44,17 @@ class WelcomePage extends StatelessWidget {
                 Text(
                   'Fresh from the farm,\ndelivered to your door.',
                   style: TextStyle(
-                      fontSize: 28,
-                      fontFamily: 'Averta-Regular',
-                      fontWeight: FontWeight.bold,
+                      fontSize: 25,
+                      fontFamily: 'Poppins',
                       color: Color.fromARGB(255, 85, 113, 83)),
                 ),
                 SizedBox(height: 30),
                 Text(
-                  '                   Let’s help farmers! \nDirect link between farmers and consumers.',
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
+                  '     Let’s help farmers! \n     Direct link between farmers and consumers.',
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins-Medium',
+                      color: Colors.black54),
                 ),
                 SizedBox(height: 80),
                 Image.asset(
@@ -68,7 +70,10 @@ class WelcomePage extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => Login()),
                     );
                   },
-                  child: Text('More'),
+                  child: Text(
+                    'More',
+                    style: TextStyle(fontFamily: 'Poppins'),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF27AE60),
                   ),
@@ -146,7 +151,10 @@ class Login extends StatelessWidget {
                         MaterialPageRoute(
                             builder: (context) => BottomNavBar()));
                   },
-                  child: Text('Login'),
+                  child: Text(
+                    'Login',
+                    style: TextStyle(fontFamily: 'Poppins'),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF27AE60),
                   ),
@@ -161,7 +169,9 @@ class Login extends StatelessWidget {
                     },
                     child: Text(
                       "Don't have an account? Register",
-                      style: TextStyle(color: Color(0xFF27AE60)),
+                      style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          color: Color(0xFF27AE60)),
                     )),
                 TextButton(
                   onPressed: () {
@@ -170,12 +180,13 @@ class Login extends StatelessWidget {
                   },
                   child: Text("Login as Admin",
                       style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
                           color: Color.fromARGB(
-                        255,
-                        85,
-                        113,
-                        83,
-                      ))),
+                            255,
+                            85,
+                            113,
+                            83,
+                          ))),
                 ),
               ]),
             ]),

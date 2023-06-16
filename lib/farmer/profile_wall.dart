@@ -50,46 +50,52 @@ class _ProfileWallState extends State<ProfileWall>
 
   final List<MarketplaceItem> items = [
     MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 400',
-      farmer: 'Ryan Amador',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
+      title: 'Tomato',
+      price: '₱400',
+      farmer: 'Arriane Gatpo',
+      description:
+          'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
+      imageUrl: 'assets/tomato.png',
     ),
     MarketplaceItem(
       title: 'Onion',
-      price: 'Php 400',
-      farmer: 'Ryan Amador',
-      description: 'A red round vegetable with a good storage quality',
+      price: '₱400',
+      farmer: 'Daniella Tungol',
+      description:
+          'An onion is a round vegetable with a brown skin that grows underground. ',
       imageUrl: 'assets/onion.png',
     ),
     MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 4500',
-      farmer: 'Ryan Amador',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
+      title: 'Corn',
+      price: '₱4500',
+      farmer: 'Marievic Añes',
+      description:
+          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
+      imageUrl: 'assets/corn.png',
     ),
     MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 400',
-      farmer: 'Ryan Amador',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
+      title: 'Calamansi',
+      price: '₱400',
+      farmer: 'Jenkins Mesina',
+      description:
+          'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
+      imageUrl: 'assets/calamansi.png',
     ),
     MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 400',
-      farmer: 'Ryan Amador',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
+      title: 'Pechay',
+      price: '₱400',
+      farmer: 'Romeo London',
+      description:
+          'Pechay is a leafy, shallow-rooted, cool-season crop but can stand higher temperatures',
+      imageUrl: 'assets/pechay.png',
     ),
     MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 400',
-      farmer: 'Daniella Marie Tungol',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
+      title: 'Rice',
+      price: '₱400',
+      farmer: 'Mavic Anes',
+      description:
+          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
+      imageUrl: 'assets/rice.png',
     ),
   ];
 
@@ -125,7 +131,7 @@ class _ProfileWallState extends State<ProfileWall>
                     'AgriPinas',
                     style: TextStyle(
                       fontSize: 17.0,
-                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
                       color: Colors.white,
                     ),
                   ),
@@ -137,16 +143,34 @@ class _ProfileWallState extends State<ProfileWall>
                 padding: EdgeInsets.zero,
                 children: <Widget>[
                   UserAccountsDrawerHeader(
-                    accountName: Text('Arriane Gatpo'),
+                    accountName: Text(
+                      '',
+                      style: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 0,
+                      ),
+                    ),
                     accountEmail: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Farmer'),
-                        Text('ag@gatpo.com'),
+                        Text(
+                          'Arriane Gatpo',
+                          style: TextStyle(
+                            fontFamily: 'Poppins-Regular',
+                            fontSize: 14.0,
+                          ),
+                        ),
+                        Text(
+                          'Farmer',
+                          style: TextStyle(
+                            fontFamily: 'Poppins-Regular',
+                            fontSize: 12.0,
+                          ),
+                        ),
                       ],
                     ),
                     currentAccountPicture: CircleAvatar(
-                      radius: 12.0,
+                      radius: 10.0,
                       backgroundImage: AssetImage('assets/user.png'),
                     ),
                     decoration: BoxDecoration(
@@ -162,8 +186,7 @@ class _ProfileWallState extends State<ProfileWall>
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => TelegramApp()),
+                            MaterialPageRoute(builder: (context) => Message()),
                           );
                         },
                       ),
@@ -171,7 +194,10 @@ class _ProfileWallState extends State<ProfileWall>
                   ),
                   ListTile(
                     leading: Icon(Icons.settings_accessibility),
-                    title: Text('Profile Information'),
+                    title: Text(
+                      'Profile Information',
+                      style: TextStyle(fontFamily: 'Poppins-Medium'),
+                    ),
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -184,7 +210,10 @@ class _ProfileWallState extends State<ProfileWall>
                   ),
                   ListTile(
                     leading: Icon(Icons.edit),
-                    title: Text('Edit Information'),
+                    title: Text(
+                      'Edit Information',
+                      style: TextStyle(fontFamily: 'Poppins-Medium'),
+                    ),
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -197,7 +226,10 @@ class _ProfileWallState extends State<ProfileWall>
                   ),
                   ListTile(
                     leading: Icon(Icons.info_outline),
-                    title: Text('About us'),
+                    title: Text(
+                      'About us',
+                      style: TextStyle(fontFamily: 'Poppins-Medium'),
+                    ),
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -210,7 +242,10 @@ class _ProfileWallState extends State<ProfileWall>
                   ),
                   ListTile(
                     leading: Icon(Icons.phone),
-                    title: Text('Contact Us'),
+                    title: Text(
+                      'Contact Us',
+                      style: TextStyle(fontFamily: 'Poppins-Medium'),
+                    ),
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -223,7 +258,10 @@ class _ProfileWallState extends State<ProfileWall>
                   ),
                   ListTile(
                     leading: Icon(Icons.logout),
-                    title: Text('Logout'),
+                    title: Text(
+                      'Logout',
+                      style: TextStyle(fontFamily: 'Poppins-Medium'),
+                    ),
                     onTap: () {},
                   ),
                 ],
@@ -236,13 +274,17 @@ class _ProfileWallState extends State<ProfileWall>
                   Tab(
                     child: Text(
                       'Marketplace Wall',
-                      style: TextStyle(color: Color(0xFF718C53)),
+                      style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          color: Color(0xFF718C53)),
                     ),
                   ),
                   Tab(
                     child: Text(
                       'Community Forum Wall',
-                      style: TextStyle(color: Color(0xFF718C53)),
+                      style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          color: Color(0xFF718C53)),
                     ),
                   ),
                 ],
@@ -257,7 +299,7 @@ class _ProfileWallState extends State<ProfileWall>
                           crossAxisCount: 2,
                           crossAxisSpacing: 15,
                           mainAxisSpacing: 10,
-                          childAspectRatio: 4.1 / 6.8,
+                          childAspectRatio: 2 / 3.5,
                         ),
                         itemCount: items.length,
                         itemBuilder: (context, index) {
@@ -273,14 +315,24 @@ class _ProfileWallState extends State<ProfileWall>
                                     children: [
                                       Expanded(
                                         child: Center(
-                                          child: Image.asset(
-                                            item.imageUrl,
-                                            fit: BoxFit.cover,
+                                          child: Align(
+                                            alignment: Alignment.bottomCenter,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child: Image.asset(
+                                                item.imageUrl,
+                                                fit: BoxFit.cover,
+                                                width: 200,
+                                                height: 150,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.all(8),
+                                        padding:
+                                            EdgeInsets.fromLTRB(8, 0, 8, 0),
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -289,8 +341,8 @@ class _ProfileWallState extends State<ProfileWall>
                                               child: Text(
                                                 item.title,
                                                 style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,
+                                                  fontFamily: 'Poppins',
                                                 ),
                                               ),
                                             ),
@@ -306,13 +358,17 @@ class _ProfileWallState extends State<ProfileWall>
                                             Text(
                                               item.farmer,
                                               style: TextStyle(
-                                                fontSize: 14,
-                                              ),
+                                                  fontSize: 13,
+                                                  fontFamily:
+                                                      'Poppins-Regular'),
                                             ),
                                             SizedBox(height: 4),
                                             Text(
                                               item.description,
-                                              style: TextStyle(fontSize: 14),
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontFamily:
+                                                      'Poppins-Regular'),
                                             ),
                                           ],
                                         ),
@@ -341,7 +397,12 @@ class _ProfileWallState extends State<ProfileWall>
                                                     .withAlpha(180),
                                               ),
                                               SizedBox(width: 8),
-                                              Text('Edit'),
+                                              Text(
+                                                'Edit',
+                                                style: TextStyle(
+                                                  fontFamily: 'Poppins-Regular',
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -354,7 +415,12 @@ class _ProfileWallState extends State<ProfileWall>
                                                 color: Color(0xFF9DC08B),
                                               ),
                                               SizedBox(width: 8),
-                                              Text('Delete'),
+                                              Text(
+                                                'Delete',
+                                                style: TextStyle(
+                                                  fontFamily: 'Poppins-Regular',
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -369,8 +435,7 @@ class _ProfileWallState extends State<ProfileWall>
                                                   child: Text(
                                                     'Edit Details',
                                                     style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                      fontFamily: 'Poppins',
                                                       fontSize: 20.0,
                                                     ),
                                                   ),
@@ -387,7 +452,9 @@ class _ProfileWallState extends State<ProfileWall>
                                                         Text(
                                                           'Add photo: ',
                                                           style: TextStyle(
-                                                            fontSize: 16.5,
+                                                            fontFamily:
+                                                                'Poppins-Regular',
+                                                            fontSize: 15.5,
                                                           ),
                                                         ),
                                                         IconButton(
@@ -412,6 +479,9 @@ class _ProfileWallState extends State<ProfileWall>
                                                         labelText:
                                                             "Crop's Name",
                                                         labelStyle: TextStyle(
+                                                            fontFamily:
+                                                                'Poppins-Regular',
+                                                            fontSize: 15.5,
                                                             color:
                                                                 Colors.black),
                                                         focusedBorder:
@@ -427,6 +497,9 @@ class _ProfileWallState extends State<ProfileWall>
                                                           InputDecoration(
                                                         labelText: 'Price',
                                                         labelStyle: TextStyle(
+                                                            fontFamily:
+                                                                'Poppins-Regular',
+                                                            fontSize: 15.5,
                                                             color:
                                                                 Colors.black),
                                                         focusedBorder:
@@ -443,6 +516,9 @@ class _ProfileWallState extends State<ProfileWall>
                                                         labelText:
                                                             "Farmer's Name",
                                                         labelStyle: TextStyle(
+                                                            fontFamily:
+                                                                'Poppins-Regular',
+                                                            fontSize: 15.5,
                                                             color:
                                                                 Colors.black),
                                                         focusedBorder:
@@ -459,6 +535,9 @@ class _ProfileWallState extends State<ProfileWall>
                                                         labelText:
                                                             'Description',
                                                         labelStyle: TextStyle(
+                                                            fontFamily:
+                                                                'Poppins-Regular',
+                                                            fontSize: 15.5,
                                                             color:
                                                                 Colors.black),
                                                         focusedBorder:
@@ -485,6 +564,9 @@ class _ProfileWallState extends State<ProfileWall>
                                                             style: TextStyle(
                                                               color:
                                                                   Colors.black,
+                                                              fontFamily:
+                                                                  'Poppins-Regular',
+                                                              fontSize: 15.5,
                                                             ),
                                                           ),
                                                         ),
@@ -498,7 +580,13 @@ class _ProfileWallState extends State<ProfileWall>
                                                                     context)
                                                                 .pop();
                                                           },
-                                                          child: Text('Save'),
+                                                          child: Text(
+                                                            'Save',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Poppins-Regular',
+                                                            ),
+                                                          ),
                                                           style: TextButton
                                                               .styleFrom(
                                                             backgroundColor:
@@ -551,7 +639,7 @@ class _ProfileWallState extends State<ProfileWall>
                                           child: Text(
                                             'Add New Product',
                                             style: TextStyle(
-                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'Poppins',
                                               fontSize: 20.0,
                                             ),
                                           ),
@@ -564,7 +652,8 @@ class _ProfileWallState extends State<ProfileWall>
                                             Text(
                                               'Add photo: ',
                                               style: TextStyle(
-                                                fontSize: 16.5,
+                                                fontFamily: 'Poppins-Regular',
+                                                fontSize: 15.5,
                                               ),
                                             ),
                                             IconButton(
@@ -584,8 +673,11 @@ class _ProfileWallState extends State<ProfileWall>
                                         TextField(
                                           decoration: InputDecoration(
                                             labelText: "Crop's Name",
-                                            labelStyle:
-                                                TextStyle(color: Colors.black),
+                                            labelStyle: TextStyle(
+                                              color: Colors.black,
+                                              fontFamily: 'Poppins-Regular',
+                                              fontSize: 15.5,
+                                            ),
                                             focusedBorder: OutlineInputBorder(
                                               borderSide: BorderSide(
                                                   color: Color(0xFFA9AF7E)),
@@ -595,8 +687,11 @@ class _ProfileWallState extends State<ProfileWall>
                                         TextField(
                                           decoration: InputDecoration(
                                             labelText: 'Price',
-                                            labelStyle:
-                                                TextStyle(color: Colors.black),
+                                            labelStyle: TextStyle(
+                                              color: Colors.black,
+                                              fontFamily: 'Poppins-Regular',
+                                              fontSize: 15.5,
+                                            ),
                                             focusedBorder: OutlineInputBorder(
                                               borderSide: BorderSide(
                                                   color: Color(0xFFA9AF7E)),
@@ -606,8 +701,11 @@ class _ProfileWallState extends State<ProfileWall>
                                         TextField(
                                           decoration: InputDecoration(
                                             labelText: "Farmer's Name",
-                                            labelStyle:
-                                                TextStyle(color: Colors.black),
+                                            labelStyle: TextStyle(
+                                              color: Colors.black,
+                                              fontFamily: 'Poppins-Regular',
+                                              fontSize: 15.5,
+                                            ),
                                             focusedBorder: OutlineInputBorder(
                                               borderSide: BorderSide(
                                                   color: Color(0xFFA9AF7E)),
@@ -617,8 +715,11 @@ class _ProfileWallState extends State<ProfileWall>
                                         TextField(
                                           decoration: InputDecoration(
                                             labelText: 'Description',
-                                            labelStyle:
-                                                TextStyle(color: Colors.black),
+                                            labelStyle: TextStyle(
+                                              color: Colors.black,
+                                              fontFamily: 'Poppins-Regular',
+                                              fontSize: 15.5,
+                                            ),
                                             focusedBorder: OutlineInputBorder(
                                               borderSide: BorderSide(
                                                   color: Color(0xFFA9AF7E)),
@@ -631,28 +732,35 @@ class _ProfileWallState extends State<ProfileWall>
                                               MainAxisAlignment.end,
                                           children: [
                                             TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
                                               child: Text(
                                                 'Cancel',
                                                 style: TextStyle(
                                                   color: Colors.black,
+                                                  fontFamily: 'Poppins-Regular',
+                                                  fontSize: 13.5,
                                                 ),
                                               ),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
                                             ),
-                                            TextButton(
+                                            ElevatedButton(
+                                              child: Text(
+                                                'Add',
+                                                style: TextStyle(
+                                                  fontFamily: 'Poppins-Regular',
+                                                ),
+                                              ),
                                               onPressed: () {
                                                 String postContent =
                                                     _postController.text;
                                                 print(postContent);
                                                 Navigator.of(context).pop();
                                               },
-                                              child: Text('Save'),
-                                              style: TextButton.styleFrom(
-                                                backgroundColor: Color.fromRGBO(
+                                              style: ElevatedButton.styleFrom(
+                                                primary: Color.fromRGBO(
                                                     157, 192, 139, 1),
-                                                primary: Colors.white,
+                                                onPrimary: Colors.white,
                                               ),
                                             ),
                                           ],
@@ -700,9 +808,8 @@ class _ProfileWallState extends State<ProfileWall>
                                                 Text(
                                                   'Arriane Gatpo',
                                                   style: TextStyle(
-                                                    fontSize: 18.0,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                                      fontSize: 16.5,
+                                                      fontFamily: 'Poppins'),
                                                 ),
                                               ],
                                             ),
@@ -718,10 +825,21 @@ class _ProfileWallState extends State<ProfileWall>
                                                     builder:
                                                         (BuildContext context) {
                                                       return AlertDialog(
-                                                        title:
-                                                            Text('Edit Post'),
+                                                        title: Text(
+                                                          'Edit Post',
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                                'Poppins',
+                                                            fontSize: 20.0,
+                                                          ),
+                                                        ),
                                                         content: TextField(
                                                           maxLines: null,
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                                'Poppins-Regular',
+                                                            fontSize: 14.0,
+                                                          ),
                                                           decoration:
                                                               InputDecoration(
                                                             hintText:
@@ -735,9 +853,10 @@ class _ProfileWallState extends State<ProfileWall>
                                                             child: Text(
                                                               'Cancel',
                                                               style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontFamily:
+                                                                      'Poppins-Regular'),
                                                             ),
                                                             onPressed: () {
                                                               Navigator.of(
@@ -746,7 +865,13 @@ class _ProfileWallState extends State<ProfileWall>
                                                             },
                                                           ),
                                                           ElevatedButton(
-                                                            child: Text('Post'),
+                                                            child: Text(
+                                                              'Post',
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'Poppins-Regular',
+                                                              ),
+                                                            ),
                                                             onPressed: () {
                                                               String
                                                                   postContent =
@@ -775,9 +900,7 @@ class _ProfileWallState extends State<ProfileWall>
                                                       );
                                                     },
                                                   );
-                                                } else if (value == 'delete') {
-                                                  // Handle delete action
-                                                }
+                                                } else if (value == 'delete') {}
                                               },
                                               itemBuilder:
                                                   (BuildContext context) =>
@@ -792,7 +915,13 @@ class _ProfileWallState extends State<ProfileWall>
                                                             .withAlpha(180),
                                                       ),
                                                       SizedBox(width: 8.0),
-                                                      Text('Edit Post'),
+                                                      Text(
+                                                        'Edit',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Poppins-Regular',
+                                                        ),
+                                                      ),
                                                     ],
                                                   ),
                                                 ),
@@ -806,7 +935,13 @@ class _ProfileWallState extends State<ProfileWall>
                                                             Color(0xFF9DC08B),
                                                       ),
                                                       SizedBox(width: 8.0),
-                                                      Text('Delete Post'),
+                                                      Text(
+                                                        'Delete',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Poppins-Regular',
+                                                        ),
+                                                      ),
                                                     ],
                                                   ),
                                                 ),
@@ -820,7 +955,9 @@ class _ProfileWallState extends State<ProfileWall>
                                   SizedBox(height: 8.0),
                                   Text(
                                     'This is the content of the post.',
-                                    style: TextStyle(fontSize: 16.0),
+                                    style: TextStyle(
+                                        fontSize: 15.0,
+                                        fontFamily: 'Poppins-Regular'),
                                   ),
                                   SizedBox(height: 8.0),
                                   Row(
@@ -865,10 +1002,17 @@ class _ProfileWallState extends State<ProfileWall>
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: Text('Write a Post'),
+                                  title: Text(
+                                    'Write a Post',
+                                    style: TextStyle(fontFamily: 'Poppins'),
+                                  ),
                                   content: TextField(
                                     controller: _postController,
                                     maxLines: null,
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins-Regular',
+                                      fontSize: 14.0,
+                                    ),
                                     decoration: InputDecoration(
                                       hintText: 'Something in your mind?',
                                       border: OutlineInputBorder(),
@@ -878,14 +1022,19 @@ class _ProfileWallState extends State<ProfileWall>
                                     TextButton(
                                       child: Text(
                                         'Cancel',
-                                        style: TextStyle(color: Colors.black),
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontFamily: 'Poppins-Regular'),
                                       ),
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
                                     ),
                                     ElevatedButton(
-                                      child: Text('Post'),
+                                      child: Text('Post',
+                                          style: TextStyle(
+                                            fontFamily: 'Poppins-Regular',
+                                          )),
                                       onPressed: () {
                                         String postContent =
                                             _postController.text;

@@ -43,46 +43,52 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
 
   final List<MarketplaceItem> items = [
     MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 400',
+      title: 'Tomato',
+      price: '₱400',
       farmer: 'Arriane Gatpo',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
+      description:
+          'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
+      imageUrl: 'assets/tomato.png',
     ),
     MarketplaceItem(
       title: 'Onion',
-      price: 'Php 400',
+      price: '₱400',
       farmer: 'Daniella Tungol',
-      description: 'A red round vegetable with a good storage quality',
+      description:
+          'An onion is a round vegetable with a brown skin that grows underground. ',
       imageUrl: 'assets/onion.png',
     ),
     MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 4500',
+      title: 'Corn',
+      price: '₱4500',
       farmer: 'Marievic Añes',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
+      description:
+          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
+      imageUrl: 'assets/corn.png',
     ),
     MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 400',
+      title: 'Calamansi',
+      price: '₱400',
       farmer: 'Jenkins Mesina',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
+      description:
+          'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
+      imageUrl: 'assets/calamansi.png',
     ),
     MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 400',
+      title: 'Pechay',
+      price: '₱400',
       farmer: 'Romeo London',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
+      description:
+          'Pechay is a leafy, shallow-rooted, cool-season crop but can stand higher temperatures',
+      imageUrl: 'assets/pechay.png',
     ),
     MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 400',
-      farmer: 'AgriPinas Mobile and Web',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
+      title: 'Rice',
+      price: '₱400',
+      farmer: 'Mavic Anes',
+      description:
+          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
+      imageUrl: 'assets/rice.png',
     ),
   ];
   void searchItem(String text) {
@@ -108,7 +114,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                 'AgriPinas',
                 style: TextStyle(
                   fontSize: 17.0,
-                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
               ),
@@ -142,7 +148,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
             crossAxisCount: 2,
             crossAxisSpacing: 15,
             mainAxisSpacing: 10,
-            childAspectRatio: 2 / 3,
+            childAspectRatio: 2 / 3.5,
           ),
           itemCount: items.length,
           itemBuilder: (context, index) {
@@ -155,9 +161,14 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                   children: [
                     Expanded(
                       child: Center(
-                        child: Image.asset(
-                          item.imageUrl,
-                          fit: BoxFit.cover,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.asset(
+                            item.imageUrl,
+                            fit: BoxFit.cover,
+                            width: 200,
+                            height: 250,
+                          ),
                         ),
                       ),
                     ),
@@ -170,8 +181,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                             child: Text(
                               item.title,
                               style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                fontFamily: 'Poppins',
                               ),
                             ),
                           ),
@@ -187,13 +198,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                           Text(
                             item.farmer,
                             style: TextStyle(
-                              fontSize: 14,
-                            ),
+                                fontSize: 13, fontFamily: 'Poppins-Regular'),
                           ),
                           SizedBox(height: 4),
                           Text(
                             item.description,
-                            style: TextStyle(fontSize: 14),
+                            style: TextStyle(
+                                fontSize: 12, fontFamily: 'Poppins-Regular'),
                           ),
                         ],
                       ),
@@ -240,7 +251,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                               child: Text(
                                 'Add New Product',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Poppins',
                                   fontSize: 20.0,
                                 ),
                               ),
@@ -252,7 +263,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                 Text(
                                   'Add photo: ',
                                   style: TextStyle(
-                                    fontSize: 16.5,
+                                    fontFamily: 'Poppins-Regular',
+                                    fontSize: 15.5,
                                   ),
                                 ),
                                 IconButton(
@@ -272,7 +284,11 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                             TextField(
                               decoration: InputDecoration(
                                 labelText: "Crop's Name",
-                                labelStyle: TextStyle(color: Colors.black),
+                                labelStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Poppins-Regular',
+                                  fontSize: 15.5,
+                                ),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide:
                                       BorderSide(color: Color(0xFFA9AF7E)),
@@ -282,7 +298,11 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                             TextField(
                               decoration: InputDecoration(
                                 labelText: 'Price',
-                                labelStyle: TextStyle(color: Colors.black),
+                                labelStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Poppins-Regular',
+                                  fontSize: 15.5,
+                                ),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide:
                                       BorderSide(color: Color(0xFFA9AF7E)),
@@ -292,7 +312,11 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                             TextField(
                               decoration: InputDecoration(
                                 labelText: "Farmer's Name",
-                                labelStyle: TextStyle(color: Colors.black),
+                                labelStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Poppins-Regular',
+                                  fontSize: 15.5,
+                                ),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide:
                                       BorderSide(color: Color(0xFFA9AF7E)),
@@ -302,7 +326,11 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                             TextField(
                               decoration: InputDecoration(
                                 labelText: 'Description',
-                                labelStyle: TextStyle(color: Colors.black),
+                                labelStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Poppins-Regular',
+                                  fontSize: 15.5,
+                                ),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide:
                                       BorderSide(color: Color(0xFFA9AF7E)),
@@ -318,6 +346,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                     'Cancel',
                                     style: TextStyle(
                                       color: Colors.black,
+                                      fontFamily: 'Poppins-Regular',
+                                      fontSize: 13.5,
                                     ),
                                   ),
                                   onPressed: () {
@@ -325,7 +355,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                   },
                                 ),
                                 ElevatedButton(
-                                  child: Text('Add'),
+                                  child: Text(
+                                    'Add',
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins-Regular',
+                                    ),
+                                  ),
                                   onPressed: () {
                                     String postContent = _postController.text;
                                     print(postContent);
