@@ -13,6 +13,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _bdateController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
+  TextEditingController _ageController = TextEditingController();
   TextEditingController _passController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
@@ -25,6 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _nameController.text = "Arriane Gatpo";
     _bdateController.text = "01/01/1990";
     _emailController.text = "ag@gatpo.com";
+    _ageController.text = "23";
     _passController.text = "**********";
     _addressController.text = "Quezon City";
     _phoneController.text = "+639675046713";
@@ -77,6 +79,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   labelText: 'Name',
                   hintText: 'Enter your name',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _phoneController,
+                enabled: false,
+                decoration: InputDecoration(
+                  labelText: 'Phone',
+                  hintText: 'Enter your phone number',
+                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _addressController,
+                enabled: false,
+                decoration: InputDecoration(
+                  labelText: 'Address',
+                  hintText: 'Enter your Address',
+                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),
@@ -87,6 +118,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   labelText: 'Birth Date',
                   hintText: 'Enter your birthdate',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _ageController,
+                enabled: false,
+                decoration: InputDecoration(
+                  labelText: 'Age',
+                  hintText: 'Enter your age',
+                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),
@@ -108,26 +155,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 decoration: InputDecoration(
                   labelText: 'Password',
                   hintText: 'Enter your password',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              TextField(
-                controller: _addressController,
-                enabled: false,
-                decoration: InputDecoration(
-                  labelText: 'Address',
-                  hintText: 'Enter your Address',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              TextField(
-                controller: _phoneController,
-                enabled: false,
-                decoration: InputDecoration(
-                  labelText: 'Phone',
-                  hintText: 'Enter your phone number',
                   border: OutlineInputBorder(),
                 ),
               ),

@@ -13,6 +13,7 @@ class _ProfileEditState extends State<ProfileEdit> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _bdateController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
+  TextEditingController _ageController = TextEditingController();
   TextEditingController _passController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
@@ -24,6 +25,7 @@ class _ProfileEditState extends State<ProfileEdit> {
     super.initState();
     _nameController.text = "Arriane Gatpo";
     _emailController.text = "ag@gatpo.com";
+    _ageController.text = "23";
     _passController.text = "**********";
     _addressController.text = "Quezon City";
     _phoneController.text = "+639675046713";
@@ -142,12 +144,41 @@ class _ProfileEditState extends State<ProfileEdit> {
               ),
               SizedBox(height: 16.0),
               TextField(
+                controller: _phoneController,
+                enabled: _isEditing,
+                decoration: InputDecoration(
+                  labelText: 'Phone',
+                  hintText: 'Enter your phone number',
+                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _addressController,
+                enabled: _isEditing,
+                decoration: InputDecoration(
+                  labelText: 'Address',
+                  hintText: 'Enter your Address',
+                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.0),
+              TextField(
                 controller: _bdateController,
                 enabled: _isEditing,
                 decoration: InputDecoration(
                   labelText: 'Birth Date',
                   hintText: 'Enter your birthdate',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
                 ),
                 onTap: () async {
                   if (_isEditing) {
@@ -161,6 +192,19 @@ class _ProfileEditState extends State<ProfileEdit> {
                         DateFormat('MM/dd/yyyy').format(_selectedDate!);
                   }
                 },
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _ageController,
+                enabled: _isEditing,
+                decoration: InputDecoration(
+                  labelText: 'Age',
+                  hintText: 'Enter your age',
+                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
+                ),
               ),
               SizedBox(height: 16.0),
               TextField(
@@ -183,32 +227,6 @@ class _ProfileEditState extends State<ProfileEdit> {
                 decoration: InputDecoration(
                   labelText: 'Password',
                   hintText: 'Enter your password',
-                  border: OutlineInputBorder(),
-                  labelStyle: TextStyle(
-                    fontFamily: 'Poppins-Regular',
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              TextField(
-                controller: _addressController,
-                enabled: _isEditing,
-                decoration: InputDecoration(
-                  labelText: 'Address',
-                  hintText: 'Enter your Address',
-                  border: OutlineInputBorder(),
-                  labelStyle: TextStyle(
-                    fontFamily: 'Poppins-Regular',
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              TextField(
-                controller: _phoneController,
-                enabled: _isEditing,
-                decoration: InputDecoration(
-                  labelText: 'Phone',
-                  hintText: 'Enter your phone number',
                   border: OutlineInputBorder(),
                   labelStyle: TextStyle(
                     fontFamily: 'Poppins-Regular',

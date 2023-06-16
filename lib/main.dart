@@ -118,17 +118,27 @@ class Login extends StatelessWidget {
                 "AgriPinas",
                 style: TextStyle(
                   fontSize: 28,
-                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
                   color: Color.fromARGB(255, 85, 113, 83),
                 ),
               ),
             ),
             TextField(
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.people),
+                prefixIcon: Icon(
+                  Icons.email,
+                  color: Color(0xFF9DC08B),
+                ),
                 labelText: "E-mail",
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 3, color: Colors.green),
+                labelStyle: TextStyle(
+                  color: Colors.black,
+                  fontFamily: 'Poppins-Regular',
+                  fontSize: 13,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color.fromARGB(255, 208, 216, 144),
+                  ),
                   borderRadius: BorderRadius.circular(15),
                 ),
               ),
@@ -136,13 +146,22 @@ class Login extends StatelessWidget {
             SizedBox(
               height: 15,
             ),
+            SizedBox(height: 10),
             TextField(
               obscureText: true,
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.password),
-                labelText: "Password",
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 3, color: Colors.green),
+                prefixIcon: Icon(
+                  Icons.password,
+                  color: Color(0xFF9DC08B),
+                ),
+                labelText: "Confirm Password",
+                labelStyle: TextStyle(
+                  color: Colors.black,
+                  fontFamily: 'Poppins-Regular',
+                  fontSize: 14,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFFA9AF7E)),
                   borderRadius: BorderRadius.circular(15),
                 ),
               ),
@@ -283,10 +302,33 @@ class _RegisterState extends State<Register> {
                 TextField(
                   decoration: InputDecoration(
                     prefixIcon: Icon(
-                      Icons.email,
+                      Icons.phone,
                       color: Color(0xFF9DC08B),
                     ),
-                    labelText: "E-mail",
+                    labelText: "Contact Number",
+                    labelStyle: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'Poppins-Regular',
+                      fontSize: 13,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color.fromARGB(255, 208, 216, 144),
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                TextField(
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(
+                      Icons.house,
+                      color: Color(0xFF9DC08B),
+                    ),
+                    labelText: "Address",
                     labelStyle: TextStyle(
                       color: Colors.black,
                       fontFamily: 'Poppins-Regular',
@@ -342,6 +384,29 @@ class _RegisterState extends State<Register> {
                       color: Color(0xFF9DC08B),
                     ),
                     labelText: "Age",
+                    labelStyle: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'Poppins-Regular',
+                      fontSize: 13,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color.fromARGB(255, 208, 216, 144),
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                TextField(
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: Color(0xFF9DC08B),
+                    ),
+                    labelText: "E-mail",
                     labelStyle: TextStyle(
                       color: Colors.black,
                       fontFamily: 'Poppins-Regular',
