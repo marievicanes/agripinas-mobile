@@ -9,9 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-import 'about_us.dart';
-import 'contact_us.dart';
-
 class ProfileScreen extends StatefulWidget {
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -22,12 +19,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       firebase_storage.FirebaseStorage.instance;
   String imageUrl = '';
 
-  final TextEditingController _fullnameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _bdateController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _contactController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController fullname = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController birthdate = TextEditingController();
+  final TextEditingController address = TextEditingController();
+  final TextEditingController contact = TextEditingController();
+  final TextEditingController password = TextEditingController();
 
   final CollectionReference _users =
       FirebaseFirestore.instance.collection('Users');
@@ -122,102 +119,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Navigator.pop(context);
           },
         ),
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/logo.png',
-              height: 32.0,
-            ),
-            SizedBox(width: 7.0),
-            Text(
-              'AgriPinas',
-              style: TextStyle(
-                fontSize: 17.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection("Users")
-                    .where("uid", isEqualTo: currentUser.currentUser!.uid)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                        itemCount: snapshot.data!.docs.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, i) {
-                          var data = snapshot.data!.docs[i];
-                          return UserAccountsDrawerHeader(
-                            accountName: Text(data['fullname']),
-                            accountEmail: Text(data['email']),
-                            currentAccountPicture: CircleAvatar(
-                              radius: 14.0,
-                              backgroundImage: AssetImage('assets/user.png'),
-                            ),
-                            decoration: BoxDecoration(
-                              color: Color(0xFFA9AF7E),
-                            ),
-                            otherAccountsPictures: [
-                              IconButton(
-                                icon: Icon(Icons.notifications),
-                                onPressed: () {},
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.message),
-                                onPressed: () {},
-                              ),
-                            ],
-                          );
-                        });
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                }),
-            ListTile(
-              leading: Icon(Icons.info_outline),
-              title: Text('About us'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AboutUsScreen(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.phone),
-              title: Text('Contact Us'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ContactUsScreen(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Logout'),
-              onTap: () {
-                AuthService authService = AuthService();
-                authService.logOutUser(context);
-              },
-            ),
-          ],
-        ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -225,13 +126,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             children: [
               SizedBox(height: 16.0),
-              CircleAvatar(
-                radius: 70.0,
-                backgroundImage: AssetImage('assets/user.png'),
+              GestureDetector(
+                onTap: () {
+                  _showPicker(context);
+                },
+                child: CircleAvatar(
+                  radius: 55,
+                  backgroundColor: Color(0xffFDCF09),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(50)),
+                    width: 100,
+                    height: 100,
+                    child: Icon(
+                      Icons.camera_alt,
+                      color: Colors.grey[800],
+                    ),
+                  ),
+                ),
               ),
               SizedBox(height: 16.0),
               TextField(
-                controller: _fullnameController,
+                controller: fullname,
                 enabled: _isEditing,
                 decoration: InputDecoration(
                   labelText: 'Name',
@@ -241,7 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               SizedBox(height: 16.0),
               TextField(
-                controller: _bdateController,
+                controller: birthdate,
                 enabled: _isEditing,
                 decoration: InputDecoration(
                   labelText: 'Birth Date',
@@ -256,14 +173,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       firstDate: DateTime(1900),
                       lastDate: DateTime.now(),
                     );
-                    _bdateController.text =
+                    birthdate.text =
                         DateFormat('MM/dd/yyyy').format(_selectedDate!);
                   }
                 },
               ),
               SizedBox(height: 16.0),
               TextField(
-                controller: _emailController,
+                controller: email,
                 enabled: _isEditing,
                 decoration: InputDecoration(
                   labelText: 'Email',
@@ -273,7 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               SizedBox(height: 16.0),
               TextField(
-                controller: _passwordController,
+                controller: password,
                 enabled: _isEditing,
                 decoration: InputDecoration(
                   labelText: 'Password',
@@ -283,7 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               SizedBox(height: 16.0),
               TextField(
-                controller: _addressController,
+                controller: address,
                 enabled: _isEditing,
                 decoration: InputDecoration(
                   labelText: 'Address',
@@ -293,7 +210,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               SizedBox(height: 16.0),
               TextField(
-                controller: _contactController,
+                controller: contact,
                 enabled: _isEditing,
                 decoration: InputDecoration(
                   labelText: 'Phone',
@@ -356,4 +273,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _saveInformation() {}
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Gallery'),
+                      onTap: () {
+                        imgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      imgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
 }

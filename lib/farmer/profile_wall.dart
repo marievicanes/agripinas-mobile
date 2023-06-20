@@ -45,6 +45,11 @@ class _ProfileWallState extends State<ProfileWall>
       firebase_storage.FirebaseStorage.instance;
   String imageUrl = '';
 
+  final TextEditingController fullname = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController contact = TextEditingController();
+  final TextEditingController _imageController = TextEditingController();
+
   Future<void> _selectImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -234,9 +239,14 @@ class _ProfileWallState extends State<ProfileWall>
                         UserAccountsDrawerHeader(
                           accountName: Text(data['fullname']),
                           accountEmail: Text(data['email']),
-                          currentAccountPicture: CircleAvatar(
-                            radius: 12.0,
-                            backgroundImage: AssetImage('assets/user.png'),
+                          currentAccountPicture: GestureDetector(
+                            onTap: () {
+                              _showPicker(context);
+                            },
+                            child: CircleAvatar(
+                              radius: 12.0,
+                              backgroundImage: AssetImage('assets/user.png'),
+                            ),
                           ),
                           decoration: BoxDecoration(
                             color: Color(0xFFA9AF7E),
@@ -585,7 +595,7 @@ class _ProfileWallState extends State<ProfileWall>
                                                                     192,
                                                                     139,
                                                                     1),
-                                                            primary:
+                                                            foregroundColor:
                                                                 Colors.white,
                                                           ),
                                                         ),
@@ -993,4 +1003,34 @@ class _ProfileWallState extends State<ProfileWall>
   }
 
   void _saveInformation() {}
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Gallery'),
+                      onTap: () {
+                        imgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      imgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
 }
