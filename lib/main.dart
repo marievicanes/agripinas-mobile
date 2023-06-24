@@ -285,8 +285,6 @@ class _RegisterState extends State<Register> {
         _selectedDate = pickedDate;
         _birthDateController.text =
             "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}";
-
-        // Update the age when the date is selected
         _ageController.text = _calculateAge(_selectedDate).toString();
       });
     }
