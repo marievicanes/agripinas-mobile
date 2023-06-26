@@ -115,6 +115,7 @@ class _CommentSectionState extends State<CommentSection> {
                 children: [
                   Expanded(
                     child: TextField(
+                      maxLines: null,
                       controller: commentController,
                       decoration: InputDecoration(
                         hintText: 'Reply here...',

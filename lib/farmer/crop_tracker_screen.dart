@@ -551,6 +551,56 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                           );
                                         },
                                       );
+                                    } else if (value == 'delete') {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text(
+                                              'Delete Tracker?',
+                                              style: TextStyle(
+                                                  fontFamily: 'Poppins-Regular',
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            content: Text(
+                                              "This can't be undone and it will be removed from your tracker.",
+                                              style: TextStyle(
+                                                fontFamily: 'Poppins-Regular',
+                                                fontSize: 13.8,
+                                              ),
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                child: Text(
+                                                  'Cancel',
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                              TextButton(
+                                                child: Text('Delete',
+                                                    style: TextStyle(
+                                                      fontFamily:
+                                                          'Poppins-Regular',
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Color(0xFF9DC08B)
+                                                          .withAlpha(180),
+                                                    )),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
                                     }
                                   },
                                 ),
@@ -826,6 +876,56 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                 ),
                                               ],
                                             ),
+                                          );
+                                        },
+                                      );
+                                    } else if (value == 'delete') {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text(
+                                              'Delete Tracker?',
+                                              style: TextStyle(
+                                                  fontFamily: 'Poppins-Regular',
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            content: Text(
+                                              "This can't be undone and it will be removed from your tracker.",
+                                              style: TextStyle(
+                                                fontFamily: 'Poppins-Regular',
+                                                fontSize: 13.8,
+                                              ),
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                child: Text(
+                                                  'Cancel',
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                              TextButton(
+                                                child: Text('Delete',
+                                                    style: TextStyle(
+                                                      fontFamily:
+                                                          'Poppins-Regular',
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Color(0xFF9DC08B)
+                                                          .withAlpha(180),
+                                                    )),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ],
                                           );
                                         },
                                       );

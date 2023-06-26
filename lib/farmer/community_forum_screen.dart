@@ -1,5 +1,6 @@
 import 'package:capstone/farmer/comment_section.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CommunityForumScreen extends StatefulWidget {
   @override
@@ -102,8 +103,9 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                         Text(
                                           'Arriane Gatpo',
                                           style: TextStyle(
-                                              fontSize: 16.5,
-                                              fontFamily: 'Poppins'),
+                                            fontSize: 16.5,
+                                            fontFamily: 'Poppins',
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -144,9 +146,10 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                                     child: Text(
                                                       'Cancel',
                                                       style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontFamily:
-                                                              'Poppins-Regular'),
+                                                        color: Colors.black,
+                                                        fontFamily:
+                                                            'Poppins-Regular',
+                                                      ),
                                                     ),
                                                     onPressed: () {
                                                       Navigator.of(context)
@@ -179,7 +182,64 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                               );
                                             },
                                           );
-                                        } else if (value == 'delete') {}
+                                        } else if (value == 'delete') {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text(
+                                                  'Delete Post?',
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                content: Text(
+                                                  "This can't be undone and it will be removed from your profile",
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    fontSize: 13.8,
+                                                  ),
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                    child: Text(
+                                                      'Cancel',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            'Poppins-Regular',
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: Text(
+                                                      'Delete',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            'Poppins-Regular',
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Color(0xFF9DC08B)
+                                                            .withAlpha(180),
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        }
                                       },
                                       itemBuilder: (BuildContext context) =>
                                           <PopupMenuEntry<String>>[
@@ -231,7 +291,17 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                           Text(
                             'What is the srp of onions?',
                             style: TextStyle(
-                                fontSize: 15.0, fontFamily: 'Poppins-Regular'),
+                              fontSize: 15.0,
+                              fontFamily: 'Poppins-Regular',
+                            ),
+                          ),
+                          SizedBox(height: 8.0),
+                          Text(
+                            DateFormat('MMM dd, yyyy').format(DateTime.now()),
+                            style: TextStyle(
+                              fontSize: 12.0,
+                              color: Colors.grey,
+                            ),
                           ),
                           SizedBox(height: 8.0),
                           Row(
