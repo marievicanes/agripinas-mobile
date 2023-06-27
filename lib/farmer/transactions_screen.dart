@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class MarketplaceItem {
   final String userid;
-  final String itemid;
   final String pendingitemname;
   final String dateordered;
   final String unitprice;
@@ -13,7 +12,6 @@ class MarketplaceItem {
 
   MarketplaceItem({
     required this.userid,
-    required this.itemid,
     required this.pendingitemname,
     required this.dateordered,
     required this.unitprice,
@@ -26,7 +24,6 @@ class MarketplaceItem {
 
 class CancelledMarketplaceItem {
   final String userid;
-  final String itemid;
   final String cancelitemname;
   final String dateordered;
   final String unitprice;
@@ -37,7 +34,6 @@ class CancelledMarketplaceItem {
 
   CancelledMarketplaceItem({
     required this.userid,
-    required this.itemid,
     required this.cancelitemname,
     required this.dateordered,
     required this.unitprice,
@@ -50,7 +46,6 @@ class CancelledMarketplaceItem {
 
 class CompleteMarketplaceItem {
   final String userid;
-  final String itemid;
   final String completeitemname;
   final String dateordered;
   final String unitprice;
@@ -61,7 +56,6 @@ class CompleteMarketplaceItem {
 
   CompleteMarketplaceItem({
     required this.userid,
-    required this.itemid,
     required this.completeitemname,
     required this.dateordered,
     required this.unitprice,
@@ -89,7 +83,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
   final List<MarketplaceItem> items = [
     MarketplaceItem(
       userid: 'B001',
-      itemid: 'N001',
       pendingitemname: 'Onion',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱400',
@@ -100,7 +93,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     ),
     MarketplaceItem(
       userid: 'B002',
-      itemid: 'N002',
       pendingitemname: 'Rice',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱500',
@@ -111,7 +103,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     ),
     MarketplaceItem(
       userid: 'B003',
-      itemid: 'N003',
       pendingitemname: 'Pechay',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱600',
@@ -122,7 +113,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     ),
     MarketplaceItem(
       userid: 'B004',
-      itemid: 'N004',
       pendingitemname: 'Corn',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱400',
@@ -133,7 +123,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     ),
     MarketplaceItem(
       userid: 'B005',
-      itemid: 'N005',
       pendingitemname: 'Tomato',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱400',
@@ -144,7 +133,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     ),
     MarketplaceItem(
       userid: 'B006',
-      itemid: 'N006',
       pendingitemname: 'Calamansi',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱400',
@@ -157,7 +145,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
   final List<CancelledMarketplaceItem> cancelitems = [
     CancelledMarketplaceItem(
       userid: 'B001',
-      itemid: 'N001',
       cancelitemname: 'Pechay',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱400',
@@ -168,7 +155,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     ),
     CancelledMarketplaceItem(
       userid: 'B002',
-      itemid: 'N002',
       cancelitemname: 'Onion',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱500',
@@ -179,7 +165,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     ),
     CancelledMarketplaceItem(
       userid: 'B003',
-      itemid: 'N003',
       cancelitemname: 'Squash',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱600',
@@ -190,7 +175,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     ),
     CancelledMarketplaceItem(
       userid: 'B004',
-      itemid: 'N004',
       cancelitemname: 'Corn',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱400',
@@ -201,7 +185,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     ),
     CancelledMarketplaceItem(
       userid: 'B005',
-      itemid: 'N005',
       cancelitemname: 'Calamansi',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱400',
@@ -212,7 +195,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     ),
     CancelledMarketplaceItem(
       userid: 'B006',
-      itemid: 'N006',
       cancelitemname: 'Siling Labuyo',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱400',
@@ -225,7 +207,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
   final List<CompleteMarketplaceItem> completeitems = [
     CompleteMarketplaceItem(
       userid: 'B001',
-      itemid: 'N001',
       completeitemname: 'Squash',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱400',
@@ -236,7 +217,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     ),
     CompleteMarketplaceItem(
       userid: 'B002',
-      itemid: 'N002',
       completeitemname: 'Watermelon',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱500',
@@ -247,7 +227,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     ),
     CompleteMarketplaceItem(
       userid: 'B003',
-      itemid: 'N003',
       completeitemname: 'Corn',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱600',
@@ -258,7 +237,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     ),
     CompleteMarketplaceItem(
       userid: 'B004',
-      itemid: 'N004',
       completeitemname: 'Pechay',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱400',
@@ -269,7 +247,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     ),
     CompleteMarketplaceItem(
       userid: 'B005',
-      itemid: 'N005',
       completeitemname: 'Calamansi',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱400',
@@ -280,7 +257,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     ),
     CompleteMarketplaceItem(
       userid: 'B006',
-      itemid: 'N006',
       completeitemname: 'Siling Labuyo',
       dateordered: '02 / 01 / 2023',
       unitprice: '₱400',
@@ -316,7 +292,12 @@ class _TransactionsScreenState extends State<TransactionsScreen>
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
           backgroundColor: Color(0xFFA9AF7E),
           centerTitle: true,
           title: Row(
@@ -518,13 +499,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                           fontWeight: FontWeight.bold,
                                           color: Color(0xFF718C53),
                                         ),
-                                      ),
-                                      SizedBox(height: 2),
-                                      Text(
-                                        item.itemid,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       SizedBox(height: 2),
                                       Text(
@@ -862,13 +836,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                       ),
                                       SizedBox(height: 2),
                                       Text(
-                                        item.itemid,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins-Medium'),
-                                      ),
-                                      SizedBox(height: 2),
-                                      Text(
                                         item.userid,
                                         style: TextStyle(
                                             fontSize: 14,
@@ -1199,13 +1166,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                           fontWeight: FontWeight.bold,
                                           color: Color(0xFF718C53),
                                         ),
-                                      ),
-                                      SizedBox(height: 2),
-                                      Text(
-                                        item.itemid,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins-Medium'),
                                       ),
                                       SizedBox(height: 2),
                                       Text(

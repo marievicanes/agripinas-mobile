@@ -1,27 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'profile_wall.dart';
+import 'package:intl/intl.dart';
 
 class MarketplaceItem {
   final String crops;
   final String quantity;
-  final String imageUrl;
+  final String etharvest1;
 
   MarketplaceItem({
     required this.crops,
     required this.quantity,
-    required this.imageUrl,
+    required this.etharvest1,
   });
 }
 
 class HarvestedItem {
   final String cropsharvested;
   final String cropsquantity;
+  final String etharvest;
   final String imageUrl1;
 
   HarvestedItem({
     required this.cropsharvested,
     required this.cropsquantity,
+    required this.etharvest,
     required this.imageUrl1,
   });
 }
@@ -40,6 +44,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
   late TabController _tabController;
   final _postController = TextEditingController();
   File? _selectedImage;
+  DateTime? selectedDate;
 
   Future<void> _selectImage() async {
     final picker = ImagePicker();
@@ -52,68 +57,89 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
     }
   }
 
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1999),
+      lastDate: DateTime.now(),
+    );
+
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
   final List<MarketplaceItem> items = [
     MarketplaceItem(
       crops: 'Tomato',
-      quantity: '10kg',
-      imageUrl: 'assets/tomato.png',
+      quantity: 'Date Planted: 05/11/2020',
+      etharvest1: 'Estimated Date to Harvest: 05/11/2021',
     ),
     MarketplaceItem(
       crops: 'Onion',
-      quantity: '5kg',
-      imageUrl: 'assets/onion.png',
+      quantity: 'Date Planted: 05/11/2020',
+      etharvest1: 'Estimated Date to Harvest: 05/11/2021',
     ),
     MarketplaceItem(
       crops: 'Pechay',
-      quantity: '55kg',
-      imageUrl: 'assets/pechay.png',
+      quantity: 'Date Planted: 05/11/2020',
+      etharvest1: 'Estimated Date to Harvest: 05/11/2021',
     ),
     MarketplaceItem(
       crops: 'Rice',
-      quantity: '20kg',
-      imageUrl: 'assets/rice.png',
+      quantity: 'Date Planted: 05/11/2020',
+      etharvest1: 'Estimated Date to Harvest: 05/11/2021',
     ),
     MarketplaceItem(
       crops: 'Calamansi',
-      quantity: '55kg',
-      imageUrl: 'assets/calamansi.png',
+      quantity: 'Date Planted: 05/11/2020',
+      etharvest1: 'Estimated Date to Harvest: 05/11/2021',
     ),
     MarketplaceItem(
       crops: 'Corn',
-      quantity: '30kg',
-      imageUrl: 'assets/corn.png',
+      quantity: 'Date Planted: 05/11/2020',
+      etharvest1: 'Estimated Date to Harvest: 05/11/2021',
     ),
   ];
 
   final List<HarvestedItem> harvesteditems = [
     HarvestedItem(
       cropsharvested: 'Squash',
-      cropsquantity: '20kg',
+      cropsquantity: 'Date Planted: 05/11/2020',
+      etharvest: 'Estimated Date to Harvest: 05/11/2021',
       imageUrl1: 'assets/kalabasa.png',
     ),
     HarvestedItem(
       cropsharvested: 'Corn',
-      cropsquantity: '10kg',
+      cropsquantity: 'Date Planted: 05/11/2020',
+      etharvest: 'Estimated Date to Harvest: 05/11/2021',
       imageUrl1: 'assets/corn.png',
     ),
     HarvestedItem(
       cropsharvested: 'Watermelon',
-      cropsquantity: '55kg',
+      cropsquantity: 'Date Planted: 05/11/2020',
+      etharvest: 'Estimated Date to Harvest: 05/11/2021',
       imageUrl1: 'assets/pakwan.png',
     ),
     HarvestedItem(
       cropsharvested: 'Siling Labuyo',
-      cropsquantity: '100kg',
+      cropsquantity: 'Date Planted: 05/11/2020',
+      etharvest: 'Estimated Date to Harvest: 05/11/2021',
       imageUrl1: 'assets/sili.png',
     ),
     HarvestedItem(
       cropsharvested: 'Pechay',
-      cropsquantity: '75kg',
+      cropsquantity: 'Date Planted: 05/11/2020',
+      etharvest: 'Estimated Date to Harvest: 05/11/2021',
       imageUrl1: 'assets/pechay.png',
     ),
     HarvestedItem(
       cropsharvested: 'Calamansi',
-      cropsquantity: '20kg',
+      cropsquantity: 'Date Planted: 05/11/2020',
+      etharvest: 'Estimated Date to Harvest: 05/11/2021',
       imageUrl1: 'assets/calamansi.png',
     ),
   ];
@@ -143,7 +169,12 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
           backgroundColor: Color(0xFFA9AF7E),
           centerTitle: true,
           title: Row(
@@ -291,7 +322,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                       crossAxisCount: 2,
                       crossAxisSpacing: 12,
                       mainAxisSpacing: 10,
-                      childAspectRatio: 3 / 4,
+                      childAspectRatio: 3 / 2,
                     ),
                     itemCount: items.length,
                     itemBuilder: (context, index) {
@@ -305,25 +336,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Expanded(
-                                    child: Center(
-                                      child: Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: Image.asset(
-                                            item.imageUrl,
-                                            fit: BoxFit.cover,
-                                            width: 200,
-                                            height: 148,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
                                   Padding(
-                                    padding: EdgeInsets.fromLTRB(8, 5, 8, 20),
+                                    padding: EdgeInsets.fromLTRB(8, 10, 8, 4),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -337,6 +351,13 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                         SizedBox(height: 4),
                                         Text(
                                           item.quantity,
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              fontFamily: 'Poppins-Light'),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          item.etharvest1,
                                           style: TextStyle(
                                               fontSize: 13,
                                               fontFamily: 'Poppins-Light'),
@@ -642,14 +663,14 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                             item.imageUrl1,
                                             fit: BoxFit.cover,
                                             width: 200,
-                                            height: 140,
+                                            height: 125,
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.fromLTRB(8, 8, 8, 20),
+                                    padding: EdgeInsets.fromLTRB(8, 2, 8, 0),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -664,6 +685,14 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                         SizedBox(height: 4),
                                         Text(
                                           item.cropsquantity,
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontFamily: 'Poppins-Light',
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          item.etharvest,
                                           style: TextStyle(
                                             fontSize: 13,
                                             fontFamily: 'Poppins-Light',

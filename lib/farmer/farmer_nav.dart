@@ -21,8 +21,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
   final List<Widget> _children = [
     MarketplaceScreen(),
     CommunityForumScreen(),
-    CropTrackerScreen(),
-    TransactionsScreen(),
     ProfileWall(),
   ];
 
@@ -34,8 +32,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
         items: [
           Icon(Icons.shopping_cart_outlined),
           Icon(Icons.forum_outlined),
-          Icon(Icons.agriculture_outlined),
-          Icon(Icons.money_outlined),
           Icon(Icons.person_outline),
         ],
         backgroundColor: Colors.white,

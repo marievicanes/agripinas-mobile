@@ -18,6 +18,12 @@ class AgriMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         backgroundColor: Color(0xFFA9AF7E),
         title: Text(
           'Messages',
@@ -149,7 +155,7 @@ List<User> users = [
   User(
     name: 'Arriane Gatpo',
     message:
-        'Ganda ng gawa mo teh! Sample sample qui dolorem ipsum, quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem',
+        'Musta? Sample sample qui dolorem ipsum, quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem',
     time: '5:34 PM',
     profile: 'assets/user.png',
   ),

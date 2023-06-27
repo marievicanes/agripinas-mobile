@@ -1,27 +1,30 @@
-import 'package:capstone/farmer/message.dart';
-import 'package:capstone/farmer/profile_edit.dart';
-import 'package:capstone/farmer/profile_screen.dart';
-import 'package:capstone/farmer/comment_section.dart';
+import 'package:capstone/main.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:capstone/farmer/crop_tracker_screen.dart';
+import 'package:capstone/farmer/transactions_screen.dart';
+import 'package:capstone/farmer/comment_section.dart';
+import 'package:capstone/farmer/message.dart';
 import 'about_us.dart';
 import 'contact_us.dart';
+import 'notification.dart';
+import 'profile_edit.dart';
+import 'profile_screen.dart';
 
 class MarketplaceItem {
   final String title;
   final String price;
   final String farmer;
   final String description;
-  final String? imageUrl;
+  final String imageUrl;
 
   MarketplaceItem({
     required this.title,
     required this.price,
     required this.farmer,
     required this.description,
-    this.imageUrl,
+    required this.imageUrl,
   });
 }
 
@@ -46,7 +49,25 @@ class _ProfileWallState extends State<ProfileWall> {
     }
   }
 
-  final List<MarketplaceItem> items = [
+  final List<Map<String, dynamic>> listViewitems = [
+    {
+      'title': 'Crop Tracker',
+      'description': 'Tomato need to harvest',
+      'icon': Icons.agriculture_outlined,
+    },
+    {
+      'title': 'Transactions',
+      'description': "Ryan Amador's order has been completed.",
+      'icon': Icons.money,
+    },
+    {
+      'title': 'Messages',
+      'description': 'Arriane Gatpo messaged you',
+      'icon': Icons.email_outlined,
+    },
+  ];
+
+  final List<MarketplaceItem> gridViewitems = [
     MarketplaceItem(
       title: 'Tomato',
       price: '₱400',
@@ -56,14 +77,30 @@ class _ProfileWallState extends State<ProfileWall> {
       imageUrl: 'assets/tomato.png',
     ),
     MarketplaceItem(
-      title: 'Carrot',
-      price: '₱300',
-      farmer: 'John Doe',
-      description: 'The carrot is a root vegetable, usually orange in color.',
-      imageUrl: null,
+      title: 'Calamansi',
+      price: '₱400',
+      farmer: 'Jenkins Mesina',
+      description:
+          'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
+      imageUrl: 'assets/calamansi.png',
+    ),
+    MarketplaceItem(
+      title: 'Pechay',
+      price: '₱400',
+      farmer: 'Romeo London',
+      description:
+          'Pechay is a leafy, shallow-rooted, cool-season crop but can stand higher temperatures',
+      imageUrl: 'assets/pechay.png',
+    ),
+    MarketplaceItem(
+      title: 'Rice',
+      price: '₱400',
+      farmer: 'Mavic Anes',
+      description:
+          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
+      imageUrl: 'assets/rice.png',
     ),
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,202 +166,421 @@ class _ProfileWallState extends State<ProfileWall> {
               otherAccountsPictures: [
                 IconButton(
                   icon: Icon(Icons.notifications),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => AgriNotif()));
+                  },
                 ),
                 IconButton(
                   icon: Icon(Icons.message),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Message()),
-                    );
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Message()));
                   },
                 ),
               ],
             ),
             ListTile(
-              leading: Icon(Icons.person),
+              leading: Icon(Icons.person_outlined),
               title: Text(
                 'Profile',
                 style: TextStyle(fontFamily: 'Poppins-Medium'),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfileScreen()),
-                );
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ProfilePage()));
               },
             ),
             ListTile(
-              leading: Icon(Icons.edit),
-              title: Text(
-                'Edit Profile',
-                style: TextStyle(fontFamily: 'Poppins-Medium'),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfileEdit()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.shopping_bag),
-              title: Text(
-                'Marketplace',
-                style: TextStyle(fontFamily: 'Poppins-Medium'),
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.comment),
-              title: Text(
-                'Comment Section',
-                style: TextStyle(fontFamily: 'Poppins-Medium'),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CommentSection()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.info),
+              leading: Icon(Icons.info_outlined),
               title: Text(
                 'About Us',
                 style: TextStyle(fontFamily: 'Poppins-Medium'),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AboutUsScreen()),
-                );
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AboutUsScreen()));
               },
             ),
             ListTile(
-              leading: Icon(Icons.contact_mail),
+              leading: Icon(Icons.contact_mail_outlined),
               title: Text(
                 'Contact Us',
                 style: TextStyle(fontFamily: 'Poppins-Medium'),
               ),
               onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ContactUsScreen()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout_outlined),
+              title: Text(
+                'Logout',
+                style: TextStyle(fontFamily: 'Poppins-Medium'),
+              ),
+              onTap: () {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ContactUsScreen()),
-                );
+                    context, MaterialPageRoute(builder: (context) => Login()));
               },
             ),
           ],
         ),
       ),
-      body: ListView.builder(
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          final item = items[index];
-          return Container(
-            margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 2.0,
-                  blurRadius: 5.0,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ListTile(
-                  leading: CircleAvatar(
-                    radius: 25.0,
-                    backgroundImage: AssetImage('assets/user.png'),
-                  ),
-                  title: Text(
-                    item.farmer,
-                    style: TextStyle(
-                      fontFamily: 'Poppins-Medium',
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  subtitle: Text(
-                    DateFormat('yyyy-MM-dd').format(DateTime.now()),
-                    style: TextStyle(
-                      fontFamily: 'Poppins-Regular',
-                      fontSize: 12.0,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 5.0),
-                if (item.imageUrl != null)
-                  Image.network(
-                    item.imageUrl!,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: 200.0,
-                  )
-                else
-                  Container(),
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 5.0),
-                      Text(
-                        item.description,
-                        style: TextStyle(
-                          fontFamily: 'Poppins-Regular',
-                          fontSize: 14.0,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: 200,
+              child: ListView.builder(
+                itemCount: listViewitems.length,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (BuildContext context, int index) {
+                  final item = listViewitems[index];
+                  final title = item['title'];
+                  final description = item['description'] ?? '';
+                  return Card(
+                    elevation: 2,
+                    child: SizedBox(
+                      height: 62.8,
+                      child: ListTile(
+                        leading: Icon(
+                          item['icon'],
+                          size: 50,
                         ),
+                        title: Text(
+                          listViewitems[index]['title'],
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Poppins-Medium'),
+                        ),
+                        subtitle: Text(
+                          listViewitems[index]['description'],
+                          style: TextStyle(
+                              fontSize: 13, fontFamily: 'Poppins-Medium'),
+                        ),
+                        trailing: Icon(Icons.arrow_forward_ios_rounded),
+                        onTap: () {
+                          if (index == 0) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CropTrackerScreen()),
+                            );
+                          } else if (index == 1) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TransactionsScreen()),
+                            );
+                          } else if (index == 2) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Message()),
+                            );
+                          }
+                        },
                       ),
-                      SizedBox(height: 5.0),
-                      SizedBox(height: 8.0),
-                      Row(
+                    ),
+                  );
+                },
+              ),
+            ),
+            Container(
+              height: 700,
+              child: GridView.builder(
+                padding: EdgeInsets.all(10),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 15,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 2 / 3.5,
+                ),
+                itemCount: gridViewitems.length,
+                itemBuilder: (context, index) {
+                  final item = gridViewitems[index];
+                  return GestureDetector(
+                    onTap: () {},
+                    child: Card(
+                      child: Stack(
                         children: [
-                          IconButton(
-                            icon: Icon(Icons.thumb_up),
-                            onPressed: () {},
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                    child: CommentSection(),
-                                  );
-                                },
-                              );
-                            },
-                            style: ButtonStyle(
-                              foregroundColor: MaterialStateProperty.all<Color>(
-                                Colors.black,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Center(
+                                  child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.asset(
+                                        item.imageUrl,
+                                        fit: BoxFit.cover,
+                                        width: 200,
+                                        height: 150,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        item.title,
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      item.price,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      item.farmer,
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontFamily: 'Poppins-Regular'),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      item.description,
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontFamily: 'Poppins-Regular'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 8,
+                            child: PopupMenuButton<String>(
+                              icon: Icon(
+                                Icons.more_horiz,
+                                color: Color(0xFF9DC08B),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              itemBuilder: (BuildContext context) => [
+                                PopupMenuItem<String>(
+                                  value: 'edit',
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.edit,
+                                        color: Color(0xFF9DC08B).withAlpha(180),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        'Edit',
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins-Regular',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                PopupMenuItem<String>(
+                                  value: 'delete',
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.delete,
+                                        color: Color(0xFF9DC08B),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        'Delete',
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins-Regular',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                              onSelected: (String value) {
+                                if (value == 'edit') {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Center(
+                                          child: Text(
+                                            'Edit Details',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 20.0,
+                                            ),
+                                          ),
+                                        ),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  'Add photo: ',
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    fontSize: 15.5,
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  onPressed: _selectImage,
+                                                  icon: Icon(Icons.image),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 5),
+                                            _selectedImage != null
+                                                ? Image.file(
+                                                    _selectedImage!,
+                                                    width: 100,
+                                                    height: 100,
+                                                  )
+                                                : SizedBox(height: 8),
+                                            TextField(
+                                              decoration: InputDecoration(
+                                                labelText: "Crop's Name",
+                                                labelStyle: TextStyle(
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    fontSize: 15.5,
+                                                    color: Colors.black),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Color(0xFFA9AF7E)),
+                                                ),
+                                              ),
+                                            ),
+                                            TextField(
+                                              decoration: InputDecoration(
+                                                labelText: 'Price',
+                                                labelStyle: TextStyle(
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    fontSize: 15.5,
+                                                    color: Colors.black),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Color(0xFFA9AF7E)),
+                                                ),
+                                              ),
+                                            ),
+                                            TextField(
+                                              decoration: InputDecoration(
+                                                labelText: "Farmer's Name",
+                                                labelStyle: TextStyle(
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    fontSize: 15.5,
+                                                    color: Colors.black),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Color(0xFFA9AF7E)),
+                                                ),
+                                              ),
+                                            ),
+                                            TextField(
+                                              decoration: InputDecoration(
+                                                labelText: 'Description',
+                                                labelStyle: TextStyle(
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    fontSize: 15.5,
+                                                    color: Colors.black),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Color(0xFFA9AF7E)),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(height: 16.0),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text(
+                                                    'Cancel',
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontFamily:
+                                                          'Poppins-Regular',
+                                                      fontSize: 15.5,
+                                                    ),
+                                                  ),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    String postContent =
+                                                        _postController.text;
+                                                    print(postContent);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text(
+                                                    'Save',
+                                                    style: TextStyle(
+                                                      fontFamily:
+                                                          'Poppins-Regular',
+                                                    ),
+                                                  ),
+                                                  style: TextButton.styleFrom(
+                                                    backgroundColor:
+                                                        Color.fromRGBO(
+                                                            157, 192, 139, 1),
+                                                    primary: Colors.white,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }
+                              },
                             ),
-                            child: Icon(Icons.comment),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+                    ),
+                  );
+                },
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: ProfileWall(),
-  ));
 }

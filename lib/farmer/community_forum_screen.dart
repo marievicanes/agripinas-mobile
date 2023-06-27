@@ -78,6 +78,25 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
               child: ListView.builder(
                 itemCount: 5,
                 itemBuilder: (BuildContext context, int index) {
+                  final List<String> names = [
+                    'Arriane Gatpo',
+                    'Daniella Tungol',
+                    'Marievic Anes',
+                    'Emily Cooper',
+                    'Mindy Chen'
+                  ];
+                  final List<String> posts = [
+                    'What is the SRP of onions?',
+                    'Is tomato a good crop and profitable? ',
+                    'Is 300Php for a 1 kilo of onion is a reasonable price?',
+                    'How much is the agriculture tools?',
+                    'What is the SRP of tomato?'
+                  ];
+                  final String userName = names[index % names.length];
+                  final String postContent = posts[index % posts.length];
+                  final String postDate =
+                      DateFormat('MMM dd, yyyy').format(DateTime.now());
+
                   return Card(
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
@@ -101,7 +120,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                         ),
                                         SizedBox(width: 8.0),
                                         Text(
-                                          'Arriane Gatpo',
+                                          userName,
                                           style: TextStyle(
                                             fontSize: 16.5,
                                             fontFamily: 'Poppins',
@@ -289,7 +308,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                           ),
                           SizedBox(height: 8.0),
                           Text(
-                            'What is the srp of onions?',
+                            postContent,
                             style: TextStyle(
                               fontSize: 15.0,
                               fontFamily: 'Poppins-Regular',
@@ -297,7 +316,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                           ),
                           SizedBox(height: 8.0),
                           Text(
-                            DateFormat('MMM dd, yyyy').format(DateTime.now()),
+                            postDate,
                             style: TextStyle(
                               fontSize: 12.0,
                               color: Colors.grey,
