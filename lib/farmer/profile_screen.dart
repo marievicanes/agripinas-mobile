@@ -7,6 +7,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final _formKey = GlobalKey<FormState>();
   TextEditingController nameController = TextEditingController();
   TextEditingController contactNumberController = TextEditingController();
   TextEditingController addressController = TextEditingController();
@@ -58,18 +59,13 @@ class _ProfilePageState extends State<ProfilePage> {
         emailController.text.isEmpty ||
         passwordController.text.isEmpty ||
         confirmPasswordController.text.isEmpty) {
-      return false; // Return false if any of the fields are empty
+      return false;
     }
 
-    // Add any additional field validation logic here
-
-    return true; // Return true if all fields are valid
+    return true;
   }
 
   void _saveProfile() {
-    // Implement the logic to save the profile data
-    // You can access the values of the text controllers here
-    // For example:
     String name = nameController.text;
     String contactNumber = contactNumberController.text;
     String address = addressController.text;
@@ -78,8 +74,6 @@ class _ProfilePageState extends State<ProfilePage> {
     String password = passwordController.text;
     String confirmPassword = confirmPasswordController.text;
 
-    // Perform the saving logic here
-    // For demonstration purposes, print the values
     print('Name: $name');
     print('Contact Number: $contactNumber');
     print('Address: $address');
@@ -134,120 +128,293 @@ class _ProfilePageState extends State<ProfilePage> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text('Edit Profile'),
+                      title: Text(
+                        'Edit Profile',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'Poppins-Bold',
+                        ),
+                      ),
                       content: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            TextField(
-                              controller: nameController,
-                              decoration: InputDecoration(
-                                labelText: 'Name',
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                controller: nameController,
+                                decoration: InputDecoration(
+                                  labelText: 'Name',
+                                  labelStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'Poppins-Regular',
+                                    fontSize: 13,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 208, 216, 144),
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                style: TextStyle(
+                                  fontFamily: 'Poppins-Regular',
+                                  fontSize: 14,
+                                ),
+                                validator: (value) {
+                                  if (value?.isEmpty ?? true) {
+                                    return 'Please enter your name';
+                                  }
+                                  return null;
+                                },
                               ),
-                            ),
-                            TextField(
-                              controller: contactNumberController,
-                              decoration: InputDecoration(
-                                labelText: 'Contact Number',
+                              TextFormField(
+                                controller: contactNumberController,
+                                decoration: InputDecoration(
+                                  labelText: 'Contact Number',
+                                  labelStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'Poppins-Regular',
+                                    fontSize: 13,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 208, 216, 144),
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                style: TextStyle(
+                                  fontFamily: 'Poppins-Regular',
+                                  fontSize: 14,
+                                ),
+                                validator: (value) {
+                                  if (value?.isEmpty ?? true) {
+                                    return 'Please enter your contact number';
+                                  }
+                                  return null;
+                                },
                               ),
-                            ),
-                            TextField(
-                              controller: addressController,
-                              decoration: InputDecoration(
-                                labelText: 'Address',
+                              TextFormField(
+                                controller: addressController,
+                                decoration: InputDecoration(
+                                  labelText: 'Address',
+                                  labelStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'Poppins-Regular',
+                                    fontSize: 13,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 208, 216, 144),
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                style: TextStyle(
+                                  fontFamily: 'Poppins-Regular',
+                                  fontSize: 14,
+                                ),
+                                validator: (value) {
+                                  if (value?.isEmpty ?? true) {
+                                    return 'Please enter your address';
+                                  }
+                                  return null;
+                                },
                               ),
-                            ),
-                            SizedBox(height: 16.0),
-                            TextField(
-                              readOnly: true,
-                              controller: TextEditingController(
-                                text: _dateFormat
-                                    .format(birthdate ?? DateTime.now()),
-                              ),
-                              onTap: () {
-                                showDatePicker(
-                                  context: context,
-                                  initialDate: birthdate ?? DateTime.now(),
-                                  firstDate: DateTime(1900),
-                                  lastDate: DateTime.now(),
-                                ).then((selectedDate) {
-                                  setState(() {
-                                    if (selectedDate != null) {
-                                      birthdate = selectedDate;
-                                      _calculateAge();
-                                    }
+                              SizedBox(height: 16.0),
+                              TextFormField(
+                                readOnly: true,
+                                controller: TextEditingController(
+                                  text: _dateFormat
+                                      .format(birthdate ?? DateTime.now()),
+                                ),
+                                onTap: () {
+                                  showDatePicker(
+                                    context: context,
+                                    initialDate: birthdate ?? DateTime.now(),
+                                    firstDate: DateTime(1900),
+                                    lastDate: DateTime.now(),
+                                  ).then((selectedDate) {
+                                    setState(() {
+                                      if (selectedDate != null) {
+                                        birthdate = selectedDate;
+                                        _calculateAge();
+                                      }
+                                    });
                                   });
-                                });
-                              },
-                              decoration: InputDecoration(
-                                labelText: 'Birthdate',
+                                },
+                                decoration: InputDecoration(
+                                  labelText: 'Birthdate',
+                                  labelStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'Poppins-Regular',
+                                    fontSize: 13,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 208, 216, 144),
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                style: TextStyle(
+                                  fontFamily: 'Poppins-Regular',
+                                  fontSize: 14,
+                                ),
+                                validator: (value) {
+                                  if (value?.isEmpty ?? true) {
+                                    return 'Please select your birthdate';
+                                  }
+                                  return null;
+                                },
                               ),
-                            ),
-                            TextField(
-                              readOnly: true,
-                              controller: TextEditingController(
-                                text: age.toString(),
+                              TextFormField(
+                                readOnly: true,
+                                controller: TextEditingController(
+                                  text: age.toString(),
+                                ),
+                                decoration: InputDecoration(
+                                  labelText: 'Age',
+                                  labelStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'Poppins-Regular',
+                                    fontSize: 13,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 208, 216, 144),
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                style: TextStyle(
+                                  fontFamily: 'Poppins-Regular',
+                                  fontSize: 14,
+                                ),
+                                validator: (value) {
+                                  return null;
+                                },
                               ),
-                              decoration: InputDecoration(
-                                labelText: 'Age',
+                              TextFormField(
+                                controller: emailController,
+                                decoration: InputDecoration(
+                                  labelText: 'Email',
+                                  labelStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'Poppins-Regular',
+                                    fontSize: 13,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 208, 216, 144),
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                style: TextStyle(
+                                  fontFamily: 'Poppins-Regular',
+                                  fontSize: 14,
+                                ),
+                                validator: (value) {
+                                  if (value?.isEmpty ?? true) {
+                                    return 'Please enter your email';
+                                  }
+                                  return null;
+                                },
                               ),
-                            ),
-                            TextField(
-                              controller: emailController,
-                              decoration: InputDecoration(
-                                labelText: 'Email',
+                              TextFormField(
+                                controller: passwordController,
+                                decoration: InputDecoration(
+                                  labelText: 'Password',
+                                  labelStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'Poppins-Regular',
+                                    fontSize: 13,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 208, 216, 144),
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                style: TextStyle(
+                                  fontFamily: 'Poppins-Regular',
+                                  fontSize: 14,
+                                ),
+                                obscureText: true,
+                                validator: (value) {
+                                  if (value?.isEmpty ?? true) {
+                                    return 'Please enter a password';
+                                  }
+
+                                  return null;
+                                },
                               ),
-                            ),
-                            TextField(
-                              controller: passwordController,
-                              decoration: InputDecoration(
-                                labelText: 'Password',
+                              TextFormField(
+                                controller: confirmPasswordController,
+                                decoration: InputDecoration(
+                                  labelText: 'Confirm Password',
+                                  labelStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'Poppins-Regular',
+                                    fontSize: 13,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 208, 216, 144),
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                style: TextStyle(
+                                  fontFamily: 'Poppins-Regular',
+                                  fontSize: 14,
+                                ),
+                                obscureText: true,
+                                validator: (value) {
+                                  if (value?.isEmpty ?? true) {
+                                    return 'Please confirm your password';
+                                  }
+                                  if (value != passwordController.text) {
+                                    return 'Passwords do not match';
+                                  }
+                                  return null;
+                                },
                               ),
-                              obscureText: true,
-                            ),
-                            TextField(
-                              controller: confirmPasswordController,
-                              decoration: InputDecoration(
-                                labelText: 'Confirm Password',
-                              ),
-                              obscureText: true,
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                       actions: [
                         TextButton(
                           onPressed: () {
-                            if (_validateFields()) {
+                            if (_formKey.currentState?.validate() ?? false) {
                               _saveProfile();
                               Navigator.pop(context);
-                            } else {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text('Error'),
-                                    content: Text(
-                                        'Please fill all the fields correctly.'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text('OK'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
                             }
                           },
-                          child: Text('Save'),
+                          child: Text(
+                            'Save',
+                            style: TextStyle(
+                              color: Color(0xFF27AE60),
+                              fontFamily: 'Poppins-Regular',
+                              fontSize: 15.5,
+                            ),
+                          ),
                         ),
                         TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text('Cancel'),
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'Poppins-Regular',
+                              fontSize: 15.5,
+                            ),
+                          ),
                         ),
                       ],
                     );
