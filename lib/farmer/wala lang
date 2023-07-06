@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'dart:io';
 import 'profile_wall.dart';
 import 'package:intl/intl.dart';
@@ -47,17 +47,6 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
   final _postController = TextEditingController();
   File? _selectedImage;
   DateTime? selectedDate;
-
-  Future<void> _selectImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        _selectedImage = File(pickedFile.path);
-      });
-    }
-  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -401,6 +390,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                             ],
                                           ),
                                         ),
+                                        SizedBox(height: 4),
                                         Padding(
                                           padding: const EdgeInsets.all(1.0),
                                           child: Column(
@@ -431,10 +421,10 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                               ),
                               Positioned(
                                 top: 0,
-                                right: 0,
+                                right: 8,
                                 child: PopupMenuButton<String>(
                                   icon: Icon(
-                                    Icons.more_vert,
+                                    Icons.more_horiz,
                                     color: Color(0xFF9DC08B),
                                   ),
                                   shape: RoundedRectangleBorder(
@@ -497,14 +487,36 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                             content: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                TextField(
+                                                TextFormField(
+                                                  onTap: () {
+                                                    DatePicker.showDatePicker(
+                                                      context,
+                                                      showTitleActions: true,
+                                                      minTime:
+                                                          DateTime(2000, 1, 1),
+                                                      maxTime: DateTime(
+                                                          2030, 12, 31),
+                                                      onChanged: (date) {
+                                                        // Perform any necessary actions when the date is changed
+                                                      },
+                                                      onConfirm: (date) {
+                                                        // Perform any necessary actions when the date is confirmed
+                                                        // You can update the value of item.datedplanted here
+                                                      },
+                                                      currentTime:
+                                                          DateTime.now(),
+                                                      locale: LocaleType
+                                                          .en, // Set the desired locale
+                                                    );
+                                                  },
                                                   decoration: InputDecoration(
-                                                    labelText: "Crop's Name",
+                                                    labelText: "Date Planted",
                                                     labelStyle: TextStyle(
-                                                        fontFamily:
-                                                            'Poppins-Regular',
-                                                        fontSize: 15.5,
-                                                        color: Colors.black),
+                                                      fontFamily:
+                                                          'Poppins-Regular',
+                                                      fontSize: 15.5,
+                                                      color: Colors.black,
+                                                    ),
                                                     focusedBorder:
                                                         OutlineInputBorder(
                                                       borderSide: BorderSide(
@@ -719,19 +731,44 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                           ),
                                         ),
                                         SizedBox(height: 4),
-                                        Text(
-                                          item.cropsquantity,
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontFamily: 'Poppins-Light',
-                                          ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Date Planted:',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              item.cropsquantity,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          item.etharvest,
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontFamily: 'Poppins-Light',
+                                        Padding(
+                                          padding: const EdgeInsets.all(1.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Estimated Date to Harvest:',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                item.etharvest,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
@@ -807,32 +844,6 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                             content: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      'Add photo: ',
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Poppins-Regular',
-                                                        fontSize: 15.5,
-                                                      ),
-                                                    ),
-                                                    IconButton(
-                                                      onPressed: _selectImage,
-                                                      icon: Icon(Icons.image),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 5),
-                                                _selectedImage != null
-                                                    ? Image.file(
-                                                        _selectedImage!,
-                                                        width: 100,
-                                                        height: 100,
-                                                      )
-                                                    : SizedBox(height: 8),
                                                 TextField(
                                                   decoration: InputDecoration(
                                                     labelText: "Crop's Name",
