@@ -97,13 +97,14 @@ class AnnouncementCard extends StatelessWidget {
                   'Posted by $adminName',
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Poppins',
                   ),
                 ),
                 Text(
                   '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute}',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
+                    fontFamily: 'Poppins-Medium',
                     color: Colors.grey,
                   ),
                 ),
@@ -114,13 +115,16 @@ class AnnouncementCard extends StatelessWidget {
               title,
               style: TextStyle(
                 fontSize: 24,
-                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins',
               ),
             ),
             SizedBox(height: 20),
             Text(
               content,
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(
+                fontSize: 14,
+                fontFamily: 'Poppins-Regular',
+              ),
             ),
           ],
         ),
