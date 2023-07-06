@@ -7,6 +7,7 @@ import 'package:capstone/farmer/transactions_screen.dart';
 import 'package:capstone/farmer/comment_section.dart';
 import 'package:capstone/farmer/message.dart';
 import 'about_us.dart';
+import 'announcement.dart';
 import 'contact_us.dart';
 import 'notification.dart';
 import 'profile_edit.dart';
@@ -189,6 +190,19 @@ class _ProfileWallState extends State<ProfileWall> {
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => ProfilePage()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.announcement_outlined),
+              title: Text(
+                'Announcement',
+                style: TextStyle(fontFamily: 'Poppins-Medium'),
+              ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AnnouncementScreen()));
               },
             ),
             ListTile(

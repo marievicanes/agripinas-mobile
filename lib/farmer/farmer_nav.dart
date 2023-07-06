@@ -4,6 +4,7 @@ import 'package:capstone/farmer/crop_tracker_screen.dart';
 import 'package:capstone/farmer/community_forum_screen.dart';
 import 'package:capstone/farmer/transactions_screen.dart';
 import 'package:capstone/farmer/profile_wall.dart';
+import 'package:capstone/farmer/dashboard_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -19,6 +20,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   int _currentIndex = 0;
 
   final List<Widget> _children = [
+    DashboardScreen(),
     MarketplaceScreen(),
     CommunityForumScreen(),
     ProfileWall(),
@@ -30,6 +32,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       body: _children[_currentIndex],
       bottomNavigationBar: CurvedNavigationBar(
         items: [
+          Icon(Icons.dashboard_customize),
           Icon(Icons.shopping_cart_outlined),
           Icon(Icons.forum_outlined),
           Icon(Icons.person_outline),

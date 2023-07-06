@@ -1,4 +1,6 @@
+import 'package:capstone/farmer/profile_wall.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(Message());
@@ -18,13 +20,12 @@ class AgriMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+        backgroundColor: Color(0xFFA9AF7E),
+        leading: BackButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context).pop();
           },
         ),
-        backgroundColor: Color(0xFFA9AF7E),
         title: Text(
           'Messages',
           style: TextStyle(fontFamily: 'Poppins'),

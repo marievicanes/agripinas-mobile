@@ -97,6 +97,13 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                   final String postDate =
                       DateFormat('MMM dd, yyyy').format(DateTime.now());
 
+                  if (_searchText.isNotEmpty &&
+                      !postContent
+                          .toLowerCase()
+                          .contains(_searchText.toLowerCase())) {
+                    return Container();
+                  }
+
                   return Card(
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
