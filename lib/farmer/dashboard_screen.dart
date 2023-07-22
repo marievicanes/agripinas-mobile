@@ -141,6 +141,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ],
                 ),
+                Text(
+                  'July 6, Monday',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
                 SizedBox(height: 20.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

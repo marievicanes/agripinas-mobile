@@ -17,6 +17,7 @@ class MarketplaceItem {
   final String title;
   final String price;
   final String farmer;
+  final String location;
   final String description;
   final String imageUrl;
 
@@ -24,6 +25,7 @@ class MarketplaceItem {
     required this.title,
     required this.price,
     required this.farmer,
+    required this.location,
     required this.description,
     required this.imageUrl,
   });
@@ -73,33 +75,37 @@ class _ProfileWallState extends State<ProfileWall> {
       title: 'Tomato',
       price: '₱400',
       farmer: 'Arriane Gatpo',
+      location: 'Brgy. Bagong Buhay',
       description:
           'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
       imageUrl: 'assets/tomato.png',
     ),
     MarketplaceItem(
+      title: 'Corn',
+      price: '₱4500',
+      farmer: 'Marievic Añes',
+      location: 'Brgy. Bagong Silang',
+      description:
+          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
+      imageUrl: 'assets/corn.png',
+    ),
+    MarketplaceItem(
       title: 'Calamansi',
       price: '₱400',
       farmer: 'Jenkins Mesina',
+      location: 'Brgy. Concepcion',
       description:
           'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
       imageUrl: 'assets/calamansi.png',
     ),
     MarketplaceItem(
-      title: 'Pechay',
-      price: '₱400',
-      farmer: 'Romeo London',
+      title: 'Corn',
+      price: '₱4500',
+      farmer: 'Marievic Añes',
+      location: 'Brgy. Bagong Silang',
       description:
-          'Pechay is a leafy, shallow-rooted, cool-season crop but can stand higher temperatures',
-      imageUrl: 'assets/pechay.png',
-    ),
-    MarketplaceItem(
-      title: 'Rice',
-      price: '₱400',
-      farmer: 'Mavic Anes',
-      description:
-          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
-      imageUrl: 'assets/rice.png',
+          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
+      imageUrl: 'assets/corn.png',
     ),
   ];
   @override
@@ -311,7 +317,7 @@ class _ProfileWallState extends State<ProfileWall> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 15,
                   mainAxisSpacing: 10,
-                  childAspectRatio: 2 / 3.5,
+                  childAspectRatio: 2 / 4,
                 ),
                 itemCount: gridViewitems.length,
                 itemBuilder: (context, index) {
@@ -355,26 +361,86 @@ class _ProfileWallState extends State<ProfileWall> {
                                       ),
                                     ),
                                     SizedBox(height: 4),
-                                    Text(
-                                      item.price,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Price: ',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          item.price,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Farmer: ',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          item.farmer,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(1.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Location:',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            item.location,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      item.farmer,
-                                      style: TextStyle(
-                                          fontSize: 13,
-                                          fontFamily: 'Poppins-Regular'),
-                                    ),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      item.description,
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontFamily: 'Poppins-Regular'),
+                                    Padding(
+                                      padding: const EdgeInsets.all(1.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Description:',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            item.description,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),

@@ -2,14 +2,10 @@ import 'package:capstone/buyer/marketplace_screen.dart';
 import 'package:capstone/buyer/add_to_cart.dart';
 import 'package:capstone/buyer/community_forum_screen.dart';
 import 'package:capstone/buyer/transactions_screen.dart';
-import 'package:capstone/buyer/profile_screen.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-
 
 class BuyerNavBar extends StatefulWidget {
   @override
@@ -24,8 +20,6 @@ class _BuyerNavBarState extends State<BuyerNavBar> {
     AddToCart(),
     CommunityForumScreen(),
     TransactionBuyer(),
-    ProfileScreen(),
-    
   ];
 
   @override
@@ -37,8 +31,7 @@ class _BuyerNavBarState extends State<BuyerNavBar> {
           Icon(Icons.shopping_bag_outlined),
           Icon(Icons.shopping_cart_checkout_outlined),
           Icon(Icons.forum_outlined),
-          Icon(Icons.money_outlined),
-          Icon(Icons.person_outline),
+          Icon(Icons.person_outlined),
         ],
         backgroundColor: Colors.white,
         color: Color(0xFFA9AF7E),

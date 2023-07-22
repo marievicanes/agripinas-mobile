@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(AgriNotif());
+  runApp(BuyerAgriNotif());
 }
 
-class AgriNotif extends StatelessWidget {
+class BuyerAgriNotif extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

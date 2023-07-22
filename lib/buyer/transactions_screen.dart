@@ -1,194 +1,291 @@
 import 'package:flutter/material.dart';
 
+import '../main.dart';
+import 'about_us.dart';
+import 'buyer_notif.dart';
+import 'buyer_profilepage.dart';
+import 'contact_us.dart';
+import 'message.dart';
+
+class MarketplaceItem {
+  final String pendingitemname;
+  final String rcategory;
+  final String dateordered;
+  final String unitprice;
+  final String quantity;
+  final String totalamount;
+  final String buyername;
+  final String imageUrl;
+
+  MarketplaceItem({
+    required this.pendingitemname,
+    required this.rcategory,
+    required this.dateordered,
+    required this.unitprice,
+    required this.quantity,
+    required this.totalamount,
+    required this.buyername,
+    required this.imageUrl,
+  });
+}
+
+class CancelledMarketplaceItem {
+  final String cancelitemname;
+  final String cancategory;
+  final String dateordered;
+  final String unitprice;
+  final String quantity;
+  final String totalamount;
+  final String buyername;
+  final String imageUrl1;
+
+  CancelledMarketplaceItem({
+    required this.cancelitemname,
+    required this.cancategory,
+    required this.dateordered,
+    required this.unitprice,
+    required this.quantity,
+    required this.totalamount,
+    required this.buyername,
+    required this.imageUrl1,
+  });
+}
+
+class CompleteMarketplaceItem {
+  final String completeitemname;
+  final String comcategory;
+  final String dateordered;
+  final String unitprice;
+  final String quantity;
+  final String totalamount;
+  final String buyername;
+  final String imageUrl2;
+
+  CompleteMarketplaceItem({
+    required this.completeitemname,
+    required this.comcategory,
+    required this.dateordered,
+    required this.unitprice,
+    required this.quantity,
+    required this.totalamount,
+    required this.buyername,
+    required this.imageUrl2,
+  });
+}
+
 class TransactionBuyer extends StatefulWidget {
   @override
   _TransactionBuyerState createState() => _TransactionBuyerState();
 }
 
-class _TransactionBuyerState extends State<TransactionBuyer> {
+class _TransactionBuyerState extends State<TransactionBuyer>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
+  String? selectedStatus;
+  bool _isButtonVisible = true;
+  late TabController _tabController;
+  final _postController = TextEditingController();
 
-  List<DataRow> _rows = [
-    DataRow(
-      cells: [
-        DataCell(Text('B001')),
-        DataCell(Text('N001')),
-        DataCell(Text('Onion')),
-        DataCell(Text('02/01/2023')),
-        DataCell(Text('400 / kg')),
-        DataCell(Text('2 kg')),
-        DataCell(Text('800')),
-        DataCell(Text('Ryan Amador')),
-        DataCell(
-          DropdownButton<String>(
-            value: 'pending',
-            items: [
-              DropdownMenuItem<String>(
-                value: 'pending',
-                child: Text('Pending'),
-              ),
-              DropdownMenuItem<String>(
-                value: 'cancelled',
-                child: Text('Cancelled'),
-              ),
-              DropdownMenuItem<String>(
-                value: 'completed',
-                child: Text('Completed'),
-              ),
-            ],
-            onChanged: (value) {},
-          ),
-        ),
-        DataCell(
-          Icon(
-            Icons.edit,
-            color: Color(0xFF9DC08B).withAlpha(130),
-          ),
-        ),
-        DataCell(
-          Icon(
-            Icons.delete,
-            color: Color(0xFF9DC08B),
-          ),
-        ),
-      ],
+  final List<MarketplaceItem> items = [
+    MarketplaceItem(
+      pendingitemname: 'Onion',
+      rcategory: 'Vegetable',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '5',
+      totalamount: '₱2,000',
+      buyername: 'Ryan Amador',
+      imageUrl: 'assets/onion.png',
     ),
-    DataRow(
-      cells: [
-        DataCell(Text('B002')),
-        DataCell(Text('N002')),
-        DataCell(Text('Garlic')),
-        DataCell(Text('02/05/2023')),
-        DataCell(Text('120 / kg')),
-        DataCell(Text('3 kg')),
-        DataCell(Text('360')),
-        DataCell(Text('Daniel Ribaya')),
-        DataCell(
-          DropdownButton<String>(
-            value: 'pending',
-            items: [
-              DropdownMenuItem<String>(
-                value: 'pending',
-                child: Text('Pending'),
-              ),
-              DropdownMenuItem<String>(
-                value: 'cancelled',
-                child: Text('Cancelled'),
-              ),
-              DropdownMenuItem<String>(
-                value: 'completed',
-                child: Text('Completed'),
-              ),
-            ],
-            onChanged: (value) {},
-          ),
-        ),
-        DataCell(
-          Icon(
-            Icons.edit,
-            color: Color(0xFF9DC08B).withAlpha(130),
-          ),
-        ),
-        DataCell(
-          Icon(
-            Icons.delete,
-            color: Color(0xFF9DC08B),
-          ),
-        ),
-      ],
+    MarketplaceItem(
+      pendingitemname: 'Rice',
+      rcategory: 'Grain',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱500',
+      quantity: '9',
+      totalamount: '₱3,600',
+      buyername: 'Daniel Ribaya',
+      imageUrl: 'assets/rice.png',
+    ),
+    MarketplaceItem(
+      pendingitemname: 'Pechay',
+      rcategory: 'Vegetable',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱600',
+      quantity: '2',
+      totalamount: 'Php 1200',
+      buyername: 'Ryan Amador',
+      imageUrl: 'assets/pechay.png',
+    ),
+    MarketplaceItem(
+      pendingitemname: 'Corn',
+      rcategory: 'Fruit',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '10',
+      totalamount: '₱4,000',
+      buyername: 'Jenkins Mesina',
+      imageUrl: 'assets/corn.png',
+    ),
+    MarketplaceItem(
+      pendingitemname: 'Tomato',
+      rcategory: 'Fruit',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '11',
+      totalamount: '₱4,400',
+      buyername: 'Ryan Amador',
+      imageUrl: 'assets/tomato.png',
+    ),
+    MarketplaceItem(
+      pendingitemname: 'Calamansi',
+      rcategory: 'Fruit',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '12',
+      totalamount: '₱4,800',
+      buyername: 'Ryan Amador',
+      imageUrl: 'assets/calamansi.png',
     ),
   ];
-  List<DataRow> _rows1 = [
-    DataRow(
-      cells: [
-        DataCell(Text('B001')),
-        DataCell(Text('N001')),
-        DataCell(Text('Onion')),
-        DataCell(Text('02/01/2023')),
-        DataCell(Text('400 / kg')),
-        DataCell(Text('2 kg')),
-        DataCell(Text('800')),
-        DataCell(Text('Ryan Edward')),
-        DataCell(
-          DropdownButton<String>(
-            value: 'pending',
-            items: [
-              DropdownMenuItem<String>(
-                value: 'pending',
-                child: Text('Pending'),
-              ),
-              DropdownMenuItem<String>(
-                value: 'cancelled',
-                child: Text('Cancelled'),
-              ),
-              DropdownMenuItem<String>(
-                value: 'completed',
-                child: Text('Completed'),
-              ),
-            ],
-            onChanged: (value) {},
-          ),
-        ),
-        DataCell(
-          Icon(
-            Icons.edit,
-            color: Color(0xFF9DC08B).withAlpha(130),
-          ),
-        ),
-        DataCell(
-          Icon(
-            Icons.delete,
-            color: Color(0xFF9DC08B),
-          ),
-        ),
-      ],
+  final List<CancelledMarketplaceItem> cancelitems = [
+    CancelledMarketplaceItem(
+      cancelitemname: 'Pechay',
+      cancategory: 'Vegetable',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '5',
+      totalamount: '₱2,000',
+      buyername: 'Marievic Anes',
+      imageUrl1: 'assets/pechay.png',
     ),
-    DataRow(
-      cells: [
-        DataCell(Text('B002')),
-        DataCell(Text('N002')),
-        DataCell(Text('Garlic')),
-        DataCell(Text('02/05/2023')),
-        DataCell(Text('120 / kg')),
-        DataCell(Text('3 kg')),
-        DataCell(Text('360')),
-        DataCell(Text('Daniel Ribaya')),
-        DataCell(
-          DropdownButton<String>(
-            value: 'pending',
-            items: [
-              DropdownMenuItem<String>(
-                value: 'pending',
-                child: Text('Pending'),
-              ),
-              DropdownMenuItem<String>(
-                value: 'cancelled',
-                child: Text('Cancelled'),
-              ),
-              DropdownMenuItem<String>(
-                value: 'completed',
-                child: Text('Completed'),
-              ),
-            ],
-            onChanged: (value) {},
-          ),
-        ),
-        DataCell(
-          Icon(
-            Icons.edit,
-            color: Color(0xFF9DC08B).withAlpha(130),
-          ),
-        ),
-        DataCell(
-          Icon(
-            Icons.delete,
-            color: Color(0xFF9DC08B),
-          ),
-        ),
-      ],
+    CancelledMarketplaceItem(
+      cancelitemname: 'Onion',
+      cancategory: 'Vegetable',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱500',
+      quantity: '9',
+      totalamount: '₱3,600',
+      buyername: 'Daniel Ribaya',
+      imageUrl1: 'assets/onion.png',
+    ),
+    CancelledMarketplaceItem(
+      cancelitemname: 'Squash',
+      cancategory: 'Vegetable',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱600',
+      quantity: '2',
+      totalamount: 'Php 1200',
+      buyername: 'Daniella Tungol',
+      imageUrl1: 'assets/kalabasa.png',
+    ),
+    CancelledMarketplaceItem(
+      cancelitemname: 'Corn',
+      cancategory: 'Fruit',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '10',
+      totalamount: '₱4,000',
+      buyername: 'Romeo London III',
+      imageUrl1: 'assets/corn.png',
+    ),
+    CancelledMarketplaceItem(
+      cancelitemname: 'Calamansi',
+      cancategory: 'Fruit',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '11',
+      totalamount: '₱4,400',
+      buyername: 'Jenkins Mesina',
+      imageUrl1: 'assets/calamansi.png',
+    ),
+    CancelledMarketplaceItem(
+      cancelitemname: 'Siling Labuyo',
+      cancategory: 'Fruit',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '12',
+      totalamount: '₱4,800',
+      buyername: 'Ryan Amador',
+      imageUrl1: 'assets/sili.png',
     ),
   ];
+  final List<CompleteMarketplaceItem> completeitems = [
+    CompleteMarketplaceItem(
+      completeitemname: 'Squash',
+      comcategory: 'Vegetbale',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '5',
+      totalamount: '₱2,000',
+      buyername: 'Marievic Anes',
+      imageUrl2: 'assets/kalabasa.png',
+    ),
+    CompleteMarketplaceItem(
+      completeitemname: 'Watermelon',
+      comcategory: 'Fruit',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱500',
+      quantity: '9',
+      totalamount: '₱3,600',
+      buyername: 'Daniel Ribaya',
+      imageUrl2: 'assets/pakwan.png',
+    ),
+    CompleteMarketplaceItem(
+      completeitemname: 'Corn',
+      comcategory: 'Fruit',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱600',
+      quantity: '2',
+      totalamount: 'Php 1200',
+      buyername: 'Daniella Tungol',
+      imageUrl2: 'assets/corn.png',
+    ),
+    CompleteMarketplaceItem(
+      completeitemname: 'Pechay',
+      comcategory: 'Vegetbale',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '10',
+      totalamount: '₱4,000',
+      buyername: 'Romeo London III',
+      imageUrl2: 'assets/pechay.png',
+    ),
+    CompleteMarketplaceItem(
+      completeitemname: 'Calamansi',
+      comcategory: 'Fruit',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '11',
+      totalamount: '₱4,400',
+      buyername: 'Jenkins Mesina',
+      imageUrl2: 'assets/calamansi.png',
+    ),
+    CompleteMarketplaceItem(
+      completeitemname: 'Siling Labuyo',
+      comcategory: 'Fruit',
+      dateordered: '02 / 01 / 2023',
+      unitprice: '₱400',
+      quantity: '12',
+      totalamount: '₱4,800',
+      buyername: 'Ryan Amador',
+      imageUrl2: 'assets/sili.png',
+    ),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   void searchItem(String text) {
     setState(() {
@@ -198,16 +295,10 @@ class _TransactionBuyerState extends State<TransactionBuyer> {
 
   @override
   Widget build(BuildContext context) {
-    List<DataRow> filteredRows = _rows
-        .where((row) =>
-            row.toString().toLowerCase().contains(_searchText.toLowerCase()))
-        .toList();
-
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
           backgroundColor: Color(0xFFA9AF7E),
           centerTitle: true,
           title: Row(
@@ -221,9 +312,115 @@ class _TransactionBuyerState extends State<TransactionBuyer> {
                 'AgriPinas',
                 style: TextStyle(
                   fontSize: 17.0,
-                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
+              ),
+            ],
+          ),
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: Text(
+                  '',
+                  style: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                    fontSize: 0,
+                  ),
+                ),
+                accountEmail: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Arriane Gatpo',
+                      style: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 14.0,
+                      ),
+                    ),
+                    Text(
+                      'Buyer',
+                      style: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 12.0,
+                      ),
+                    ),
+                  ],
+                ),
+                currentAccountPicture: CircleAvatar(
+                  radius: 10.0,
+                  backgroundImage: AssetImage('assets/user.png'),
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xFFA9AF7E),
+                ),
+                otherAccountsPictures: [
+                  IconButton(
+                    icon: Icon(Icons.notifications),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BuyerAgriNotif()));
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.message),
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Message()));
+                    },
+                  ),
+                ],
+              ),
+              ListTile(
+                leading: Icon(Icons.person_2_outlined),
+                title: Text(
+                  'Profile',
+                  style: TextStyle(fontFamily: 'Poppins-Medium'),
+                ),
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ProfilePage()));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.info_outlined),
+                title: Text(
+                  'About Us',
+                  style: TextStyle(fontFamily: 'Poppins-Medium'),
+                ),
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AboutUsScreen()));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.contact_mail_outlined),
+                title: Text(
+                  'Contact Us',
+                  style: TextStyle(fontFamily: 'Poppins-Medium'),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ContactUsScreen()));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.logout_outlined),
+                title: Text(
+                  'Logout',
+                  style: TextStyle(fontFamily: 'Poppins-Medium'),
+                ),
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Login()));
+                },
               ),
             ],
           ),
@@ -235,14 +432,26 @@ class _TransactionBuyerState extends State<TransactionBuyer> {
               tabs: [
                 Tab(
                   child: Text(
-                    'Manage Orders',
-                    style: TextStyle(color: Color(0xFF718C53)),
+                    'To Receive',
+                    style: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        color: Color(0xFF718C53)),
                   ),
                 ),
                 Tab(
                   child: Text(
-                    'Purchased',
-                    style: TextStyle(color: Color(0xFF718C53)),
+                    'Cancelled',
+                    style: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        color: Color(0xFF718C53)),
+                  ),
+                ),
+                Tab(
+                  child: Text(
+                    'Completed',
+                    style: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        color: Color(0xFF718C53)),
                   ),
                 ),
               ],
@@ -264,11 +473,9 @@ class _TransactionBuyerState extends State<TransactionBuyer> {
               children: [
                 Expanded(
                   child: Text(
-                    'Transactions',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    '     Transactions',
+                    style:
+                        TextStyle(fontSize: 20.0, fontFamily: 'Poppins-Bold'),
                   ),
                 ),
               ],
@@ -294,7 +501,8 @@ class _TransactionBuyerState extends State<TransactionBuyer> {
                     children: [
                       Text(
                         'Show:',
-                        style: TextStyle(fontSize: 16.0),
+                        style: TextStyle(
+                            fontSize: 15.0, fontFamily: 'Poppins-Regular'),
                       ),
                       SizedBox(width: 8.0),
                       DropdownButton<int>(
@@ -344,262 +552,513 @@ class _TransactionBuyerState extends State<TransactionBuyer> {
             Expanded(
               child: TabBarView(
                 children: [
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 5,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            DataTable(
-                              columns: [
-                                DataColumn(
-                                  label: Text(
-                                    'Item ID',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
+                  ListView.builder(
+                    padding: EdgeInsets.all(10),
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+                      return GestureDetector(
+                        onTap: () {},
+                        child: Card(
+                          child: Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.pendingitemname,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.asset(
+                                          item.imageUrl,
+                                          fit: BoxFit.cover,
+                                          width: 80,
+                                          height: 80,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                DataColumn(
-                                  label: Text(
-                                    'Item ID',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
+                                SizedBox(
+                                  width: 6,
                                 ),
-                                DataColumn(
-                                  label: Text(
-                                    'Item Name',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Date Ordered',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Unit Price',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Quantity Order',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Total Amount',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Farmer Name',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Status',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Edit',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Delete',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(height: 8),
+                                      Text(
+                                        '',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF718C53),
+                                        ),
+                                      ),
+                                      SizedBox(height: 2),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "Category: ",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.rcategory,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 2),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "Farmer's Name: ",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.buyername,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Date Ordered: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.dateordered,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Price: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.unitprice,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Quantity: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.quantity,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Total Amount: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.totalamount,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
-                              rows: filteredRows,
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 5,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                      
-                            DataTable(
-                              columns: [
-                                DataColumn(
-                                  label: Text(
-                                    'Item ID',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
+                  ListView.builder(
+                    padding: EdgeInsets.all(10),
+                    itemCount: cancelitems.length,
+                    itemBuilder: (context, index) {
+                      final item = cancelitems[index];
+                      return GestureDetector(
+                        onTap: () {},
+                        child: Card(
+                          child: Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.cancelitemname,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.asset(
+                                          item.imageUrl1,
+                                          fit: BoxFit.cover,
+                                          width: 80,
+                                          height: 80,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                DataColumn(
-                                  label: Text(
-                                    'Item Name',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
+                                SizedBox(
+                                  width: 6,
                                 ),
-                                DataColumn(
-                                  label: Text(
-                                    'Item Name',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Date Ordered',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Unit Price',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Quantity Order',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Total Amount',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Buyer Name',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Status',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Edit',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Text(
-                                    'Delete',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF718C53),
-                                    ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(height: 8),
+                                      Text(
+                                        '',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF718C53),
+                                        ),
+                                      ),
+                                      SizedBox(height: 2),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "Category: ",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.cancategory,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 2),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "Farmer's Name: ",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.buyername,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Date Ordered: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.dateordered,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Price: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.unitprice,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Quantity: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.quantity,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Total Amount: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.totalamount,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
-                              rows: filteredRows,
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
+                  ),
+                  ListView.builder(
+                    padding: EdgeInsets.all(10),
+                    itemCount: completeitems.length,
+                    itemBuilder: (context, index) {
+                      final item = completeitems[index];
+                      return GestureDetector(
+                        onTap: () {},
+                        child: Card(
+                          child: Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.completeitemname,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.asset(
+                                          item.imageUrl2,
+                                          fit: BoxFit.cover,
+                                          width: 80,
+                                          height: 80,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 6,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(height: 8),
+                                      Text(
+                                        '',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF718C53),
+                                        ),
+                                      ),
+                                      SizedBox(height: 2),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "Category: ",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.comcategory,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 2),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "Farmer's Name: ",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.buyername,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Date Ordered: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.dateordered,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Price: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.unitprice,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Quantity: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.quantity,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Total Amount: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.totalamount,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -609,4 +1068,6 @@ class _TransactionBuyerState extends State<TransactionBuyer> {
       ),
     );
   }
+
+  void _saveInformation() {}
 }

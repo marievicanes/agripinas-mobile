@@ -501,42 +501,108 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                         ),
                                       ),
                                       SizedBox(height: 2),
-                                      Text(
-                                        item.userid,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins-Medium'),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'User ID: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.userid,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        item.buyername,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins-Medium'),
+                                      SizedBox(height: 2),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Buyer Name: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.buyername,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        item.dateordered,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins-Medium'),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Date Ordered: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.dateordered,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        item.unitprice,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Price: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.unitprice,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        item.quantity,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins-Medium'),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Quantity: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.quantity,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        item.totalamount,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Total Amount: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.totalamount,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -835,42 +901,108 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                         ),
                                       ),
                                       SizedBox(height: 2),
-                                      Text(
-                                        item.userid,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins-Medium'),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'User ID: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.userid,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                       SizedBox(height: 4),
-                                      Text(
-                                        item.buyername,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins-Medium'),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Buyer Name: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.buyername,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        item.dateordered,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins-Medium'),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Date Ordered: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.dateordered,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        item.unitprice,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Price: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.unitprice,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        item.quantity,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins-Medium'),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Quantity: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.quantity,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        item.totalamount,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Total Amount: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.totalamount,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -1168,42 +1300,108 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                         ),
                                       ),
                                       SizedBox(height: 2),
-                                      Text(
-                                        item.userid,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins-Medium'),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'User ID: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.userid,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                       SizedBox(height: 4),
-                                      Text(
-                                        item.buyername,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins-Medium'),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Buyer Name: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.buyername,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        item.dateordered,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins-Medium'),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Date Ordered: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.dateordered,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        item.unitprice,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Price: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.unitprice,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        item.quantity,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins-Medium'),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Quantity: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.quantity,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        item.totalamount,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Total Amount: ',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.totalamount,
+                                            style: TextStyle(
+                                              fontSize: 14.5,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),

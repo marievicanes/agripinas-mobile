@@ -1,4 +1,3 @@
-import 'package:capstone/farmer/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'contact_us.dart';
 import 'buyer_nav.dart';
@@ -26,7 +25,7 @@ class AboutUsScreen extends StatelessWidget {
               'AgriPinas',
               style: TextStyle(
                 fontSize: 17.0,
-                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins',
                 color: Colors.white,
               ),
             ),
@@ -48,15 +47,12 @@ class AboutUsScreen extends StatelessWidget {
               SizedBox(height: 16.0),
               Text(
                 'ABOUT US',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24.0, fontFamily: 'Poppins-Bold'),
               ),
-              SizedBox(height: 16.0),
+              SizedBox(height: 12.0),
               Text(
                 'Farmers are at the center of our culture; they provide us with every single meal. As a result, farmers provide a means of subsistence for everyone in the country. No matter how small or large, it still counts. It is solely because of them that we may live on this world. In addition to a wealth of nutritious food, farmers also generate a wide range of valued commodities. Farmers protect the environment through maintaining healthy soil, preserving water supplies, and protecting animals. In the community, farmers have a big part to play. Despite their huge importance, farmers still do not have a decent way of life. As a result, researchers will develop a market and management system that will allow farmers to post their crop online, making it simple for anyone to buy it.  ',
-                style: TextStyle(fontSize: 16.0),
+                style: TextStyle(fontSize: 16.0, fontFamily: 'Poppins-Regular'),
               ),
               SizedBox(height: 16.0),
               Text(
