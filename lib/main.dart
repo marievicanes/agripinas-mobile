@@ -43,7 +43,7 @@ class WelcomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Fresh from the farm,\ndelivered to your door.',
+                  'Grown with care,\ntraded with trust.',
                   style: TextStyle(
                     fontSize: 25,
                     fontFamily: 'Poppins',
