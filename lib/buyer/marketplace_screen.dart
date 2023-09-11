@@ -1,128 +1,308 @@
-import 'package:capstone/buyer/add_to_cart.dart';
-import 'package:capstone/buyer/chat_page.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
-void main() => runApp(MyApp());
+class MarketplaceItem {
+  final String title;
+  final String price;
+  final String farmer;
+  final String location;
+  final String description;
+  final String imageUrl;
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Marketplace',
-      theme: ThemeData(),
-      home: MarketplaceScreen(),
-    );
-  }
+  MarketplaceItem({
+    required this.title,
+    required this.price,
+    required this.farmer,
+    required this.location,
+    required this.description,
+    required this.imageUrl,
+  });
 }
+
 class MarketplaceScreen extends StatefulWidget {
   @override
   _MarketplaceScreenState createState() => _MarketplaceScreenState();
 }
 
 class _MarketplaceScreenState extends State<MarketplaceScreen> {
-  final List<String> _items = ['Onion', 'Corn', 'Rice', 'Eggplant'];
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
+  List<MarketplaceItem> filteredItems = [];
 
-
-  TextEditingController _cropNameController = TextEditingController();
-  TextEditingController _farmerNameController = TextEditingController();
-  TextEditingController _categoryController = TextEditingController();
-  TextEditingController _packagingController = TextEditingController();
-  TextEditingController _kilogramPerUnitController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
+  final List<MarketplaceItem> items = [
+    
+    MarketplaceItem(
+      title: 'Tomato',
+      price: '₱400',
+      farmer: 'Arriane Gatpo',
+      location: 'Brgy. Bagong Buhay',
+      description:
+          'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
+      imageUrl: 'assets/tomato.png',
+    ),
+    MarketplaceItem(
+      title: 'Onion',
+      price: '₱400',
+      farmer: 'Daniella Tungol',
+      location: 'Brgy. Bagong Sikat',
+      description:
+          'An onion is a round vegetable with a brown skin that grows underground. ',
+      imageUrl: 'assets/onion.png',
+    ),
+    MarketplaceItem(
+      title: 'Corn',
+      price: '₱4500',
+      farmer: 'Marievic Añes',
+      location: 'Brgy. Bagong Silang',
+      description:
+          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
+      imageUrl: 'assets/corn.png',
+    ),
+    MarketplaceItem(
+      title: 'Calamansi',
+      price: '₱400',
+      farmer: 'Jenkins Mesina',
+      location: 'Brgy. Concepcion',
+      description:
+          'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
+      imageUrl: 'assets/calamansi.png',
+    ),
+    MarketplaceItem(
+      title: 'Pechay',
+      price: '₱400',
+      farmer: 'Romeo London',
+      location: 'Brgy. Entablado',
+      description:
+          'Pechay is a leafy, shallow-rooted, cool-season crop but can stand higher temperatures',
+      imageUrl: 'assets/pechay.png',
+    ),
+    MarketplaceItem(
+      title: 'Rice',
+      price: '₱400',
+      farmer: 'Mavic Anes',
+      location: 'Brgy. Maligaya',
+      description:
+          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
+      imageUrl: 'assets/rice.png',
+    ),
+    MarketplaceItem(
+      title: 'Rice',
+      price: '₱400',
+      farmer: 'Mavic Anes',
+      location: 'Brgy. Natividad North',
+      description:
+          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
+      imageUrl: 'assets/rice.png',
+    ),
+    MarketplaceItem(
+      title: 'Tomato',
+      price: '₱400',
+      farmer: 'Arriane Gatpo',
+      location: 'Brgy. Natividad South',
+      description:
+          'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
+      imageUrl: 'assets/tomato.png',
+    ),
+    MarketplaceItem(
+      title: 'Onion',
+      price: '₱400',
+      farmer: 'Daniella Tungol',
+      location: 'Brgy. Palasinan',
+      description:
+          'An onion is a round vegetable with a brown skin that grows underground. ',
+      imageUrl: 'assets/onion.png',
+    ),
+    MarketplaceItem(
+      title: 'Corn',
+      price: '₱4500',
+      farmer: 'Marievic Añes',
+      location: 'Brgy. Polilio',
+      description:
+          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
+      imageUrl: 'assets/corn.png',
+    ),
+    MarketplaceItem(
+      title: 'Calamansi',
+      price: '₱400',
+      farmer: 'Jenkins Mesina',
+      location: 'Brgy. San Antonio',
+      description:
+          'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
+      imageUrl: 'assets/calamansi.png',
+    ),
+    MarketplaceItem(
+      title: 'Pechay',
+      price: '₱400',
+      farmer: 'Romeo London',
+      location: 'Brgy. San Carlos',
+      description:
+          'Pechay is a leafy, shallow-rooted, cool-season crop but can stand higher temperatures',
+      imageUrl: 'assets/pechay.png',
+    ),
+    MarketplaceItem(
+      title: 'Rice',
+      price: '₱400',
+      farmer: 'Mavic Anes',
+      location: 'Brgy. San Fernando Norte',
+      description:
+          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
+      imageUrl: 'assets/rice.png',
+    ),
+    MarketplaceItem(
+      title: 'Rice',
+      price: '₱400',
+      farmer: 'Mavic Anes',
+      location: 'Brgy. San Fernando Sur',
+      description:
+          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
+      imageUrl: 'assets/rice.png',
+    ),
+    MarketplaceItem(
+      title: 'Tomato',
+      price: '₱400',
+      farmer: 'Arriane Gatpo',
+      location: 'Brgy. San Gregorio',
+      description:
+          'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
+      imageUrl: 'assets/tomato.png',
+    ),
+    MarketplaceItem(
+      title: 'Onion',
+      price: '₱400',
+      farmer: 'Daniella Tungol',
+      location: 'Brgy. San Juan North',
+      description:
+          'An onion is a round vegetable with a brown skin that grows underground. ',
+      imageUrl: 'assets/onion.png',
+    ),
+    MarketplaceItem(
+      title: 'Corn',
+      price: '₱4500',
+      farmer: 'Marievic Añes',
+      location: 'Brgy. San Juan South',
+      description:
+          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
+      imageUrl: 'assets/corn.png',
+    ),
+    MarketplaceItem(
+      title: 'Calamansi',
+      price: '₱400',
+      farmer: 'Jenkins Mesina',
+      location: 'Brgy. San Roque',
+      description:
+          'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
+      imageUrl: 'assets/calamansi.png',
+    ),
+    MarketplaceItem(
+      title: 'Pechay',
+      price: '₱400',
+      farmer: 'Romeo London',
+      location: 'Brgy. San Vicente',
+      description:
+          'Pechay is a leafy, shallow-rooted, cool-season crop but can stand higher temperatures',
+      imageUrl: 'assets/pechay.png',
+    ),
+    MarketplaceItem(
+      title: 'Rice',
+      price: '₱400',
+      farmer: 'Mavic Anes',
+      location: 'Brgy. Santa Ines',
+      description:
+          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
+      imageUrl: 'assets/rice.png',
+    ),
+    MarketplaceItem(
+      title: 'Rice',
+      price: '₱400',
+      farmer: 'Mavic Anes',
+      location: 'Brgy. Santa Isabel',
+      description:
+          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
+      imageUrl: 'assets/rice.png',
+    ),
+    MarketplaceItem(
+      title: 'Tomato',
+      price: '₱400',
+      farmer: 'Arriane Gatpo',
+      location: 'Brgy. Santa Rita',
+      description:
+          'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
+      imageUrl: 'assets/tomato.png',
+    ),
+    MarketplaceItem(
+      title: 'Onion',
+      price: '₱400',
+      farmer: 'Daniella Tungol',
+      location: 'Brgy. Sinipit',
+      description:
+          'An onion is a round vegetable with a brown skin that grows underground. ',
+      imageUrl: 'assets/onion.png',
+    ),
+    MarketplaceItem(
+      title: 'Corn',
+      price: '₱4500',
+      farmer: 'Marievic Añes',
+      location: 'Brgy. Polilio',
+      description:
+          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
+      imageUrl: 'assets/corn.png',
+    ),
+    MarketplaceItem(
+      title: 'Calamansi',
+      price: '₱400',
+      farmer: 'Jenkins Mesina',
+      location: 'Brgy. San Antonio',
+      description:
+          'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
+      imageUrl: 'assets/calamansi.png',
+    ),
+    MarketplaceItem(
+      title: 'Pechay',
+      price: '₱400',
+      farmer: 'Romeo London',
+      location: 'Brgy. San Carlos',
+      description:
+          'Pechay is a leafy, shallow-rooted, cool-season crop but can stand higher temperatures',
+      imageUrl: 'assets/pechay.png',
+    ),
+    MarketplaceItem(
+      title: 'Rice',
+      price: '₱400',
+      farmer: 'Mavic Anes',
+      location: 'Brgy. San Fernando Norte',
+      description:
+          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
+      imageUrl: 'assets/rice.png',
+    ),
+    MarketplaceItem(
+      title: 'Rice',
+      price: '₱400',
+      farmer: 'Mavic Anes',
+      location: 'Brgy. San Fernando Sur',
+      description:
+          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
+      imageUrl: 'assets/rice.png',
+    ),
+  ];
 
   void searchItem(String text) {
     setState(() {
       _searchText = text;
+      filteredItems = items
+          .where((item) =>
+              item.title.toLowerCase().contains(text.toLowerCase()) ||
+              item.farmer.toLowerCase().contains(text.toLowerCase()) ||
+              item.price.toLowerCase().contains(text.toLowerCase()) ||
+              item.location.toLowerCase().contains(text.toLowerCase()))
+          .toList();
     });
-  }
-
-  void editCropDetails() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Chat'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-
-                TextField(
-                  controller: _cropNameController,
-                  decoration: InputDecoration(labelText: 'Crop Name'),
-                ),
-                SizedBox(height: 16.0),
-
-                TextField(
-                  controller: _farmerNameController,
-                  decoration: InputDecoration(labelText: 'Farmer Name'),
-                ),
-                SizedBox(height: 16.0),
-
-
-                TextField(
-                  controller: _categoryController,
-                  decoration: InputDecoration(labelText: 'Category'),
-                ),
-                SizedBox(height: 16.0),
-
-                TextField(
-                  controller: _packagingController,
-                  decoration: InputDecoration(labelText: 'Packaging'),
-                ),
-                SizedBox(height: 16.0),
-
-                TextField(
-                  controller: _kilogramPerUnitController,
-                  decoration: InputDecoration(labelText: 'Kilogram per Unit'),
-                ),
-                SizedBox(height: 16.0),
-
-                TextField(
-                  controller: _descriptionController,
-                  decoration: InputDecoration(labelText: 'Description'),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Cancel',
-                style: TextStyle(
-                  color: Colors.black,
-                ),
-              ),
-            ),
-
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _searchText = _cropNameController.text;
-                });
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Save',
-                style: TextStyle(
-                  color: Color(0xFF42931B),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    List<String> filteredItems =
-    _items.where((item) => item.toLowerCase().contains(_searchText.toLowerCase())).toList();
+    List<MarketplaceItem> displayItems =
+        _searchText.isEmpty ? items : filteredItems;
 
     return Scaffold(
       appBar: AppBar(
@@ -139,7 +319,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
               'AgriPinas',
               style: TextStyle(
                 fontSize: 17.0,
-                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins',
                 color: Colors.white,
               ),
             ),
@@ -167,136 +347,137 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
           ),
         ],
       ),
-      body: Container(
-        padding: EdgeInsets.all(5.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 16.0),
-            Expanded(
-              child: ListView.builder(
-                itemCount: filteredItems.length,
-                itemBuilder: (BuildContext context, int index) {
-                  String cropName = filteredItems[index];
-
-                  return Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            cropName,
-                            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 8.0),
-                          Row(
-                            children: [
-                              Image.asset(
-                                'assets/onion.png',
-                                width: 150.0,
-                                height: 100.0,
-                              ),
-                              SizedBox(width: 8.0),
-                              Text(
-                                '\n\n\n\n\nFarmer: ${_farmerNameController.text}',
-                                style: TextStyle(fontSize: 14.0),
-                              ),
-                            ],
-                          ),
-
-                          SizedBox(height: 8.0),
-                          Row(
-                            children: [
-                              Text(
-                                '                                             Category: ${_categoryController.text}',
-                                style: TextStyle(fontSize: 14.0),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8.0),
-                          Row(
-                            children: [
-                              Text(
-                                '                                             Packaging: ${_packagingController.text}',
-                                style: TextStyle(fontSize: 14.0),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8.0),
-                          Row(
-                            children: [
-                              Text(
-                                '                                             Kilogram per unit: ${_kilogramPerUnitController.text}',
-                                style: TextStyle(fontSize: 14.0),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8.0),
-                          Row(
-                            children: [
-                              Text(
-                                '                                             Description: ${_descriptionController.text}',
-                                style: TextStyle(fontSize: 14.0),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8.0),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '',
-                                style: TextStyle(fontSize: 14.0),
-                              ),
-                          Column(
-                            children: [
-                                  OutlinedButton.icon(
-                                    icon: Icon(Icons.chat_bubble_outline),
-                                    label: Text('Chat'),
-                                    style: OutlinedButton.styleFrom(
-                                      side: BorderSide(color: Color(0xFF9DC08B), width: 2),
-                                      primary: Color(                                      0xFF9DC08B),
-                                      textStyle: TextStyle(fontSize: 16),), 
-                                    onPressed: () { Navigator.of(context).push(MaterialPageRoute(builder: 
-                                      (context) => ChatScreen()));
-                                     },
-                                
-                                  ),
-                                  OutlinedButton.icon(
-                                    icon: Icon(Icons.shopping_cart_checkout_outlined),
-                                    label: Text('Add to Cart'),
-                                    style: OutlinedButton.styleFrom(
-                                      side: BorderSide(color: Color(0xFF9DC08B), width: 2),
-                                      primary: Color(                                      0xFF9DC08B),
-                                      textStyle: TextStyle(fontSize: 16),),
-                                    onPressed: () { 
-                                      Navigator.of(context).push(MaterialPageRoute(builder: 
-                                      (context) => AddToCart()));
-                                     },
-                                  ),
-                                   ElevatedButton.icon(
-                                    onPressed: editCropDetails,
-                                    icon: Icon(Icons.shopping_cart_checkout_outlined),
-                                    label: Text('Buy Now!'),
-                                    style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color(0xFF9DC08B),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )
-                         ]
-                       ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
+      body: GridView.builder(
+        padding: EdgeInsets.all(10),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 15,
+          mainAxisSpacing: 10,
+          childAspectRatio: 2 / 3.5,
         ),
+        itemCount: displayItems.length,
+        itemBuilder: (context, index) {
+          final item = displayItems[index];
+          return GestureDetector(
+              onTap: () {},
+              child: Card(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          item.imageUrl,
+                          fit: BoxFit.cover,
+                          width: 200,
+                          height: 250,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Text(
+                            item.title,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Text(
+                              'Price: ',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              item.price,
+                              style: TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Text(
+                              'Farmer: ',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              item.farmer,
+                              style: TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(1.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Location:',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                item.location,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(1.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Description:',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                item.description,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              )));
+        },
       ),
-        );
+    );
   }
-  }
+}
