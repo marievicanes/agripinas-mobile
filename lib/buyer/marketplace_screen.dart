@@ -31,7 +31,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   List<MarketplaceItem> filteredItems = [];
 
   final List<MarketplaceItem> items = [
-    
+
     MarketplaceItem(
       title: 'Tomato',
       price: '₱400',
