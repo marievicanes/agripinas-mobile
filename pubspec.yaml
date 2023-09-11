@@ -93,6 +93,11 @@ flutter:
     - assets/temperature.png
     - assets/weather.png
     - assets/windspeed.png
+    - assets/fertilizer.png
+    - assets/fruits.png
+    - assets/products.png
+    - assets/veggies.png
+    - assets/fertilizer1.png
     
 
   # An image asset can refer to one or more resolution-specific "variants", see
