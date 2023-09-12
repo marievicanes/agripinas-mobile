@@ -16,7 +16,6 @@ import 'profile_screen.dart';
 class MarketplaceItem {
   final String title;
   final String price;
-  final String farmer;
   final String location;
   final String description;
   final String imageUrl;
@@ -24,7 +23,6 @@ class MarketplaceItem {
   MarketplaceItem({
     required this.title,
     required this.price,
-    required this.farmer,
     required this.location,
     required this.description,
     required this.imageUrl,
@@ -74,7 +72,6 @@ class _ProfileWallState extends State<ProfileWall> {
     MarketplaceItem(
       title: 'Tomato',
       price: '₱400',
-      farmer: 'Arriane Gatpo',
       location: 'Brgy. Bagong Buhay',
       description:
           'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
@@ -83,7 +80,6 @@ class _ProfileWallState extends State<ProfileWall> {
     MarketplaceItem(
       title: 'Corn',
       price: '₱4500',
-      farmer: 'Marievic Añes',
       location: 'Brgy. Bagong Silang',
       description:
           'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
@@ -92,7 +88,6 @@ class _ProfileWallState extends State<ProfileWall> {
     MarketplaceItem(
       title: 'Calamansi',
       price: '₱400',
-      farmer: 'Jenkins Mesina',
       location: 'Brgy. Concepcion',
       description:
           'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
@@ -101,7 +96,6 @@ class _ProfileWallState extends State<ProfileWall> {
     MarketplaceItem(
       title: 'Corn',
       price: '₱4500',
-      farmer: 'Marievic Añes',
       location: 'Brgy. Bagong Silang',
       description:
           'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
@@ -379,23 +373,6 @@ class _ProfileWallState extends State<ProfileWall> {
                                       ],
                                     ),
                                     SizedBox(height: 4),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'Farmer: ',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          item.farmer,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
                                     Padding(
                                       padding: const EdgeInsets.all(1.0),
                                       child: Column(

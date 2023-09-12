@@ -1,16 +1,16 @@
-import 'package:capstone/farmer/fruitcalamansi.dart';
-import 'package:capstone/farmer/fruitcorn.dart';
-import 'package:capstone/farmer/fruittomato.dart';
+import 'package:capstone/farmer/fertilizer_fertilizer1.dart';
+import 'package:capstone/farmer/fertilizer_organicF.dart';
+import 'package:capstone/farmer/ofproducts_crop.dart';
 import 'package:flutter/material.dart';
 
-class MarketplaceItem {
+class OFProductsItem {
   final String title;
   final String price;
   final String farmer;
   final String location;
   final String imageUrl;
 
-  MarketplaceItem({
+  OFProductsItem({
     required this.title,
     required this.price,
     required this.farmer,
@@ -19,51 +19,27 @@ class MarketplaceItem {
   });
 }
 
-class FruitsScreen extends StatefulWidget {
+class OFProductScreen extends StatefulWidget {
   @override
-  _FruitsScreenState createState() => _FruitsScreenState();
+  _OFProductsScreenState createState() => _OFProductsScreenState();
 }
 
-class _FruitsScreenState extends State<FruitsScreen> {
+class _OFProductsScreenState extends State<OFProductScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
-  List<MarketplaceItem> filteredItems = [];
+  List<OFProductsItem> filteredItems = [];
 
-  final List<MarketplaceItem> items = [
-    MarketplaceItem(
-      title: 'Tomato',
-      price: '₱400',
-      farmer: 'Arriane Gatpo',
-      location: 'Brgy. Bagong Buhay',
-      imageUrl: 'assets/tomato.png',
-    ),
-    MarketplaceItem(
-      title: 'Corn',
-      price: '₱4500',
-      farmer: 'Marievic Añes',
-      location: 'Brgy. Bagong Silang',
-      imageUrl: 'assets/corn.png',
-    ),
-    MarketplaceItem(
-      title: 'Calamansi',
-      price: '₱400',
+  final List<OFProductsItem> items = [
+    OFProductsItem(
+      title: 'Crops',
+      price: '₱300',
       farmer: 'Jenkins Mesina',
-      location: 'Brgy. Concepcion',
-      imageUrl: 'assets/calamansi.png',
-    ),
-    MarketplaceItem(
-      title: 'Tomato',
-      price: '₱400',
-      farmer: 'Arriane Gatpo',
-      location: 'Brgy. Natividad South',
-      imageUrl: 'assets/tomato.png',
+      location: 'Brgy. Bagong Buhay',
+      imageUrl: 'assets/crops.png',
     ),
   ];
   final List<Widget Function(BuildContext)> routes = [
-    (context) => FruitTomatoScreen(),
-    (context) => FruitCornScreen(),
-    (context) => FruitCalamansiScreen(),
-    (context) => FruitTomatoScreen(),
+    (context) => CropsScreen(),
   ];
   void searchItem(String text) {
     setState(() {
@@ -80,7 +56,7 @@ class _FruitsScreenState extends State<FruitsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<MarketplaceItem> displayItems =
+    List<OFProductsItem> displayItems =
         _searchText.isEmpty ? items : filteredItems;
 
     return Scaffold(
