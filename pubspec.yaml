@@ -98,6 +98,7 @@ flutter:
     - assets/products.png
     - assets/veggies.png
     - assets/fertilizer1.png
+    - assets/crops.png
     
 
   # An image asset can refer to one or more resolution-specific "variants", see

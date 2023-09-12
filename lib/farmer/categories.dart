@@ -1,3 +1,4 @@
+import 'package:capstone/farmer/category_ofproducts.dart';
 import 'package:capstone/farmer/category_veggies.dart';
 import 'package:capstone/farmer/category_fertilizer.dart';
 import 'package:capstone/farmer/marketplace_screen.dart';
@@ -46,7 +47,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     (context) => FruitsScreen(),
     (context) => VegetablesScreen(),
     (context) => FertilizersScreen(),
-    (context) => OtherFarmProductsScreen(),
+    (context) => OFProductScreen(),
   ];
 
   @override
@@ -179,20 +180,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class OtherFarmProductsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Other Farm Products'),
-      ),
-      body: Center(
-        child: Text("Other Farm Products"),
       ),
     );
   }
