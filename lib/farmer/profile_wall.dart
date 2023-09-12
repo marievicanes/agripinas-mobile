@@ -1,3 +1,4 @@
+import 'package:capstone/farmer/messages.dart';
 import 'package:capstone/main.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -5,7 +6,6 @@ import 'dart:io';
 import 'package:capstone/farmer/crop_tracker_screen.dart';
 import 'package:capstone/farmer/transactions_screen.dart';
 import 'package:capstone/farmer/comment_section.dart';
-import 'package:capstone/farmer/message.dart';
 import 'about_us.dart';
 import 'announcement.dart';
 import 'contact_us.dart';
