@@ -205,7 +205,7 @@ class Login extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => BottomNavBar()),
+                              builder: (context) => BuyerNavBar()),
                         );
                       }
                     },
