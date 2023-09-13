@@ -1,4 +1,5 @@
 import 'package:capstone/buyer/message.dart';
+import 'package:capstone/buyer/transactions_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -21,12 +22,12 @@ class VeggiesPechay {
   });
 }
 
-class VeggiesPechayScreen extends StatefulWidget {
+class VeggyScreen extends StatefulWidget {
   @override
-  _VeggiesPechayState createState() => _VeggiesPechayState();
+  _VeggyState createState() => _VeggyState();
 }
 
-class _VeggiesPechayState extends State<VeggiesPechayScreen> {
+class _VeggyState extends State<VeggyScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
   List<VeggiesPechay> filteredItems = [];
@@ -198,7 +199,26 @@ class _VeggiesPechayState extends State<VeggiesPechayScreen> {
                       ],
                     ),
                   ),
-         
+                  ElevatedButton.icon(
+                          icon: Icon(Icons.shopping_cart_checkout_outlined),
+                          label: Text('Buy Now'),
+                          style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF9DC08B),),
+                          onPressed: () { 
+                  Navigator.of(context).push(MaterialPageRoute(builder: 
+                          (context) => TransactionBuyer()));
+                          },
+                        ),
+                  OutlinedButton.icon(
+                          icon: Icon(Icons.shopping_cart_checkout_outlined),
+                          label: Text('Add to Cart'),
+                          style: OutlinedButton.styleFrom(
+                          backgroundColor: Color.fromARGB(255, 248, 250, 247),),
+                          onPressed: () { 
+                  Navigator.of(context).push(MaterialPageRoute(builder: 
+                          (context) => TransactionBuyer()));
+                          },
+                        ),
                 ],
               ),
             ),

@@ -1,6 +1,4 @@
-import 'package:capstone/admin/admin_navbar.dart';
 import 'package:flutter/material.dart';
-import 'package:capstone/farmer/farmer_nav.dart';
 import 'package:capstone/buyer/buyer_nav.dart';
 import 'package:intl/intl.dart';
 
@@ -205,7 +203,7 @@ class Login extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => BottomNavBar()),
+                              builder: (context) => BuyerNavBar()),
                         );
                       }
                     },
