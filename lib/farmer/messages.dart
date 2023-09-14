@@ -1,34 +1,30 @@
-import 'package:capstone/farmer/profile_wall.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'dart:io';
 
-void main() {
-  runApp(Message());
-}
-
-class Message extends StatelessWidget {
+class Message extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: AgriMessage(),
-    );
-  }
+  _MessageState createState() => _MessageState();
 }
 
-class AgriMessage extends StatelessWidget {
+class _MessageState extends State<Message> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFA9AF7E),
-        leading: BackButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: Text(
-          'Messages',
-          style: TextStyle(fontFamily: 'Poppins'),
+        centerTitle: false,
+        title: Row(
+          children: [
+            SizedBox(width: 8.0),
+            Text(
+              'Messages',
+              style: TextStyle(
+                fontSize: 17.0,
+                fontFamily: 'Poppins',
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
       ),
       body: Column(

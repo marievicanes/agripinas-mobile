@@ -1,40 +1,23 @@
-import 'package:capstone/farmer/profile_wall.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
 
-void main() {
-  runApp(AnnouncementScreen());
-}
-
-class AnnouncementScreen extends StatelessWidget {
+class AnnouncementScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: AnnouncementPage(),
-    );
-  }
+  _AnnouncementScreenState createState() => _AnnouncementScreenState();
 }
 
-class AnnouncementPage extends StatelessWidget {
+class _AnnouncementScreenState extends State<AnnouncementScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFA9AF7E),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        centerTitle: false,
         title: Row(
           children: [
-            Image.asset(
-              'assets/logo.png',
-              height: 32.0,
-            ),
             SizedBox(width: 8.0),
             Text(
-              'AgriPinas',
+              'Announcements',
               style: TextStyle(
                 fontSize: 17.0,
                 fontFamily: 'Poppins',

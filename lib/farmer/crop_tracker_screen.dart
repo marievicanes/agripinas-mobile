@@ -39,7 +39,11 @@ class CropTrackerScreen extends StatefulWidget {
 
 class _CropTrackerScreenState extends State<CropTrackerScreen>
     with SingleTickerProviderStateMixin {
+  String selectedCategory = "Fruits";
   String? selectedStatus;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _cropNameController = TextEditingController();
+  final TextEditingController _statusController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   TextEditingController _datePlantedController = TextEditingController();
   TextEditingController _estimatedDateController = TextEditingController();
@@ -572,184 +576,247 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                         ),
                                                       ),
                                                     ),
-                                                    content: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        TextField(
-                                                          decoration:
-                                                              InputDecoration(
-                                                            labelText:
-                                                                "Crop's Name",
-                                                            labelStyle: TextStyle(
+                                                    content: Form(
+                                                      key: _formKey,
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          TextFormField(
+                                                            decoration:
+                                                                InputDecoration(
+                                                              labelText:
+                                                                  "Crop's Name",
+                                                              labelStyle:
+                                                                  TextStyle(
                                                                 fontFamily:
                                                                     'Poppins-Regular',
                                                                 fontSize: 15.5,
                                                                 color: Colors
-                                                                    .black),
-                                                            focusedBorder:
-                                                                OutlineInputBorder(
-                                                              borderSide: BorderSide(
+                                                                    .black,
+                                                              ),
+                                                              focusedBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide:
+                                                                    BorderSide(
                                                                   color: Color(
-                                                                      0xFFA9AF7E)),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        TextFormField(
-                                                          readOnly: true,
-                                                          onTap: () {
-                                                            _selectDatePlanted(
-                                                                context);
-                                                          },
-                                                          decoration:
-                                                              InputDecoration(
-                                                            labelText:
-                                                                "Date Planted",
-                                                            labelStyle:
-                                                                TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontFamily:
-                                                                  'Poppins-Regular',
-                                                              fontSize: 13,
-                                                            ),
-                                                            focusedBorder:
-                                                                OutlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        208,
-                                                                        216,
-                                                                        144),
+                                                                      0xFFA9AF7E),
+                                                                ),
                                                               ),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          15),
                                                             ),
+                                                            validator: (value) {
+                                                              if (value!
+                                                                  .isEmpty) {
+                                                                return "Crop's name is required";
+                                                              }
+                                                              return null;
+                                                            },
                                                           ),
-                                                          controller:
-                                                              _datePlantedController,
-                                                          onSaved: (value) {},
-                                                        ),
-                                                        TextFormField(
-                                                          readOnly: true,
-                                                          onTap: () {
-                                                            _selectEstimatedDate(
-                                                                context);
-                                                          },
-                                                          decoration:
-                                                              InputDecoration(
-                                                            labelText:
-                                                                "Estimated Date to Harvest",
-                                                            labelStyle:
-                                                                TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontFamily:
-                                                                  'Poppins-Regular',
-                                                              fontSize: 13,
-                                                            ),
-                                                            focusedBorder:
-                                                                OutlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        208,
-                                                                        216,
-                                                                        144),
+                                                          TextFormField(
+                                                            readOnly: true,
+                                                            onTap: () {
+                                                              _selectDatePlanted(
+                                                                  context);
+                                                            },
+                                                            decoration:
+                                                                InputDecoration(
+                                                              labelText:
+                                                                  "Date Planted",
+                                                              labelStyle:
+                                                                  TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                    'Poppins-Regular',
+                                                                fontSize: 13,
                                                               ),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          15),
+                                                              focusedBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide:
+                                                                    BorderSide(
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          208,
+                                                                          216,
+                                                                          144),
+                                                                ),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            15),
+                                                              ),
                                                             ),
+                                                            validator: (value) {
+                                                              if (value!
+                                                                  .isEmpty) {
+                                                                return "Date Planted is required";
+                                                              }
+                                                              return null;
+                                                            },
+                                                            controller:
+                                                                _datePlantedController,
+                                                            onSaved: (value) {},
                                                           ),
-                                                          controller:
-                                                              _estimatedDateController,
-                                                          onSaved: (value) {},
-                                                        ),
-                                                        TextField(
-                                                          decoration:
-                                                              InputDecoration(
-                                                            labelText: "Status",
-                                                            labelStyle: TextStyle(
+                                                          TextFormField(
+                                                            readOnly: true,
+                                                            onTap: () {
+                                                              _selectEstimatedDate(
+                                                                  context);
+                                                            },
+                                                            decoration:
+                                                                InputDecoration(
+                                                              labelText:
+                                                                  "Estimated Date to Harvest",
+                                                              labelStyle:
+                                                                  TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                    'Poppins-Regular',
+                                                                fontSize: 13,
+                                                              ),
+                                                              focusedBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide:
+                                                                    BorderSide(
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          208,
+                                                                          216,
+                                                                          144),
+                                                                ),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            15),
+                                                              ),
+                                                            ),
+                                                            validator: (value) {
+                                                              if (value!
+                                                                  .isEmpty) {
+                                                                return "Estimated to Harvest is required";
+                                                              }
+                                                              return null;
+                                                            },
+                                                            controller:
+                                                                _estimatedDateController,
+                                                            onSaved: (value) {},
+                                                          ),
+                                                          TextFormField(
+                                                            decoration:
+                                                                InputDecoration(
+                                                              labelText:
+                                                                  "Status",
+                                                              labelStyle:
+                                                                  TextStyle(
                                                                 fontFamily:
                                                                     'Poppins-Regular',
                                                                 fontSize: 15.5,
                                                                 color: Colors
-                                                                    .black),
-                                                            focusedBorder:
-                                                                OutlineInputBorder(
-                                                              borderSide: BorderSide(
+                                                                    .black,
+                                                              ),
+                                                              focusedBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide:
+                                                                    BorderSide(
                                                                   color: Color(
-                                                                      0xFFA9AF7E)),
+                                                                      0xFFA9AF7E),
+                                                                ),
+                                                              ),
                                                             ),
+                                                            validator: (value) {
+                                                              if (value!
+                                                                  .isEmpty) {
+                                                                return "Status is required";
+                                                              }
+                                                              return null;
+                                                            },
                                                           ),
-                                                        ),
-                                                        SizedBox(height: 16.0),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .end,
-                                                          children: [
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
-                                                              child: Text(
-                                                                'Cancel',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontFamily:
-                                                                      'Poppins-Regular',
+                                                          SizedBox(
+                                                              height: 16.0),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .end,
+                                                            children: [
+                                                              TextButton(
+                                                                onPressed: () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                },
+                                                                child: Text(
+                                                                  'Cancel',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontFamily:
+                                                                        'Poppins-Regular',
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                String
-                                                                    postContent =
-                                                                    _postController
-                                                                        .text;
-                                                                print(
-                                                                    postContent);
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
-                                                              child: Text(
-                                                                'Save',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontFamily:
-                                                                      'Poppins-Regular',
+                                                              TextButton(
+                                                                onPressed: () {
+                                                                  if (_formKey
+                                                                      .currentState!
+                                                                      .validate()) {
+                                                                    String
+                                                                        cropName =
+                                                                        _cropNameController
+                                                                            .text;
+                                                                    String
+                                                                        datePlanted =
+                                                                        _datePlantedController
+                                                                            .text;
+                                                                    String
+                                                                        estimatedDate =
+                                                                        _estimatedDateController
+                                                                            .text;
+                                                                    String
+                                                                        status =
+                                                                        _statusController
+                                                                            .text;
+
+                                                                    print(
+                                                                        'Crop Name: $cropName');
+                                                                    print(
+                                                                        'Date Planted: $datePlanted');
+                                                                    print(
+                                                                        'Estimated Date: $estimatedDate');
+                                                                    print(
+                                                                        'Status: $status');
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  }
+                                                                },
+                                                                child: Text(
+                                                                  'Save',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontFamily:
+                                                                        'Poppins-Regular',
+                                                                  ),
+                                                                ),
+                                                                style: TextButton
+                                                                    .styleFrom(
+                                                                  backgroundColor:
+                                                                      Color.fromRGBO(
+                                                                          157,
+                                                                          192,
+                                                                          139,
+                                                                          1),
+                                                                  primary: Colors
+                                                                      .white,
                                                                 ),
                                                               ),
-                                                              style: TextButton
-                                                                  .styleFrom(
-                                                                backgroundColor:
-                                                                    Color
-                                                                        .fromRGBO(
-                                                                            157,
-                                                                            192,
-                                                                            139,
-                                                                            1),
-                                                                primary: Colors
-                                                                    .white,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   );
                                                 },
@@ -898,134 +965,188 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                   child: Container(
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 10.0),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        SizedBox(height: 16.0),
-                                        Center(
-                                          child: Text(
-                                            'Add New Crop',
-                                            style: TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontSize: 20.0,
+                                    child: Form(
+                                      key: _formKey,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          SizedBox(height: 16.0),
+                                          Center(
+                                            child: Text(
+                                              'Add New Crop',
+                                              style: TextStyle(
+                                                fontFamily: 'Poppins',
+                                                fontSize: 20.0,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        TextField(
-                                          decoration: InputDecoration(
-                                            labelText: "Crop's Name",
-                                            labelStyle: TextStyle(
+                                          TextFormField(
+                                            controller: _cropNameController,
+                                            decoration: InputDecoration(
+                                              labelText: "Crop's Name",
+                                              labelStyle: TextStyle(
                                                 fontFamily: 'Poppins-Regular',
                                                 fontSize: 15.5,
-                                                color: Colors.black),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Color(0xFFA9AF7E)),
-                                            ),
-                                          ),
-                                        ),
-                                        TextFormField(
-                                          readOnly: true,
-                                          onTap: () {
-                                            _selectDatePlanted(context);
-                                          },
-                                          decoration: InputDecoration(
-                                            labelText: "Date Planted",
-                                            labelStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontFamily: 'Poppins-Regular',
-                                              fontSize: 13,
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color.fromARGB(
-                                                    255, 208, 216, 144),
+                                                color: Colors.black,
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                            ),
-                                          ),
-                                          controller: _datePlantedController,
-                                          onSaved: (value) {},
-                                        ),
-                                        TextFormField(
-                                          readOnly: true,
-                                          onTap: () {
-                                            _selectEstimatedDate(context);
-                                          },
-                                          decoration: InputDecoration(
-                                            labelText:
-                                                "Estimated Date to Harvest",
-                                            labelStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontFamily: 'Poppins-Regular',
-                                              fontSize: 13,
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color.fromARGB(
-                                                    255, 208, 216, 144),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: Color(0xFFA9AF7E),
+                                                ),
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
                                             ),
+                                            validator: (value) {
+                                              if (value!.isEmpty) {
+                                                return "Crop's name is required";
+                                              }
+                                              return null;
+                                            },
                                           ),
-                                          controller: _estimatedDateController,
-                                          onSaved: (value) {},
-                                        ),
-                                        TextField(
-                                          decoration: InputDecoration(
-                                            labelText: "Status",
-                                            labelStyle: TextStyle(
+                                          TextFormField(
+                                            readOnly: true,
+                                            onTap: () {
+                                              _selectDatePlanted(context);
+                                            },
+                                            decoration: InputDecoration(
+                                              labelText: "Date Planted",
+                                              labelStyle: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: 'Poppins-Regular',
+                                                fontSize: 13,
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: Color.fromARGB(
+                                                      255, 208, 216, 144),
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                              ),
+                                            ),
+                                            validator: (value) {
+                                              if (value!.isEmpty) {
+                                                return 'Date Planted is required';
+                                              }
+                                              return null;
+                                            },
+                                            controller: _datePlantedController,
+                                            onSaved: (value) {},
+                                          ),
+                                          TextFormField(
+                                            readOnly: true,
+                                            onTap: () {
+                                              _selectEstimatedDate(context);
+                                            },
+                                            decoration: InputDecoration(
+                                              labelText:
+                                                  "Estimated Date to Harvest",
+                                              labelStyle: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: 'Poppins-Regular',
+                                                fontSize: 13,
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: Color.fromARGB(
+                                                      255, 208, 216, 144),
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                              ),
+                                            ),
+                                            validator: (value) {
+                                              if (value!.isEmpty) {
+                                                return 'Estimated Date to Harvest is required';
+                                              }
+                                              return null;
+                                            },
+                                            controller:
+                                                _estimatedDateController,
+                                            onSaved: (value) {},
+                                          ),
+                                          TextFormField(
+                                            controller: _statusController,
+                                            decoration: InputDecoration(
+                                              labelText: "Status",
+                                              labelStyle: TextStyle(
                                                 fontFamily: 'Poppins-Regular',
                                                 fontSize: 15.5,
-                                                color: Colors.black),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Color(0xFFA9AF7E)),
+                                                color: Colors.black,
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: Color(0xFFA9AF7E),
+                                                ),
+                                              ),
                                             ),
+                                            validator: (value) {
+                                              if (value!.isEmpty) {
+                                                return 'Status is required';
+                                              }
+                                              return null;
+                                            },
                                           ),
-                                        ),
-                                        SizedBox(height: 16.0),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            TextButton(
-                                              child: Text(
-                                                'Cancel',
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontFamily: 'Poppins-Regular',
-                                                  fontSize: 13.5,
+                                          SizedBox(height: 16.0),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              TextButton(
+                                                child: Text(
+                                                  'Cancel',
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    fontSize: 13.5,
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                              ElevatedButton(
+                                                child: Text(
+                                                  'Add',
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  if (_formKey.currentState!
+                                                      .validate()) {
+                                                    String cropName =
+                                                        _cropNameController
+                                                            .text;
+                                                    String datePlanted =
+                                                        _datePlantedController
+                                                            .text;
+                                                    String estimatedDate =
+                                                        _estimatedDateController
+                                                            .text;
+                                                    String status =
+                                                        _statusController.text;
+                                                    print(
+                                                        'Crop Name: $cropName');
+                                                    print(
+                                                        'Date Planted: $datePlanted');
+                                                    print(
+                                                        'Estimated Date: $estimatedDate');
+                                                    print('Status: $status');
+                                                    Navigator.of(context).pop();
+                                                  }
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  primary: Color.fromRGBO(
+                                                      157, 192, 139, 1),
+                                                  onPrimary: Colors.white,
                                                 ),
                                               ),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                            ElevatedButton(
-                                              child: Text(
-                                                'Add',
-                                                style: TextStyle(
-                                                  fontFamily: 'Poppins-Regular',
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                String postContent =
-                                                    _postController.text;
-                                                print(postContent);
-                                                Navigator.of(context).pop();
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                primary: Color.fromRGBO(
-                                                    157, 192, 139, 1),
-                                                onPrimary: Colors.white,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );
@@ -1157,182 +1278,306 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                           ),
                                                         ),
                                                       ),
-                                                      content: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              Text('Add Image',
+                                                      content: Form(
+                                                        key: _formKey,
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Text(
+                                                                  'Add Image',
                                                                   style:
                                                                       TextStyle(
                                                                     fontFamily:
                                                                         'Poppins-Regular',
                                                                     fontSize:
                                                                         15.5,
-                                                                  )),
-                                                              IconButton(
-                                                                onPressed: () {
-                                                                  _pickImageFromGallery();
-                                                                },
-                                                                icon: Icon(Icons
-                                                                    .file_upload),
-                                                              ),
-                                                              IconButton(
-                                                                onPressed: () {
-                                                                  _captureImageFromCamera();
-                                                                },
-                                                                icon: Icon(Icons
-                                                                    .camera_alt),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          TextField(
-                                                            maxLines: 1,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              labelText:
-                                                                  "Price",
-                                                              labelStyle: TextStyle(
-                                                                  fontFamily:
-                                                                      'Poppins-Regular',
-                                                                  fontSize:
-                                                                      15.5,
-                                                                  color: Colors
-                                                                      .black),
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Color(
-                                                                        0xFFA9AF7E)),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          TextField(
-                                                            maxLines: 1,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              labelText:
-                                                                  "Farmer",
-                                                              labelStyle: TextStyle(
-                                                                  fontFamily:
-                                                                      'Poppins-Regular',
-                                                                  fontSize:
-                                                                      15.5,
-                                                                  color: Colors
-                                                                      .black),
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Color(
-                                                                        0xFFA9AF7E)),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          TextField(
-                                                            maxLines: 2,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              labelText:
-                                                                  "Location",
-                                                              labelStyle: TextStyle(
-                                                                  fontFamily:
-                                                                      'Poppins-Regular',
-                                                                  fontSize:
-                                                                      15.5,
-                                                                  color: Colors
-                                                                      .black),
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Color(
-                                                                        0xFFA9AF7E)),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          TextField(
-                                                            maxLines: 4,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              labelText:
-                                                                  "Description",
-                                                              labelStyle: TextStyle(
-                                                                  fontFamily:
-                                                                      'Poppins-Regular',
-                                                                  fontSize:
-                                                                      15.5,
-                                                                  color: Colors
-                                                                      .black),
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Color(
-                                                                        0xFFA9AF7E)),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                              height: 16.0),
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .end,
-                                                            children: [
-                                                              TextButton(
-                                                                onPressed: () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                },
-                                                                child: Text(
-                                                                  'Cancel',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontFamily:
-                                                                        'Poppins-Regular',
                                                                   ),
                                                                 ),
+                                                                IconButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    _pickImageFromGallery();
+                                                                  },
+                                                                  icon: Icon(Icons
+                                                                      .file_upload),
+                                                                ),
+                                                                IconButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    _captureImageFromCamera();
+                                                                  },
+                                                                  icon: Icon(Icons
+                                                                      .camera_alt),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            DropdownButtonFormField<
+                                                                String>(
+                                                              value:
+                                                                  selectedCategory,
+                                                              onChanged: (String?
+                                                                  newValue) {
+                                                                setState(() {
+                                                                  selectedCategory =
+                                                                      newValue!;
+                                                                });
+                                                              },
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                labelText:
+                                                                    "Category",
+                                                                labelStyle:
+                                                                    TextStyle(
+                                                                  fontFamily:
+                                                                      'Poppins-Regular',
+                                                                  fontSize:
+                                                                      15.5,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                                focusedBorder:
+                                                                    OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Color(0xFFA9AF7E)),
+                                                                ),
                                                               ),
-                                                              TextButton(
-                                                                onPressed: () {
-                                                                  String
-                                                                      postContent =
-                                                                      _postController
-                                                                          .text;
-                                                                  print(
-                                                                      postContent);
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                },
-                                                                child: Text(
-                                                                  'Save',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontFamily:
-                                                                        'Poppins-Regular',
+                                                              validator:
+                                                                  (value) {
+                                                                if (value ==
+                                                                        null ||
+                                                                    value
+                                                                        .isEmpty) {
+                                                                  return "Category is required";
+                                                                }
+                                                                return null;
+                                                              },
+                                                              items: <String>[
+                                                                "Fruits",
+                                                                "Vegetables",
+                                                                "Fertilizer",
+                                                                "Other Farm Products",
+                                                              ].map<
+                                                                  DropdownMenuItem<
+                                                                      String>>((String
+                                                                  value) {
+                                                                return DropdownMenuItem<
+                                                                    String>(
+                                                                  value: value,
+                                                                  child: Text(
+                                                                      value),
+                                                                );
+                                                              }).toList(),
+                                                            ),
+                                                            TextFormField(
+                                                              maxLines: 1,
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                labelText:
+                                                                    "Price",
+                                                                labelStyle:
+                                                                    TextStyle(
+                                                                  fontFamily:
+                                                                      'Poppins-Regular',
+                                                                  fontSize:
+                                                                      15.5,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                                focusedBorder:
+                                                                    OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Color(0xFFA9AF7E)),
+                                                                ),
+                                                              ),
+                                                              validator:
+                                                                  (value) {
+                                                                if (value ==
+                                                                        null ||
+                                                                    value
+                                                                        .isEmpty) {
+                                                                  return "Price is required";
+                                                                }
+                                                                return null;
+                                                              },
+                                                            ),
+                                                            TextFormField(
+                                                              maxLines: 1,
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                labelText:
+                                                                    "Farmer",
+                                                                labelStyle:
+                                                                    TextStyle(
+                                                                  fontFamily:
+                                                                      'Poppins-Regular',
+                                                                  fontSize:
+                                                                      15.5,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                                focusedBorder:
+                                                                    OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Color(0xFFA9AF7E)),
+                                                                ),
+                                                              ),
+                                                              validator:
+                                                                  (value) {
+                                                                if (value ==
+                                                                        null ||
+                                                                    value
+                                                                        .isEmpty) {
+                                                                  return "Farmer is required";
+                                                                }
+                                                                return null;
+                                                              },
+                                                            ),
+                                                            TextFormField(
+                                                              maxLines: 2,
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                labelText:
+                                                                    "Location ",
+                                                                labelStyle:
+                                                                    TextStyle(
+                                                                  fontFamily:
+                                                                      'Poppins-Regular',
+                                                                  fontSize:
+                                                                      15.5,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                                focusedBorder:
+                                                                    OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Color(0xFFA9AF7E)),
+                                                                ),
+                                                              ),
+                                                              validator:
+                                                                  (value) {
+                                                                if (value ==
+                                                                        null ||
+                                                                    value
+                                                                        .isEmpty) {
+                                                                  return "Location is required";
+                                                                }
+                                                                return null;
+                                                              },
+                                                            ),
+                                                            TextFormField(
+                                                              maxLines: 4,
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                labelText:
+                                                                    "Description",
+                                                                labelStyle:
+                                                                    TextStyle(
+                                                                  fontFamily:
+                                                                      'Poppins-Regular',
+                                                                  fontSize:
+                                                                      15.5,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                                focusedBorder:
+                                                                    OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Color(0xFFA9AF7E)),
+                                                                ),
+                                                              ),
+                                                              validator:
+                                                                  (value) {
+                                                                if (value ==
+                                                                        null ||
+                                                                    value
+                                                                        .isEmpty) {
+                                                                  return "Description is required";
+                                                                }
+                                                                return null;
+                                                              },
+                                                            ),
+                                                            SizedBox(
+                                                                height: 16.0),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .end,
+                                                              children: [
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  },
+                                                                  child: Text(
+                                                                    'Cancel',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontFamily:
+                                                                          'Poppins-Regular',
+                                                                    ),
                                                                   ),
                                                                 ),
-                                                                style: TextButton
-                                                                    .styleFrom(
-                                                                  backgroundColor:
-                                                                      Color.fromRGBO(
-                                                                          157,
-                                                                          192,
-                                                                          139,
-                                                                          1),
-                                                                  primary: Colors
-                                                                      .white,
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    if (_formKey
+                                                                        .currentState!
+                                                                        .validate()) {
+                                                                      String
+                                                                          postContent =
+                                                                          _postController
+                                                                              .text;
+                                                                      print(
+                                                                          postContent);
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+                                                                    }
+                                                                  },
+                                                                  child: Text(
+                                                                    'Save',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontFamily:
+                                                                          'Poppins-Regular',
+                                                                    ),
+                                                                  ),
+                                                                  style: TextButton
+                                                                      .styleFrom(
+                                                                    backgroundColor:
+                                                                        Color.fromRGBO(
+                                                                            157,
+                                                                            192,
+                                                                            139,
+                                                                            1),
+                                                                    primary: Colors
+                                                                        .white,
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                     );
                                                   },
@@ -1374,263 +1619,6 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                         ),
                                       ),
                                     ],
-                                  ),
-                                  Positioned(
-                                    top: 5,
-                                    right: 8,
-                                    child: PopupMenuButton<String>(
-                                      icon: Icon(
-                                        Icons.more_horiz,
-                                        color: Color(0xFF9DC08B),
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      itemBuilder: (BuildContext context) => [
-                                        PopupMenuItem<String>(
-                                          value: 'edit',
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.edit,
-                                                color: Color(0xFF9DC08B)
-                                                    .withAlpha(180),
-                                              ),
-                                              SizedBox(width: 8),
-                                              Text(
-                                                'Edit',
-                                                style: TextStyle(
-                                                  fontFamily: 'Poppins-Regular',
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        PopupMenuItem<String>(
-                                          value: 'delete',
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.delete,
-                                                color: Color(0xFF9DC08B),
-                                              ),
-                                              SizedBox(width: 8),
-                                              Text(
-                                                'Delete',
-                                                style: TextStyle(
-                                                  fontFamily: 'Poppins-Regular',
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                      onSelected: (String value) {
-                                        if (value == 'edit') {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: Center(
-                                                  child: Text(
-                                                    'Edit Details',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Poppins',
-                                                      fontSize: 20.0,
-                                                    ),
-                                                  ),
-                                                ),
-                                                content: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    TextFormField(
-                                                      readOnly: true,
-                                                      onTap: () {
-                                                        _selectDatePlanted1(
-                                                            context);
-                                                      },
-                                                      decoration:
-                                                          InputDecoration(
-                                                        labelText:
-                                                            "Date Planted",
-                                                        labelStyle: TextStyle(
-                                                          color: Colors.black,
-                                                          fontFamily:
-                                                              'Poppins-Regular',
-                                                          fontSize: 13,
-                                                        ),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    208,
-                                                                    216,
-                                                                    144),
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(15),
-                                                        ),
-                                                      ),
-                                                      controller:
-                                                          _datePlantedController1,
-                                                      onSaved: (value) {},
-                                                    ),
-                                                    TextFormField(
-                                                      readOnly: true,
-                                                      onTap: () {
-                                                        _selectHarvestedDate(
-                                                            context);
-                                                      },
-                                                      decoration:
-                                                          InputDecoration(
-                                                        labelText:
-                                                            "Harvested Date",
-                                                        labelStyle: TextStyle(
-                                                          color: Colors.black,
-                                                          fontFamily:
-                                                              'Poppins-Regular',
-                                                          fontSize: 13,
-                                                        ),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    208,
-                                                                    216,
-                                                                    144),
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(15),
-                                                        ),
-                                                      ),
-                                                      controller:
-                                                          _harvestedDateController,
-                                                      onSaved: (value) {},
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
-                                                      children: [
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                          child: Text(
-                                                            'Cancel',
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontFamily:
-                                                                  'Poppins-Regular',
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            String postContent =
-                                                                _postController
-                                                                    .text;
-                                                            print(postContent);
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                          child: Text(
-                                                            'Save',
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'Poppins-Regular',
-                                                            ),
-                                                          ),
-                                                          style: TextButton
-                                                              .styleFrom(
-                                                            backgroundColor:
-                                                                Color.fromRGBO(
-                                                                    157,
-                                                                    192,
-                                                                    139,
-                                                                    1),
-                                                            primary:
-                                                                Colors.white,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        } else if (value == 'delete') {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: Text(
-                                                  'Delete Tracker?',
-                                                  style: TextStyle(
-                                                      fontFamily:
-                                                          'Poppins-Regular',
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                content: Text(
-                                                  "This can't be undone and it will be removed from your tracker.",
-                                                  style: TextStyle(
-                                                    fontFamily:
-                                                        'Poppins-Regular',
-                                                    fontSize: 13.8,
-                                                  ),
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    child: Text(
-                                                      'Cancel',
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Poppins-Regular',
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                  ),
-                                                  TextButton(
-                                                    child: Text('Delete',
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              'Poppins-Regular',
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Color(
-                                                                  0xFF9DC08B)
-                                                              .withAlpha(180),
-                                                        )),
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        }
-                                      },
-                                    ),
                                   ),
                                 ],
                               ),

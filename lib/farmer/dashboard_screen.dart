@@ -10,6 +10,43 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  bool hasShownPopup = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!hasShownPopup) {
+        showPopup();
+      }
+    });
+  }
+
+  void showPopup() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Announcement mavic'),
+          content: Text(
+            'Dear Cabiao farmers, ... (your content here)',
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  hasShownPopup = true;
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   final List<Map<String, dynamic>> tomorrowForecast = [
     {
       'date': 'July 7',
@@ -192,7 +229,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       icon: tomorrowForecast[index]['icon'],
                       temperature: tomorrowForecast[index]['temperature'],
                       weatherCondition: tomorrowForecast[index]
-                          ['weatherCondition'], // Pass the weather condition
+                          ['weatherCondition'],
                     );
                   },
                 ),
@@ -208,7 +245,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       icon: nextSevenDaysForecast[index]['icon'],
                       temperature: nextSevenDaysForecast[index]['temperature'],
                       weatherCondition: nextSevenDaysForecast[index]
-                          ['weatherCondition'], // Pass the weather condition
+                          ['weatherCondition'],
                     );
                   },
                 ),
