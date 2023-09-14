@@ -59,10 +59,10 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     ),
   ];
   final List<Widget Function(BuildContext)> routes = [
-    (context) => VeggyScreen(),
+    (context) => NextMarketScreen(),
     (context) => VeggiesKalabasaScreen(),
     (context) => VeggiesKalabasaScreen(),
-    (context) => VeggyScreen(),
+    (context) => NextMarketyScreen(),
   ];
   void searchItem(String text) {
     setState(() {

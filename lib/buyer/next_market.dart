@@ -22,12 +22,12 @@ class VeggiesPechay {
   });
 }
 
-class VeggyScreen extends StatefulWidget {
+class NextMarketScreen extends StatefulWidget {
   @override
-  _VeggyState createState() => _VeggyState();
+  _NextMarketState createState() => _NextMarketState();
 }
 
-class _VeggyState extends State<VeggyScreen> {
+class _NextMarketState extends State<NextMarketScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
   List<VeggiesPechay> filteredItems = [];
