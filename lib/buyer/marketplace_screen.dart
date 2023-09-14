@@ -1,13 +1,12 @@
+import 'package:capstone/farmer/veggies_kalabasa.dart';
+import 'package:capstone/buyer/veggy.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 class MarketplaceItem {
   final String title;
   final String price;
   final String farmer;
   final String location;
-  final String description;
   final String imageUrl;
 
   MarketplaceItem({
@@ -15,7 +14,6 @@ class MarketplaceItem {
     required this.price,
     required this.farmer,
     required this.location,
-    required this.description,
     required this.imageUrl,
   });
 }
@@ -31,261 +29,41 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   List<MarketplaceItem> filteredItems = [];
 
   final List<MarketplaceItem> items = [
-    
     MarketplaceItem(
-      title: 'Tomato',
+      title: 'Pechay',
       price: '₱400',
       farmer: 'Arriane Gatpo',
       location: 'Brgy. Bagong Buhay',
-      description:
-          'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
-      imageUrl: 'assets/tomato.png',
+      imageUrl: 'assets/pechay.png',
     ),
     MarketplaceItem(
-      title: 'Onion',
-      price: '₱400',
-      farmer: 'Daniella Tungol',
-      location: 'Brgy. Bagong Sikat',
-      description:
-          'An onion is a round vegetable with a brown skin that grows underground. ',
-      imageUrl: 'assets/onion.png',
-    ),
-    MarketplaceItem(
-      title: 'Corn',
+      title: 'Kalabasa',
       price: '₱4500',
       farmer: 'Marievic Añes',
       location: 'Brgy. Bagong Silang',
-      description:
-          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
-      imageUrl: 'assets/corn.png',
+      imageUrl: 'assets/kalabasa.png',
     ),
     MarketplaceItem(
-      title: 'Calamansi',
+      title: 'Kalabasa',
       price: '₱400',
       farmer: 'Jenkins Mesina',
       location: 'Brgy. Concepcion',
-      description:
-          'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
-      imageUrl: 'assets/calamansi.png',
+      imageUrl: 'assets/kalabasa.png',
     ),
     MarketplaceItem(
       title: 'Pechay',
-      price: '₱400',
-      farmer: 'Romeo London',
-      location: 'Brgy. Entablado',
-      description:
-          'Pechay is a leafy, shallow-rooted, cool-season crop but can stand higher temperatures',
-      imageUrl: 'assets/pechay.png',
-    ),
-    MarketplaceItem(
-      title: 'Rice',
-      price: '₱400',
-      farmer: 'Mavic Anes',
-      location: 'Brgy. Maligaya',
-      description:
-          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
-      imageUrl: 'assets/rice.png',
-    ),
-    MarketplaceItem(
-      title: 'Rice',
-      price: '₱400',
-      farmer: 'Mavic Anes',
-      location: 'Brgy. Natividad North',
-      description:
-          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
-      imageUrl: 'assets/rice.png',
-    ),
-    MarketplaceItem(
-      title: 'Tomato',
       price: '₱400',
       farmer: 'Arriane Gatpo',
       location: 'Brgy. Natividad South',
-      description:
-          'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
-      imageUrl: 'assets/tomato.png',
-    ),
-    MarketplaceItem(
-      title: 'Onion',
-      price: '₱400',
-      farmer: 'Daniella Tungol',
-      location: 'Brgy. Palasinan',
-      description:
-          'An onion is a round vegetable with a brown skin that grows underground. ',
-      imageUrl: 'assets/onion.png',
-    ),
-    MarketplaceItem(
-      title: 'Corn',
-      price: '₱4500',
-      farmer: 'Marievic Añes',
-      location: 'Brgy. Polilio',
-      description:
-          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
-      imageUrl: 'assets/corn.png',
-    ),
-    MarketplaceItem(
-      title: 'Calamansi',
-      price: '₱400',
-      farmer: 'Jenkins Mesina',
-      location: 'Brgy. San Antonio',
-      description:
-          'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
-      imageUrl: 'assets/calamansi.png',
-    ),
-    MarketplaceItem(
-      title: 'Pechay',
-      price: '₱400',
-      farmer: 'Romeo London',
-      location: 'Brgy. San Carlos',
-      description:
-          'Pechay is a leafy, shallow-rooted, cool-season crop but can stand higher temperatures',
       imageUrl: 'assets/pechay.png',
-    ),
-    MarketplaceItem(
-      title: 'Rice',
-      price: '₱400',
-      farmer: 'Mavic Anes',
-      location: 'Brgy. San Fernando Norte',
-      description:
-          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
-      imageUrl: 'assets/rice.png',
-    ),
-    MarketplaceItem(
-      title: 'Rice',
-      price: '₱400',
-      farmer: 'Mavic Anes',
-      location: 'Brgy. San Fernando Sur',
-      description:
-          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
-      imageUrl: 'assets/rice.png',
-    ),
-    MarketplaceItem(
-      title: 'Tomato',
-      price: '₱400',
-      farmer: 'Arriane Gatpo',
-      location: 'Brgy. San Gregorio',
-      description:
-          'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
-      imageUrl: 'assets/tomato.png',
-    ),
-    MarketplaceItem(
-      title: 'Onion',
-      price: '₱400',
-      farmer: 'Daniella Tungol',
-      location: 'Brgy. San Juan North',
-      description:
-          'An onion is a round vegetable with a brown skin that grows underground. ',
-      imageUrl: 'assets/onion.png',
-    ),
-    MarketplaceItem(
-      title: 'Corn',
-      price: '₱4500',
-      farmer: 'Marievic Añes',
-      location: 'Brgy. San Juan South',
-      description:
-          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
-      imageUrl: 'assets/corn.png',
-    ),
-    MarketplaceItem(
-      title: 'Calamansi',
-      price: '₱400',
-      farmer: 'Jenkins Mesina',
-      location: 'Brgy. San Roque',
-      description:
-          'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
-      imageUrl: 'assets/calamansi.png',
-    ),
-    MarketplaceItem(
-      title: 'Pechay',
-      price: '₱400',
-      farmer: 'Romeo London',
-      location: 'Brgy. San Vicente',
-      description:
-          'Pechay is a leafy, shallow-rooted, cool-season crop but can stand higher temperatures',
-      imageUrl: 'assets/pechay.png',
-    ),
-    MarketplaceItem(
-      title: 'Rice',
-      price: '₱400',
-      farmer: 'Mavic Anes',
-      location: 'Brgy. Santa Ines',
-      description:
-          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
-      imageUrl: 'assets/rice.png',
-    ),
-    MarketplaceItem(
-      title: 'Rice',
-      price: '₱400',
-      farmer: 'Mavic Anes',
-      location: 'Brgy. Santa Isabel',
-      description:
-          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
-      imageUrl: 'assets/rice.png',
-    ),
-    MarketplaceItem(
-      title: 'Tomato',
-      price: '₱400',
-      farmer: 'Arriane Gatpo',
-      location: 'Brgy. Santa Rita',
-      description:
-          'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
-      imageUrl: 'assets/tomato.png',
-    ),
-    MarketplaceItem(
-      title: 'Onion',
-      price: '₱400',
-      farmer: 'Daniella Tungol',
-      location: 'Brgy. Sinipit',
-      description:
-          'An onion is a round vegetable with a brown skin that grows underground. ',
-      imageUrl: 'assets/onion.png',
-    ),
-    MarketplaceItem(
-      title: 'Corn',
-      price: '₱4500',
-      farmer: 'Marievic Añes',
-      location: 'Brgy. Polilio',
-      description:
-          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
-      imageUrl: 'assets/corn.png',
-    ),
-    MarketplaceItem(
-      title: 'Calamansi',
-      price: '₱400',
-      farmer: 'Jenkins Mesina',
-      location: 'Brgy. San Antonio',
-      description:
-          'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
-      imageUrl: 'assets/calamansi.png',
-    ),
-    MarketplaceItem(
-      title: 'Pechay',
-      price: '₱400',
-      farmer: 'Romeo London',
-      location: 'Brgy. San Carlos',
-      description:
-          'Pechay is a leafy, shallow-rooted, cool-season crop but can stand higher temperatures',
-      imageUrl: 'assets/pechay.png',
-    ),
-    MarketplaceItem(
-      title: 'Rice',
-      price: '₱400',
-      farmer: 'Mavic Anes',
-      location: 'Brgy. San Fernando Norte',
-      description:
-          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
-      imageUrl: 'assets/rice.png',
-    ),
-    MarketplaceItem(
-      title: 'Rice',
-      price: '₱400',
-      farmer: 'Mavic Anes',
-      location: 'Brgy. San Fernando Sur',
-      description:
-          'Rice is edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced.',
-      imageUrl: 'assets/rice.png',
     ),
   ];
-
+  final List<Widget Function(BuildContext)> routes = [
+    (context) => NextMarketScreen(),
+    (context) => VeggiesKalabasaScreen(),
+    (context) => VeggiesKalabasaScreen(),
+    (context) => NextMarketyScreen(),
+  ];
   void searchItem(String text) {
     setState(() {
       _searchText = text;
@@ -306,8 +84,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         backgroundColor: Color(0xFFA9AF7E),
+        centerTitle: true,
         title: Row(
           children: [
             Image.asset(
@@ -329,7 +107,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
           Padding(
             padding: EdgeInsets.all(8.0),
             child: Container(
-              width: 200.0,
+              width: 190.0,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(25.0),
@@ -359,7 +137,14 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
         itemBuilder: (context, index) {
           final item = displayItems[index];
           return GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: routes[index],
+                  ),
+                );
+              },
               child: Card(
                   child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -436,34 +221,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                 'Location:',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.bold, 
                                 ),
                               ),
                               SizedBox(height: 4),
                               Text(
                                 item.location,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(1.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Description:',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                item.description,
                                 style: TextStyle(
                                   fontSize: 14,
                                 ),
