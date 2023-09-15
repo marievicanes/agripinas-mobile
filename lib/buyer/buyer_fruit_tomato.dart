@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class FruitCorn {
+class BuyerFruitTomato {
   final String title;
   final String price;
   final String farmer;
@@ -10,7 +10,7 @@ class FruitCorn {
   final String description;
   final String imageUrl;
 
-  FruitCorn({
+  BuyerFruitTomato({
     required this.title,
     required this.price,
     required this.farmer,
@@ -20,25 +20,25 @@ class FruitCorn {
   });
 }
 
-class FruitCornScreen extends StatefulWidget {
+class BuyerFruitTomatoScreen extends StatefulWidget {
   @override
-  _FruitCornState createState() => _FruitCornState();
+  _BuyerFruitTomatoState createState() => _BuyerFruitTomatoState();
 }
 
-class _FruitCornState extends State<FruitCornScreen> {
+class _BuyerFruitTomatoState extends State<BuyerFruitTomatoScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
-  List<FruitCorn> filteredItems = [];
+  List<BuyerFruitTomato> filteredItems = [];
 
-  final List<FruitCorn> items = [
-    FruitCorn(
-      title: 'Corn',
+  final List<BuyerFruitTomato> items = [
+    BuyerFruitTomato(
+      title: 'Tomato',
       price: '₱400',
-      farmer: 'Arriane Gatpo',
+      farmer: 'Marievic Anes',
       location: 'Brgy. Bagong Buhay',
       description:
           'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
-      imageUrl: 'assets/corn.png',
+      imageUrl: 'assets/tomato.png',
     ),
   ];
 
@@ -57,7 +57,8 @@ class _FruitCornState extends State<FruitCornScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<FruitCorn> displayItems = _searchText.isEmpty ? items : filteredItems;
+    List<BuyerFruitTomato> displayItems =
+        _searchText.isEmpty ? items : filteredItems;
 
     return Scaffold(
       appBar: AppBar(
@@ -81,14 +82,14 @@ class _FruitCornState extends State<FruitCornScreen> {
           ],
         ),
       ),
-      body: Center(
-        child: ListView.builder(
-          padding: EdgeInsets.all(10),
-          itemCount: displayItems.length,
-          itemBuilder: (context, index) {
-            final item = displayItems[index];
-            return GestureDetector(
-              child: Card(
+      body: ListView.builder(
+        padding: EdgeInsets.all(10),
+        itemCount: displayItems.length,
+        itemBuilder: (context, index) {
+          final item = displayItems[index];
+          return Column(
+            children: [
+              Card(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -202,9 +203,61 @@ class _FruitCornState extends State<FruitCornScreen> {
                   ],
                 ),
               ),
-            );
-          },
-        ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  OutlinedButton(
+                    onPressed: () {},
+                    style: ButtonStyle(
+                      side: MaterialStateProperty.all(
+                          BorderSide(color: Color(0xFF9DC08B))),
+                      foregroundColor:
+                          MaterialStateProperty.all(Color(0xFF9DC08B)),
+                    ),
+                    child: Text(
+                      'Chat Now',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Poppins-Regular',
+                          color: Colors.black),
+                    ),
+                  ),
+                  OutlinedButton(
+                    onPressed: () {},
+                    style: ButtonStyle(
+                      side: MaterialStateProperty.all(
+                          BorderSide(color: Color(0xFF9DC08B))),
+                      foregroundColor:
+                          MaterialStateProperty.all(Color(0xFF9DC08B)),
+                    ),
+                    child: Text(
+                      'Add to Cart',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Poppins-Regular',
+                          color: Colors.black),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Color(0xFF9DC08B)),
+                    ),
+                    child: Text(
+                      'BUY NOW',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Poppins',
+                          color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
       ),
     );
   }

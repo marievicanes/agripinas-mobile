@@ -3,14 +3,14 @@ import 'package:capstone/farmer/fertilizer_organicF.dart';
 import 'package:capstone/farmer/ofproducts_crop.dart';
 import 'package:flutter/material.dart';
 
-class OFProductsItem {
+class BuyerOFProductsItem {
   final String title;
   final String price;
   final String farmer;
   final String location;
   final String imageUrl;
 
-  OFProductsItem({
+  BuyerOFProductsItem({
     required this.title,
     required this.price,
     required this.farmer,
@@ -19,21 +19,21 @@ class OFProductsItem {
   });
 }
 
-class OFProductScreen extends StatefulWidget {
+class BuyerOFProductScreen extends StatefulWidget {
   @override
-  _OFProductsScreenState createState() => _OFProductsScreenState();
+  _BuyerOFProductsScreenState createState() => _BuyerOFProductsScreenState();
 }
 
-class _OFProductsScreenState extends State<OFProductScreen> {
+class _BuyerOFProductsScreenState extends State<BuyerOFProductScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
-  List<OFProductsItem> filteredItems = [];
+  List<BuyerOFProductsItem> filteredItems = [];
 
-  final List<OFProductsItem> items = [
-    OFProductsItem(
+  final List<BuyerOFProductsItem> items = [
+    BuyerOFProductsItem(
       title: 'Crops',
       price: '₱300',
-      farmer: 'Jenkins Mesina',
+      farmer: 'Daniella Tungol',
       location: 'Brgy. Bagong Buhay',
       imageUrl: 'assets/crops.png',
     ),
@@ -56,7 +56,7 @@ class _OFProductsScreenState extends State<OFProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<OFProductsItem> displayItems =
+    List<BuyerOFProductsItem> displayItems =
         _searchText.isEmpty ? items : filteredItems;
 
     return Scaffold(

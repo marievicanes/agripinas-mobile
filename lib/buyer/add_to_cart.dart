@@ -60,7 +60,7 @@ class _AddToCartState extends State<AddToCart>
       unitprice: '₱400',
       quantity: 2,
       farmername: 'Arriane Gatpo',
-      imageUrl: 'assets/onion.png',
+      imageUrl: 'assets/tomato.png',
     ),
     ShoppingCartItem(
       pendingitemname: 'Tomato',
@@ -69,7 +69,7 @@ class _AddToCartState extends State<AddToCart>
       unitprice: '₱500',
       quantity: 2,
       farmername: 'Marievic Anes',
-      imageUrl: 'assets/onion.png',
+      imageUrl: 'assets/tomato.png',
     ),
   ];
 

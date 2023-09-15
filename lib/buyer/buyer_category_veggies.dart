@@ -1,49 +1,72 @@
-import 'package:capstone/buyer/message.dart';
-import 'package:capstone/buyer/transactions_screen.dart';
+import 'package:capstone/farmer/fruitcalamansi.dart';
+import 'package:capstone/farmer/fruitcorn.dart';
+import 'package:capstone/farmer/fruittomato.dart';
+import 'package:capstone/farmer/veggies_kalabasa.dart';
+import 'package:capstone/farmer/veggies_pechay.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
-class VeggiesPechay {
+class BuyerVegetablesItem {
   final String title;
   final String price;
   final String farmer;
   final String location;
-  final String description;
   final String imageUrl;
 
-  VeggiesPechay({
+  BuyerVegetablesItem({
     required this.title,
     required this.price,
     required this.farmer,
     required this.location,
-    required this.description,
     required this.imageUrl,
   });
 }
 
-class NextMarketScreen extends StatefulWidget {
+class BuyerVegetablesScreen extends StatefulWidget {
   @override
-  _NextMarketState createState() => _NextMarketState();
+  _BuyerVegetablesScreenState createState() => _BuyerVegetablesScreenState();
 }
 
-class _NextMarketState extends State<NextMarketScreen> {
+class _BuyerVegetablesScreenState extends State<BuyerVegetablesScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
-  List<VeggiesPechay> filteredItems = [];
+  List<BuyerVegetablesItem> filteredItems = [];
 
-  final List<VeggiesPechay> items = [
-    VeggiesPechay(
+  final List<BuyerVegetablesItem> items = [
+    BuyerVegetablesItem(
       title: 'Pechay',
       price: '₱400',
       farmer: 'Arriane Gatpo',
       location: 'Brgy. Bagong Buhay',
-      description:
-          'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
+      imageUrl: 'assets/pechay.png',
+    ),
+    BuyerVegetablesItem(
+      title: 'Kalabasa',
+      price: '₱4500',
+      farmer: 'Marievic Añes',
+      location: 'Brgy. Bagong Silang',
+      imageUrl: 'assets/kalabasa.png',
+    ),
+    BuyerVegetablesItem(
+      title: 'Kalabasa',
+      price: '₱400',
+      farmer: 'Daniella Tungol',
+      location: 'Brgy. Concepcion',
+      imageUrl: 'assets/kalabasa.png',
+    ),
+    BuyerVegetablesItem(
+      title: 'Pechay',
+      price: '₱400',
+      farmer: 'Arriane Gatpo',
+      location: 'Brgy. Natividad South',
       imageUrl: 'assets/pechay.png',
     ),
   ];
-
+  final List<Widget Function(BuildContext)> routes = [
+    (context) => VeggiesPechayScreen(),
+    (context) => VeggiesKalabasaScreen(),
+    (context) => VeggiesKalabasaScreen(),
+    (context) => VeggiesPechayScreen(),
+  ];
   void searchItem(String text) {
     setState(() {
       _searchText = text;
@@ -59,13 +82,13 @@ class _NextMarketState extends State<NextMarketScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<VeggiesPechay> displayItems =
+    List<BuyerVegetablesItem> displayItems =
         _searchText.isEmpty ? items : filteredItems;
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFA9AF7E),
-        centerTitle: false,
+        centerTitle: true,
         title: Row(
           children: [
             Image.asset(
@@ -83,25 +106,62 @@ class _NextMarketState extends State<NextMarketScreen> {
             ),
           ],
         ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Container(
+              width: 190.0,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25.0),
+              ),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  prefixIcon: Icon(Icons.search),
+                  border: InputBorder.none,
+                ),
+                onChanged: searchItem,
+              ),
+            ),
+          ),
+        ],
       ),
-      body: ListView.builder(
+      body: GridView.builder(
         padding: EdgeInsets.all(10),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 15,
+          mainAxisSpacing: 10,
+          childAspectRatio: 2 / 3.5,
+        ),
         itemCount: displayItems.length,
         itemBuilder: (context, index) {
           final item = displayItems[index];
           return GestureDetector(
-            child: Card(
-              child: Column(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: routes[index],
+                  ),
+                );
+              },
+              child: Card(
+                  child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        item.imageUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: 250,
+                  Expanded(
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          item.imageUrl,
+                          fit: BoxFit.cover,
+                          width: 200,
+                          height: 250,
+                        ),
                       ),
                     ),
                   ),
@@ -114,83 +174,66 @@ class _NextMarketState extends State<NextMarketScreen> {
                           child: Text(
                             item.title,
                             style: TextStyle(
-                              fontSize: 25,
+                              fontSize: 15,
                               fontFamily: 'Poppins',
                             ),
                           ),
                         ),
-                        SizedBox(height: 20),
+                        SizedBox(height: 4),
                         Row(
                           children: [
                             Text(
                               'Price: ',
                               style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                fontFamily: 'Poppins',
                               ),
                             ),
                             Text(
                               item.price,
                               style: TextStyle(
-                                fontSize: 17,
+                                fontSize: 14,
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 6),
+                        SizedBox(height: 4),
                         Row(
                           children: [
                             Text(
                               'Farmer: ',
                               style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                fontFamily: 'Poppins',
                               ),
                             ),
                             Text(
                               item.farmer,
                               style: TextStyle(
-                                fontSize: 17,
+                                fontSize: 13,
+                                fontFamily: 'Poppins-Regular',
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 6),
-                        Row(
-                          children: [
-                            Text(
-                              'Location: ',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              item.location,
-                              style: TextStyle(
-                                fontSize: 17,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 6),
                         Padding(
                           padding: const EdgeInsets.all(1.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Description:',
+                                'Location:',
                                 style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  fontFamily: 'Poppins',
                                 ),
                               ),
-                              SizedBox(height: 6),
+                              SizedBox(height: 4),
                               Text(
-                                item.description,
+                                item.location,
                                 style: TextStyle(
-                                  fontSize: 17,
+                                  fontSize: 13,
+                                  fontFamily: 'Poppins-Regular',
                                 ),
                               ),
                             ],
@@ -199,30 +242,8 @@ class _NextMarketState extends State<NextMarketScreen> {
                       ],
                     ),
                   ),
-                  ElevatedButton.icon(
-                          icon: Icon(Icons.shopping_cart_checkout_outlined),
-                          label: Text('Buy Now'),
-                          style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF9DC08B),),
-                          onPressed: () { 
-                  Navigator.of(context).push(MaterialPageRoute(builder: 
-                          (context) => TransactionBuyer()));
-                          },
-                        ),
-                  OutlinedButton.icon(
-                          icon: Icon(Icons.shopping_cart_checkout_outlined),
-                          label: Text('Add to Cart'),
-                          style: OutlinedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(255, 248, 250, 247),),
-                          onPressed: () { 
-                  Navigator.of(context).push(MaterialPageRoute(builder: 
-                          (context) => TransactionBuyer()));
-                          },
-                        ),
                 ],
-              ),
-            ),
-          );
+              )));
         },
       ),
     );

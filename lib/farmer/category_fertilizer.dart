@@ -167,7 +167,7 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                               'Price: ',
                               style: TextStyle(
                                 fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Poppins',
                               ),
                             ),
                             Text(
@@ -185,13 +185,14 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                               'Farmer: ',
                               style: TextStyle(
                                 fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Poppins',
                               ),
                             ),
                             Text(
                               item.farmer,
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 13,
+                                fontFamily: 'Poppins-Regular',
                               ),
                             ),
                           ],
@@ -205,14 +206,15 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                                 'Location:',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Poppins',
                                 ),
                               ),
                               SizedBox(height: 4),
                               Text(
                                 item.location,
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 13,
+                                  fontFamily: 'Poppins-Regular',
                                 ),
                               ),
                             ],

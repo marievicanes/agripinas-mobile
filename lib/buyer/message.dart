@@ -154,32 +154,31 @@ class User {
 List<User> users = [
   User(
     name: 'Arriane Gatpo',
-    message:
-        'Musta? Sample sample qui dolorem ipsum, quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem',
+    message: 'Thank you! I already received my item',
     time: '5:34 PM',
     profile: 'assets/user.png',
   ),
   User(
     name: 'Daniella Marie Tungol',
-    message: 'Nice one! Sample oks',
+    message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     time: '7:23 PM',
     profile: 'assets/user2.png',
   ),
   User(
     name: 'Marievic Anes',
-    message: 'Kamusta? Uy!',
+    message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     time: '8:45 PM',
     profile: 'assets/user3.png',
   ),
   User(
     name: 'Jenkins Mesina',
-    message: 'Pre',
+    message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     time: '9:12 PM',
     profile: 'assets/user4.png',
   ),
   User(
     name: 'Romeo London',
-    message: 'Uy pre!',
+    message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     time: '10:56 PM',
     profile: 'assets/user5.png',
   ),

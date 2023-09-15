@@ -1,15 +1,15 @@
-import 'package:capstone/farmer/veggies_kalabasa.dart';
-import 'package:capstone/buyer/veggy.dart';
+import 'package:capstone/farmer/fertilizer_fertilizer1.dart';
+import 'package:capstone/farmer/fertilizer_organicF.dart';
 import 'package:flutter/material.dart';
 
-class MarketplaceItem {
+class BuyerFertilizersItem {
   final String title;
   final String price;
   final String farmer;
   final String location;
   final String imageUrl;
 
-  MarketplaceItem({
+  BuyerFertilizersItem({
     required this.title,
     required this.price,
     required this.farmer,
@@ -18,51 +18,35 @@ class MarketplaceItem {
   });
 }
 
-class MarketplaceScreen extends StatefulWidget {
+class BuyerFertilizersScreen extends StatefulWidget {
   @override
-  _MarketplaceScreenState createState() => _MarketplaceScreenState();
+  _BuyerFertilizersScreenState createState() => _BuyerFertilizersScreenState();
 }
 
-class _MarketplaceScreenState extends State<MarketplaceScreen> {
+class _BuyerFertilizersScreenState extends State<BuyerFertilizersScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
-  List<MarketplaceItem> filteredItems = [];
+  List<BuyerFertilizersItem> filteredItems = [];
 
-  final List<MarketplaceItem> items = [
-    MarketplaceItem(
-      title: 'Pechay',
-      price: '₱400',
-      farmer: 'Arriane Gatpo',
+  final List<BuyerFertilizersItem> items = [
+    BuyerFertilizersItem(
+      title: 'Organic Fertilizer',
+      price: '₱300',
+      farmer: 'Romeo London',
       location: 'Brgy. Bagong Buhay',
-      imageUrl: 'assets/pechay.png',
+      imageUrl: 'assets/fertilizer1.png',
     ),
-    MarketplaceItem(
-      title: 'Kalabasa',
-      price: '₱4500',
-      farmer: 'Marievic Añes',
-      location: 'Brgy. Bagong Silang',
-      imageUrl: 'assets/kalabasa.png',
-    ),
-    MarketplaceItem(
-      title: 'Kalabasa',
+    BuyerFertilizersItem(
+      title: 'Fertilizer',
       price: '₱400',
       farmer: 'Jenkins Mesina',
-      location: 'Brgy. Concepcion',
-      imageUrl: 'assets/kalabasa.png',
-    ),
-    MarketplaceItem(
-      title: 'Pechay',
-      price: '₱400',
-      farmer: 'Arriane Gatpo',
       location: 'Brgy. Natividad South',
-      imageUrl: 'assets/pechay.png',
+      imageUrl: 'assets/fertilizer.png',
     ),
   ];
   final List<Widget Function(BuildContext)> routes = [
-    (context) => NextMarketScreen(),
-    (context) => VeggiesKalabasaScreen(),
-    (context) => VeggiesKalabasaScreen(),
-    (context) => NextMarketyScreen(),
+    (context) => OrganicFertilizerScreen(),
+    (context) => Fertilizer1Screen(),
   ];
   void searchItem(String text) {
     setState(() {
@@ -79,7 +63,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<MarketplaceItem> displayItems =
+    List<BuyerFertilizersItem> displayItems =
         _searchText.isEmpty ? items : filteredItems;
 
     return Scaffold(
@@ -183,7 +167,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                               'Price: ',
                               style: TextStyle(
                                 fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Poppins',
                               ),
                             ),
                             Text(
@@ -201,13 +185,14 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                               'Farmer: ',
                               style: TextStyle(
                                 fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Poppins',
                               ),
                             ),
                             Text(
                               item.farmer,
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 13,
+                                fontFamily: 'Poppins-Regular',
                               ),
                             ),
                           ],
@@ -221,14 +206,15 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                 'Location:',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  fontWeight: FontWeight.bold, 
+                                  fontFamily: 'Poppins',
                                 ),
                               ),
                               SizedBox(height: 4),
                               Text(
                                 item.location,
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 13,
+                                  fontFamily: 'Poppins-Regular',
                                 ),
                               ),
                             ],

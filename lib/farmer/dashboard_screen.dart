@@ -27,13 +27,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Announcement mavic'),
-          content: Text(
-            'Dear Cabiao farmers, ... (your content here)',
+          title: Center(
+            child: Text(
+              'Announcement',
+              style: TextStyle(fontFamily: 'Poppins', fontSize: 19),
+            ),
           ),
+          content: Text(
+              'Dear Cabiao farmers,\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lacinia pretium aliquet. Quisque euismod suscipit mi id accumsan. Quisque molestie varius nisl, eget dictum nunc eleifend quis. Mauris massa est, tincidunt vel venenatis venenatis, fringilla sed orci. Integer et rutrum est, quis venenatis mi. Vestibulum dictum posuere quam, facilisis convallis nunc auctor eu. Etiam iaculis eleifend lorem, ut consequat lacus efficitur rutrum. Sed porta tortor nec velit luctus ullamcorper. Aenean rutrum lectus id tristique tempor. Fusce non ligula varius orci euismod imperdiet at eu ipsum. Maecenas mollis ac est ac vehicula. Donec sit amet orci risus. Nunc malesuada ut ante ac pretium. In hac habitasse platea dictumst. Integer dapibus sodales tortor, et dapibus magna ullamcorper pretium.',
+              style: TextStyle(fontFamily: 'Poppins-Regular', fontSize: 14)),
           actions: <Widget>[
             TextButton(
-              child: Text('OK'),
+              child: Text(
+                'OK',
+                style: TextStyle(
+                  color: Color(0xFF4D7046), // Change the text color to black
+                  fontFamily:
+                      'Poppins-Bold', // Replace 'YourFontFamily' with the desired font family
+                ),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
                 setState(() {

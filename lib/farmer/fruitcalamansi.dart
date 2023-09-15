@@ -124,7 +124,7 @@ class _FruitCalamansiState extends State<FruitCalamansiScreen> {
                               'Price: ',
                               style: TextStyle(
                                 fontSize: 17,
-                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Poppins',
                               ),
                             ),
                             Text(
@@ -142,13 +142,14 @@ class _FruitCalamansiState extends State<FruitCalamansiScreen> {
                               'Farmer: ',
                               style: TextStyle(
                                 fontSize: 17,
-                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Poppins',
                               ),
                             ),
                             Text(
                               item.farmer,
                               style: TextStyle(
-                                fontSize: 17,
+                                fontSize: 15,
+                                fontFamily: 'Poppins-Regular',
                               ),
                             ),
                           ],
@@ -160,13 +161,14 @@ class _FruitCalamansiState extends State<FruitCalamansiScreen> {
                               'Location: ',
                               style: TextStyle(
                                 fontSize: 17,
-                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Poppins',
                               ),
                             ),
                             Text(
                               item.location,
                               style: TextStyle(
-                                fontSize: 17,
+                                fontSize: 15,
+                                fontFamily: 'Poppins-Regular',
                               ),
                             ),
                           ],
@@ -181,15 +183,15 @@ class _FruitCalamansiState extends State<FruitCalamansiScreen> {
                                 'Description:',
                                 style: TextStyle(
                                   fontSize: 17,
-                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Poppins',
                                 ),
                               ),
                               SizedBox(height: 6),
                               Text(
                                 item.description,
                                 style: TextStyle(
-                                  fontSize: 17,
-                                ),
+                                    fontSize: 15,
+                                    fontFamily: 'Poppins-Regular'),
                               ),
                             ],
                           ),

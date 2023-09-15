@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class FruitCorn {
+class BuyerFruitCorn {
   final String title;
   final String price;
   final String farmer;
@@ -10,7 +10,7 @@ class FruitCorn {
   final String description;
   final String imageUrl;
 
-  FruitCorn({
+  BuyerFruitCorn({
     required this.title,
     required this.price,
     required this.farmer,
@@ -20,21 +20,21 @@ class FruitCorn {
   });
 }
 
-class FruitCornScreen extends StatefulWidget {
+class BuyerFruitCornScreen extends StatefulWidget {
   @override
-  _FruitCornState createState() => _FruitCornState();
+  _BuyerFruitCornState createState() => _BuyerFruitCornState();
 }
 
-class _FruitCornState extends State<FruitCornScreen> {
+class _BuyerFruitCornState extends State<BuyerFruitCornScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
-  List<FruitCorn> filteredItems = [];
+  List<BuyerFruitCorn> filteredItems = [];
 
-  final List<FruitCorn> items = [
-    FruitCorn(
+  final List<BuyerFruitCorn> items = [
+    BuyerFruitCorn(
       title: 'Corn',
       price: '₱400',
-      farmer: 'Arriane Gatpo',
+      farmer: 'Marievic Anes',
       location: 'Brgy. Bagong Buhay',
       description:
           'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
@@ -57,7 +57,8 @@ class _FruitCornState extends State<FruitCornScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<FruitCorn> displayItems = _searchText.isEmpty ? items : filteredItems;
+    List<BuyerFruitCorn> displayItems =
+        _searchText.isEmpty ? items : filteredItems;
 
     return Scaffold(
       appBar: AppBar(
