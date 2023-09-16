@@ -1,3 +1,4 @@
+import 'package:capstone/buyer/checkout.dart';
 import 'package:capstone/buyer/message.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -261,7 +262,13 @@ class _BuyerVeggiesPechayState extends State<BuyerVeggiesPechayScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => CheckoutScreen(),
+                        ),
+                      );
+                    },
                     style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Color(0xFF9DC08B)),

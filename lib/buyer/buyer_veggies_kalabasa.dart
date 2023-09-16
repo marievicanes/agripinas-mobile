@@ -1,3 +1,4 @@
+import 'package:capstone/buyer/checkout.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -260,7 +261,13 @@ class _BuyerVeggiesKalabasaState extends State<BuyerVeggiesKalabasaScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => CheckoutScreen(),
+                        ),
+                      );
+                    },
                     style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Color(0xFF9DC08B)),
