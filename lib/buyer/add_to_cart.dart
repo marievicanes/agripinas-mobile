@@ -421,7 +421,7 @@ class _AddToCartState extends State<AddToCart>
                 ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    primary: Color(0xFF27AE60),
+                    primary: Color(0xFFC0D090),
                   ),
                   child: Text(
                     'Checkout',
