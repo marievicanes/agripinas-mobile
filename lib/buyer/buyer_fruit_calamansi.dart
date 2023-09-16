@@ -1,3 +1,4 @@
+import 'package:capstone/buyer/add_to_cart.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -87,121 +88,195 @@ class _BuyerFruitCalamansiState extends State<BuyerFruitCalamansiScreen> {
         itemCount: displayItems.length,
         itemBuilder: (context, index) {
           final item = displayItems[index];
-          return GestureDetector(
-            child: Card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        item.imageUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: 250,
+          return Column(
+            children: [
+              Card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          item.imageUrl,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: 250,
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center(
-                          child: Text(
-                            item.title,
-                            style: TextStyle(
-                              fontSize: 25,
-                              fontFamily: 'Poppins',
+                    Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: Text(
+                              item.title,
+                              style: TextStyle(
+                                fontSize: 25,
+                                fontFamily: 'Poppins',
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Text(
-                              'Price: ',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                            Text(
-                              item.price,
-                              style: TextStyle(
-                                fontSize: 17,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 6),
-                        Row(
-                          children: [
-                            Text(
-                              'Farmer: ',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                            Text(
-                              item.farmer,
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'Poppins-Regular',
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 6),
-                        Row(
-                          children: [
-                            Text(
-                              'Location: ',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                            Text(
-                              item.location,
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'Poppins-Regular',
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 6),
-                        Padding(
-                          padding: const EdgeInsets.all(1.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          SizedBox(height: 20),
+                          Row(
                             children: [
                               Text(
-                                'Description:',
+                                'Price: ',
                                 style: TextStyle(
                                   fontSize: 17,
                                   fontFamily: 'Poppins',
                                 ),
                               ),
-                              SizedBox(height: 6),
                               Text(
-                                item.description,
+                                item.price,
                                 style: TextStyle(
-                                    fontSize: 15,
-                                    fontFamily: 'Poppins-Regular'),
+                                  fontSize: 17,
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 6),
+                          Row(
+                            children: [
+                              Text(
+                                'Farmer: ',
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                              Text(
+                                item.farmer,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontFamily: 'Poppins-Regular',
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 6),
+                          Row(
+                            children: [
+                              Text(
+                                'Location: ',
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                              Text(
+                                item.location,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontFamily: 'Poppins-Regular',
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 6),
+                          Padding(
+                            padding: const EdgeInsets.all(1.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Description:',
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ),
+                                SizedBox(height: 6),
+                                Text(
+                                  item.description,
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontFamily: 'Poppins-Regular'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  OutlinedButton(
+                    onPressed: () {},
+                    style: ButtonStyle(
+                      side: MaterialStateProperty.all(
+                          BorderSide(color: Color(0xFF9DC08B))),
+                      foregroundColor:
+                          MaterialStateProperty.all(Color(0xFF9DC08B)),
+                    ),
+                    child: Text(
+                      'Chat Now',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Poppins-Regular',
+                          color: Colors.black),
+                    ),
+                  ),
+                  OutlinedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          Future.delayed(Duration(milliseconds: 600), () {
+                            Navigator.of(context).pop();
+                          });
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            title: Text(
+                              'Added to Cart',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontFamily: 'Poppins-Regular',
+                                color: Colors.black,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    style: ButtonStyle(
+                      side: MaterialStateProperty.all(
+                        BorderSide(color: Color(0xFF9DC08B)),
+                      ),
+                    ),
+                    child: Text(
+                      'Add to Cart',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Poppins-Regular',
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Color(0xFF9DC08B)),
+                    ),
+                    child: Text(
+                      'BUY NOW',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Poppins',
+                          color: Colors.white),
                     ),
                   ),
                 ],
               ),
-            ),
+            ],
           );
         },
       ),

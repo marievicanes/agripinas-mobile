@@ -224,19 +224,39 @@ class _BuyerFruitTomatoState extends State<BuyerFruitTomatoScreen> {
                     ),
                   ),
                   OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          Future.delayed(Duration(milliseconds: 600), () {
+                            Navigator.of(context).pop();
+                          });
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            title: Text(
+                              'Added to Cart',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontFamily: 'Poppins-Regular',
+                                color: Colors.black,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
                     style: ButtonStyle(
                       side: MaterialStateProperty.all(
-                          BorderSide(color: Color(0xFF9DC08B))),
-                      foregroundColor:
-                          MaterialStateProperty.all(Color(0xFF9DC08B)),
+                        BorderSide(color: Color(0xFF9DC08B)),
+                      ),
                     ),
                     child: Text(
                       'Add to Cart',
                       style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'Poppins-Regular',
-                          color: Colors.black),
+                        fontSize: 15,
+                        fontFamily: 'Poppins-Regular',
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                   ElevatedButton(

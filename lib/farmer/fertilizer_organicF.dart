@@ -124,13 +124,13 @@ class _OrganicFertilizerState extends State<OrganicFertilizerScreen> {
                               'Price: ',
                               style: TextStyle(
                                 fontSize: 17,
-                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Poppins',
                               ),
                             ),
                             Text(
                               item.price,
                               style: TextStyle(
-                                fontSize: 17,
+                                fontSize: 15,
                               ),
                             ),
                           ],
@@ -141,15 +141,13 @@ class _OrganicFertilizerState extends State<OrganicFertilizerScreen> {
                             Text(
                               'Farmer: ',
                               style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Poppins',
                               ),
                             ),
                             Text(
                               item.farmer,
                               style: TextStyle(
-                                fontSize: 17,
-                              ),
+                                  fontSize: 15, fontFamily: 'Poppins-Regular'),
                             ),
                           ],
                         ),
@@ -159,15 +157,12 @@ class _OrganicFertilizerState extends State<OrganicFertilizerScreen> {
                             Text(
                               'Location: ',
                               style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
+                                  fontSize: 17, fontFamily: 'Poppins'),
                             ),
                             Text(
                               item.location,
                               style: TextStyle(
-                                fontSize: 17,
-                              ),
+                                  fontSize: 15, fontFamily: 'Poppins-Regular'),
                             ),
                           ],
                         ),
@@ -181,15 +176,15 @@ class _OrganicFertilizerState extends State<OrganicFertilizerScreen> {
                                 'Description:',
                                 style: TextStyle(
                                   fontSize: 17,
-                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Poppins',
                                 ),
                               ),
                               SizedBox(height: 6),
                               Text(
                                 item.description,
                                 style: TextStyle(
-                                  fontSize: 17,
-                                ),
+                                    fontSize: 15,
+                                    fontFamily: 'Poppins-Regular'),
                               ),
                             ],
                           ),

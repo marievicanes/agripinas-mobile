@@ -1,6 +1,4 @@
-import 'package:capstone/farmer/fertilizer_fertilizer1.dart';
-import 'package:capstone/farmer/fertilizer_organicF.dart';
-import 'package:capstone/farmer/ofproducts_crop.dart';
+import 'package:capstone/buyer/buyer_ofproducts_crops.dart';
 import 'package:flutter/material.dart';
 
 class BuyerOFProductsItem {
@@ -39,7 +37,7 @@ class _BuyerOFProductsScreenState extends State<BuyerOFProductScreen> {
     ),
   ];
   final List<Widget Function(BuildContext)> routes = [
-    (context) => CropsScreen(),
+    (context) => BuyerCropsScreen(),
   ];
   void searchItem(String text) {
     setState(() {

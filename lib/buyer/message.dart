@@ -1,33 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'dart:io';
 
-void main() {
-  runApp(Message());
-}
-
-class Message extends StatelessWidget {
+class Message extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: AgriMessage(),
-    );
-  }
+  _MessageState createState() => _MessageState();
 }
 
-class AgriMessage extends StatelessWidget {
+class _MessageState extends State<Message> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFA9AF7E),
-        leading: BackButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: Text(
-          'Messages',
-          style: TextStyle(fontFamily: 'Poppins'),
+        centerTitle: false,
+        title: Row(
+          children: [
+            SizedBox(width: 8.0),
+            Text(
+              'Messages',
+              style: TextStyle(
+                fontSize: 17.0,
+                fontFamily: 'Poppins',
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
       ),
       body: Column(
@@ -154,31 +151,36 @@ class User {
 List<User> users = [
   User(
     name: 'Arriane Gatpo',
-    message: 'Thank you! I already received my item',
+    message:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget risus eget dolor blandit vehicula. Quisque tristique mi at nisl fringilla, nec vehicula metus euismod. Nunc et massa ac justo dignissim gravida. Sed nec leo euismod, cursus lorem id',
     time: '5:34 PM',
     profile: 'assets/user.png',
   ),
   User(
     name: 'Daniella Marie Tungol',
-    message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    message:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget risus eget dolor blandit vehicula. Quisque tristique mi at nisl fringilla, nec vehicula metus euismod. Nunc et massa ac justo dignissim gravida. Sed nec leo euismod, cursus lorem id',
     time: '7:23 PM',
     profile: 'assets/user2.png',
   ),
   User(
     name: 'Marievic Anes',
-    message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    message:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget risus eget dolor blandit vehicula. Quisque tristique mi at nisl fringilla, nec vehicula metus euismod. Nunc et massa ac justo dignissim gravida. Sed nec leo euismod, cursus lorem id',
     time: '8:45 PM',
     profile: 'assets/user3.png',
   ),
   User(
     name: 'Jenkins Mesina',
-    message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    message:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget risus eget dolor blandit vehicula. Quisque tristique mi at nisl fringilla, nec vehicula metus euismod. Nunc et massa ac justo dignissim gravida. Sed nec leo euismod, cursus lorem id',
     time: '9:12 PM',
     profile: 'assets/user4.png',
   ),
   User(
     name: 'Romeo London',
-    message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    message:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget risus eget dolor blandit vehicula. Quisque tristique mi at nisl fringilla, nec vehicula metus euismod. Nunc et massa ac justo dignissim gravida. Sed nec leo euismod, cursus lorem id',
     time: '10:56 PM',
     profile: 'assets/user5.png',
   ),

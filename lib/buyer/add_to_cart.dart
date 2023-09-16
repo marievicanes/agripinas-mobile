@@ -367,6 +367,7 @@ class _AddToCartState extends State<AddToCart>
                               isCheckedList[index] = value!;
                             });
                           },
+                          activeColor: Color(0xFF9DC08B),
                         ),
                         IconButton(
                           icon: Icon(Icons.delete),

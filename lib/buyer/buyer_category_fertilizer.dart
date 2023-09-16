@@ -1,3 +1,5 @@
+import 'package:capstone/buyer/buyer_fertilizer_fertilizer1.dart';
+import 'package:capstone/buyer/buyer_fertilizer_organicF.dart';
 import 'package:capstone/farmer/fertilizer_fertilizer1.dart';
 import 'package:capstone/farmer/fertilizer_organicF.dart';
 import 'package:flutter/material.dart';
@@ -45,8 +47,8 @@ class _BuyerFertilizersScreenState extends State<BuyerFertilizersScreen> {
     ),
   ];
   final List<Widget Function(BuildContext)> routes = [
-    (context) => OrganicFertilizerScreen(),
-    (context) => Fertilizer1Screen(),
+    (context) => BuyerOrganicFertilizerScreen(),
+    (context) => BuyerFertilizer1Screen(),
   ];
   void searchItem(String text) {
     setState(() {

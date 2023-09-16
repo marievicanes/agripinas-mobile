@@ -1,9 +1,9 @@
-import 'package:capstone/buyer/checkout.dart';
+import 'package:capstone/buyer/message.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class BuyerFruitCorn {
+class BuyerVeggiesPechay {
   final String title;
   final String price;
   final String farmer;
@@ -11,7 +11,7 @@ class BuyerFruitCorn {
   final String description;
   final String imageUrl;
 
-  BuyerFruitCorn({
+  BuyerVeggiesPechay({
     required this.title,
     required this.price,
     required this.farmer,
@@ -21,25 +21,25 @@ class BuyerFruitCorn {
   });
 }
 
-class BuyerFruitCornScreen extends StatefulWidget {
+class BuyerVeggiesPechayScreen extends StatefulWidget {
   @override
-  _BuyerFruitCornState createState() => _BuyerFruitCornState();
+  _BuyerVeggiesPechayState createState() => _BuyerVeggiesPechayState();
 }
 
-class _BuyerFruitCornState extends State<BuyerFruitCornScreen> {
+class _BuyerVeggiesPechayState extends State<BuyerVeggiesPechayScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
-  List<BuyerFruitCorn> filteredItems = [];
+  List<BuyerVeggiesPechay> filteredItems = [];
 
-  final List<BuyerFruitCorn> items = [
-    BuyerFruitCorn(
-      title: 'Corn',
+  final List<BuyerVeggiesPechay> items = [
+    BuyerVeggiesPechay(
+      title: 'Pechay',
       price: '₱400',
-      farmer: 'Marievic Anes',
+      farmer: 'Arriane Gatpo',
       location: 'Brgy. Bagong Buhay',
       description:
           'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
-      imageUrl: 'assets/corn.png',
+      imageUrl: 'assets/pechay.png',
     ),
   ];
 
@@ -58,7 +58,7 @@ class _BuyerFruitCornState extends State<BuyerFruitCornScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<BuyerFruitCorn> displayItems =
+    List<BuyerVeggiesPechay> displayItems =
         _searchText.isEmpty ? items : filteredItems;
 
     return Scaffold(
@@ -261,13 +261,7 @@ class _BuyerFruitCornState extends State<BuyerFruitCornScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => CheckoutScreen(),
-                        ),
-                      );
-                    },
+                    onPressed: () {},
                     style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Color(0xFF9DC08B)),

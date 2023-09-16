@@ -1,9 +1,8 @@
-import 'package:capstone/buyer/checkout.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class BuyerFruitCorn {
+class BuyerVeggiesKalabasa {
   final String title;
   final String price;
   final String farmer;
@@ -11,7 +10,7 @@ class BuyerFruitCorn {
   final String description;
   final String imageUrl;
 
-  BuyerFruitCorn({
+  BuyerVeggiesKalabasa({
     required this.title,
     required this.price,
     required this.farmer,
@@ -21,25 +20,25 @@ class BuyerFruitCorn {
   });
 }
 
-class BuyerFruitCornScreen extends StatefulWidget {
+class BuyerVeggiesKalabasaScreen extends StatefulWidget {
   @override
-  _BuyerFruitCornState createState() => _BuyerFruitCornState();
+  _BuyerVeggiesKalabasaState createState() => _BuyerVeggiesKalabasaState();
 }
 
-class _BuyerFruitCornState extends State<BuyerFruitCornScreen> {
+class _BuyerVeggiesKalabasaState extends State<BuyerVeggiesKalabasaScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
-  List<BuyerFruitCorn> filteredItems = [];
+  List<BuyerVeggiesKalabasa> filteredItems = [];
 
-  final List<BuyerFruitCorn> items = [
-    BuyerFruitCorn(
-      title: 'Corn',
+  final List<BuyerVeggiesKalabasa> items = [
+    BuyerVeggiesKalabasa(
+      title: 'Kalabasa',
       price: '₱400',
-      farmer: 'Marievic Anes',
+      farmer: 'Jenkins Mesina',
       location: 'Brgy. Bagong Buhay',
       description:
-          'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
-      imageUrl: 'assets/corn.png',
+          'The kalabasa is the edible berry of the plant, commonly known as the tomato plant.',
+      imageUrl: 'assets/kalabasa.png',
     ),
   ];
 
@@ -58,7 +57,7 @@ class _BuyerFruitCornState extends State<BuyerFruitCornScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<BuyerFruitCorn> displayItems =
+    List<BuyerVeggiesKalabasa> displayItems =
         _searchText.isEmpty ? items : filteredItems;
 
     return Scaffold(
@@ -261,13 +260,7 @@ class _BuyerFruitCornState extends State<BuyerFruitCornScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => CheckoutScreen(),
-                        ),
-                      );
-                    },
+                    onPressed: () {},
                     style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Color(0xFF9DC08B)),

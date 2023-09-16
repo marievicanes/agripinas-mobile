@@ -1,9 +1,8 @@
-import 'package:capstone/buyer/checkout.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class BuyerFruitCorn {
+class BuyerFertilizer1 {
   final String title;
   final String price;
   final String farmer;
@@ -11,7 +10,7 @@ class BuyerFruitCorn {
   final String description;
   final String imageUrl;
 
-  BuyerFruitCorn({
+  BuyerFertilizer1({
     required this.title,
     required this.price,
     required this.farmer,
@@ -21,25 +20,25 @@ class BuyerFruitCorn {
   });
 }
 
-class BuyerFruitCornScreen extends StatefulWidget {
+class BuyerFertilizer1Screen extends StatefulWidget {
   @override
-  _BuyerFruitCornState createState() => _BuyerFruitCornState();
+  _BuyerFertilizer1State createState() => _BuyerFertilizer1State();
 }
 
-class _BuyerFruitCornState extends State<BuyerFruitCornScreen> {
+class _BuyerFertilizer1State extends State<BuyerFertilizer1Screen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
-  List<BuyerFruitCorn> filteredItems = [];
+  List<BuyerFertilizer1> filteredItems = [];
 
-  final List<BuyerFruitCorn> items = [
-    BuyerFruitCorn(
-      title: 'Corn',
+  final List<BuyerFertilizer1> items = [
+    BuyerFertilizer1(
+      title: 'Organic Fertilizer',
       price: '₱400',
       farmer: 'Marievic Anes',
       location: 'Brgy. Bagong Buhay',
       description:
           'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
-      imageUrl: 'assets/corn.png',
+      imageUrl: 'assets/fertilizer.png',
     ),
   ];
 
@@ -58,7 +57,7 @@ class _BuyerFruitCornState extends State<BuyerFruitCornScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<BuyerFruitCorn> displayItems =
+    List<BuyerFertilizer1> displayItems =
         _searchText.isEmpty ? items : filteredItems;
 
     return Scaffold(
@@ -261,13 +260,7 @@ class _BuyerFruitCornState extends State<BuyerFruitCornScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => CheckoutScreen(),
-                        ),
-                      );
-                    },
+                    onPressed: () {},
                     style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Color(0xFF9DC08B)),

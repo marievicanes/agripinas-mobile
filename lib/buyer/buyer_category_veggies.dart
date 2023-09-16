@@ -1,3 +1,5 @@
+import 'package:capstone/buyer/buyer_veggies_kalabasa.dart';
+import 'package:capstone/buyer/buyer_veggies_pechay.dart';
 import 'package:capstone/farmer/fruitcalamansi.dart';
 import 'package:capstone/farmer/fruitcorn.dart';
 import 'package:capstone/farmer/fruittomato.dart';
@@ -35,7 +37,7 @@ class _BuyerVegetablesScreenState extends State<BuyerVegetablesScreen> {
     BuyerVegetablesItem(
       title: 'Pechay',
       price: '₱400',
-      farmer: 'Arriane Gatpo',
+      farmer: 'Daniella Tungol',
       location: 'Brgy. Bagong Buhay',
       imageUrl: 'assets/pechay.png',
     ),
@@ -62,10 +64,10 @@ class _BuyerVegetablesScreenState extends State<BuyerVegetablesScreen> {
     ),
   ];
   final List<Widget Function(BuildContext)> routes = [
-    (context) => VeggiesPechayScreen(),
-    (context) => VeggiesKalabasaScreen(),
-    (context) => VeggiesKalabasaScreen(),
-    (context) => VeggiesPechayScreen(),
+    (context) => BuyerVeggiesPechayScreen(),
+    (context) => BuyerVeggiesKalabasaScreen(),
+    (context) => BuyerVeggiesKalabasaScreen(),
+    (context) => BuyerVeggiesPechayScreen(),
   ];
   void searchItem(String text) {
     setState(() {
