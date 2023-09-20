@@ -14,13 +14,12 @@ class BuyerCategoryItem {
   });
 }
 
-class BuyerCategoryItemScreen extends StatefulWidget {
+class BuyerCategoriesScreen extends StatefulWidget {
   @override
-  _BuyerCategoryItemScreenState createState() =>
-      _BuyerCategoryItemScreenState();
+  _BuyerCategoriesScreenState createState() => _BuyerCategoriesScreenState();
 }
 
-class _BuyerCategoryItemScreenState extends State<BuyerCategoryItemScreen> {
+class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
   List<BuyerCategoryItem> filteredItems = [];
@@ -53,9 +52,6 @@ class _BuyerCategoryItemScreenState extends State<BuyerCategoryItemScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<BuyerCategoryItem> displayItems =
-        _searchText.isEmpty ? items : filteredItems;
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -78,107 +74,100 @@ class _BuyerCategoryItemScreenState extends State<BuyerCategoryItemScreen> {
           ],
         ),
       ),
-      body: Column(
+      body: ListView(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'Marketplace',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontFamily: 'Poppins-Bold',
               ),
-            ],
+            ),
           ),
-          Row(
+          SizedBox(height: 1.0),
+          Column(
             children: [
-              Expanded(
-                child: Text(
-                  '     Categories',
-                  style: TextStyle(fontSize: 20.0, fontFamily: 'Poppins-Bold'),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Expanded(
-            child: GridView.builder(
-              padding: EdgeInsets.all(10),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 15,
-                mainAxisSpacing: 10,
-                childAspectRatio: 2 / 3.5,
-              ),
-              itemCount: displayItems.length,
-              itemBuilder: (context, index) {
-                final item = displayItems[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: routes[index],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text(
+                      'Categories',
+                      style: TextStyle(
+                        fontSize: 16.5,
+                        fontFamily: 'Poppins-Regular',
                       ),
-                    );
-                  },
-                  child: Card(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Center(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.asset(
-                                item.imageUrl,
-                                fit: BoxFit.cover,
-                                width: 200,
-                                height: 250,
-                              ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 5.0),
+            ],
+          ),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.all(10),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              crossAxisSpacing: 1,
+              mainAxisSpacing: 1,
+              childAspectRatio: 2 / 3,
+            ),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: routes[index],
+                    ),
+                  );
+                },
+                child: Card(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.asset(
+                              item.imageUrl,
+                              fit: BoxFit.cover,
+                              width: 250,
+                              height: 250,
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.all(9),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Center(
-                                child: Text(
-                                  item.title,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontFamily: 'Poppins',
-                                  ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(9),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Text(
+                                item.title,
+                                style: TextStyle(
+                                  fontSize: 12.2,
+                                  fontFamily: 'Poppins',
                                 ),
                               ),
-                              SizedBox(height: 4),
-                              SizedBox(height: 4),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ],
       ),
