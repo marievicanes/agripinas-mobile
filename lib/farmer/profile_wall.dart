@@ -306,6 +306,8 @@ class _ProfileWallState extends State<ProfileWall> {
             Container(
               height: 700,
               child: GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.all(10),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
