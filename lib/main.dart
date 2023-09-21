@@ -46,7 +46,7 @@ class WelcomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Fresh from the farm,\ndelivered to your door.',
+                  'Grown with care,\ntraded with trust.',
                   style: TextStyle(
                       fontSize: 28,
                       fontFamily: 'Averta-Regular',
@@ -55,7 +55,7 @@ class WelcomePage extends StatelessWidget {
                 ),
                 SizedBox(height: 30),
                 Text(
-                  '                   Let’s help farmers! \nDirect link between farmers and consumers.',
+                  '                         Let’s help farmers! \n   Direct link between farmers and consumers.',
                   style: TextStyle(fontSize: 16, color: Colors.black54),
                 ),
                 SizedBox(height: 80),
@@ -90,6 +90,26 @@ class Login extends StatelessWidget {
   final currentUser = FirebaseAuth.instance;
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   final AuthService authService = AuthService();
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email.';
+    }
+    if (!value.contains('@')) {
+      return 'Please enter a valid email address.';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your password.';
+    }
+    if (value.length < 8) {
+      return 'Password must have at least 8 characters.';
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,38 +163,46 @@ class Login extends StatelessWidget {
               TextFormField(
                 controller: authService.email,
                 decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.people),
+                  prefixIcon: Icon(
+                    Icons.email,
+                    color: Color(0xFF9DC08B),
+                  ),
                   labelText: "E-mail",
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(width: 3, color: Colors.green),
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Poppins-Regular',
+                    fontSize: 13,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color.fromARGB(255, 208, 216, 144),
+                    ),
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
+                validator: _validateEmail,
               ),
               SizedBox(height: 15),
               TextFormField(
                 obscureText: true,
                 controller: authService.password,
                 decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.password),
+                  prefixIcon: Icon(
+                    Icons.lock,
+                    color: Color(0xFF9DC08B),
+                  ),
                   labelText: "Password",
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(width: 3, color: Colors.green),
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Poppins-Regular',
+                    fontSize: 14,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFFA9AF7E)),
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
+                validator: _validatePassword,
               ),
               SizedBox(height: 30),
               ElevatedButton(
@@ -243,274 +271,544 @@ class Login extends StatelessWidget {
   }
 }
 
-class Register extends StatelessWidget {
+class Register extends StatefulWidget {
+  @override
+  _RegisterState createState() => _RegisterState();
+}
+
+bool _isChecked = false;
+
+class _RegisterState extends State<Register> {
   final AuthService authService = AuthService();
+  final _formKey = GlobalKey<FormState>();
+  DateTime? _selectedDate;
+
+  bool _isPasswordValid(String password) {
+    return password.length >= 8 &&
+        password.contains(RegExp(r'[a-zA-Z]')) &&
+        password.contains(RegExp(r'[0-9]')) &&
+        password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1999),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        _selectedDate = pickedDate;
+        authService.birthdate.text =
+            "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}";
+        authService.age.text = _calculateAge(_selectedDate).toString();
+      });
+    }
+  }
+
+  String _calculateAge(DateTime? birthdate) {
+    if (birthdate == null) return '';
+    final now = DateTime.now();
+    final age = now.year - birthdate.year;
+    return age.toString();
+  }
+
+  @override
+  void dispose() {
+    authService.birthdate.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 0),
-              child: Hero(
-                  tag: 'hero',
-                  child: SizedBox(
-                    height: 100,
-                    child: Image.asset('assets/logo.png'),
-                  )),
-            ),
-            Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: Text(
-                  "Let's get started!",
-                  style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 85, 113, 83)),
-                )),
-            TextFormField(
-              controller: authService.fullname,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.person),
-                labelText: "Full Name",
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 3, color: Colors.green),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return 'Please enter your full name';
-                }
-                return null;
-              },
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              controller: authService.contact,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.person),
-                labelText: "Contact",
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 3, color: Colors.green),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return 'Please enter your contact';
-                }
-                return null;
-              },
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              controller: authService.address,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.person),
-                labelText: "Address",
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 3, color: Colors.green),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return 'Please enter your address';
-                }
-                return null;
-              },
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              controller: authService.birthdate,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.person),
-                labelText: "Date of Birth",
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 3, color: Colors.green),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return 'Please enter your date of birth';
-                }
-                return null;
-              },
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              controller: authService.age,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.person),
-                labelText: "Age",
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 3, color: Colors.green),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return 'Please enter your age';
-                }
-                return null;
-              },
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              controller: authService.email,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.email),
-                labelText: "E-mail",
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 3, color: Colors.green),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return 'Please enter your email';
-                }
-                {
-                  bool isValidEmail(String email) {
-                    final emailRegExp =
-                        RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$');
-                    return emailRegExp.hasMatch(email);
-                  }
-                }
-                return null;
-              },
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Column(
-              children: [
-                SizedBox(height: 15),
-                DropdownButtonFormField(
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.arrow_drop_down),
-                    labelText: "Roles",
-                    border: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(width: 3, color: Colors.green),
-                      borderRadius: BorderRadius.circular(15),
+        resizeToAvoidBottomInset: false,
+        body: Padding(
+            padding: EdgeInsets.symmetric(vertical: 50, horizontal: 20),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 40, vertical: 0),
+                      child: Hero(
+                        tag: 'hero',
+                        child: SizedBox(
+                          height: 100,
+                          child: Image.asset('assets/logo.png'),
+                        ),
+                      ),
                     ),
-                  ),
-                  items: [
-                    DropdownMenuItem(
-                      value: "Farmer",
-                      child: Text("Farmer"),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                      child: Text(
+                        "Let's get started!",
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontFamily: 'Poppins',
+                          color: Color.fromARGB(255, 85, 113, 83),
+                        ),
+                      ),
                     ),
-                    DropdownMenuItem(
-                      value: "Buyer",
-                      child: Text("Buyer"),
+                    TextFormField(
+                      controller: authService.fullname,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: Color(0xFF9DC08B),
+                        ),
+                        labelText: "Full Name",
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 13,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 208, 216, 144),
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your full name';
+                        }
+                        return null;
+                      },
                     ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    TextField(
+                      controller: authService.contact,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.phone,
+                          color: Color(0xFF9DC08B),
+                        ),
+                        labelText: "Contact Number",
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 13,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 208, 216, 144),
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    TextFormField(
+                      controller: authService.address,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.house,
+                          color: Color(0xFF9DC08B),
+                        ),
+                        labelText: "Address",
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 13,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 208, 216, 144),
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your address';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    TextFormField(
+                      readOnly: true,
+                      onTap: () {
+                        _selectDate(context);
+                      },
+                      controller: authService.birthdate,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.calendar_today,
+                          color: Color(0xFF9DC08B),
+                        ),
+                        labelText: "Birth Date",
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 13,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 208, 216, 144),
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select your birth date';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {},
+                    ),
+                    SizedBox(height: 15),
+                    TextFormField(
+                      enabled: false,
+                      controller: authService.age,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.hourglass_bottom_outlined,
+                          color: Color(0xFF9DC08B),
+                        ),
+                        labelText: "Age",
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 13,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 208, 216, 144),
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    TextFormField(
+                      controller: authService.email,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.email,
+                          color: Color(0xFF9DC08B),
+                        ),
+                        labelText: "E-mail",
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 13,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 208, 216, 144),
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 15),
+                    DropdownButtonFormField(
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Color.fromARGB(255, 85, 113, 83),
+                        ),
+                        labelText: "Roles",
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 14,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 208, 216, 144),
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      items: [
+                        DropdownMenuItem(
+                          value: "Farmer",
+                          child: Text(
+                            "Farmer",
+                            style: TextStyle(fontFamily: 'Poppins-Regular'),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: "Buyer",
+                          child: Text(
+                            "Buyer",
+                            style: TextStyle(fontFamily: 'Poppins-Regular'),
+                          ),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        authService.role.text = value as String;
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a role';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 15),
+                    TextFormField(
+                      obscureText: true,
+                      controller: authService.password,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.lock,
+                          color: Color(0xFF9DC08B),
+                        ),
+                        labelText: "Password",
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 13,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 208, 216, 144),
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your password';
+                        }
+                        if (!_isPasswordValid(value)) {
+                          return 'Password must be at least 8 characters long and contain a combination of letters, numbers, and symbols';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Password must be at least 8 characters long and contain a combination of letters, numbers, and symbols',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      obscureText: true,
+                      controller: authService.confirmpassword,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.lock,
+                          color: Color(0xFF9DC08B),
+                        ),
+                        labelText: "Confirm Password",
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 13,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 208, 216, 144),
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please confirm your password';
+                        } else if (value != authService.password) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Text(
+                      "By clicking Register, you are agreeing to the",
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return StatefulBuilder(
+                              builder:
+                                  (BuildContext context, StateSetter setState) {
+                                return AlertDialog(
+                                  title: Text("Terms and Conditions"),
+                                  content: SingleChildScrollView(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          "Welcome to the AgriPinas! These terms and conditions outline the rules and regulations for the use of our mobile application.",
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          "By accessing this app, we assume you accept these terms and conditions. Do not continue to use the AgriApp if you do not agree to all of the terms and conditions stated on this page.",
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          "The following terminology applies to these Terms and Conditions, Privacy Statement, and Disclaimer Notice and all Agreements: 'Client', 'You' and 'Your' refer to you, the person log in to this app and compliant to the Company’s terms and conditions. 'The Company', 'Ourselves', 'We', 'Our' and 'Us', refer to our Company. 'Party', 'Parties', or 'Us', refers to both the Client and ourselves.",
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          "1. INTELLECTUAL PROPERTY RIGHTS",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          "Unless otherwise indicated, we retain all right, title, and interest in and to the Software and the Website, including without limitation all graphics, user interfaces, databases, functionality, software, website designs, audio, video, text, photographs, graphics, logos, and trademarks or service marks reproduced through the System. These Terms of Use do not grant you any intellectual property license or rights in or to the Software and the Website or any of its components, except to the limited extent that these Terms of Use specifically sets forth your license rights to it. You recognize that the Software and the Website and their components are protected by copyright and other laws.",
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          "2. USER REPRESENTATIONS",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          "By using the AgriPinas, you represent and warrant that: (1) all registration information you submit will be true, accurate, current, and complete; (2) you will maintain the accuracy of such information and promptly update such registration information as necessary; (3) you have the legal capacity and you agree to comply with these Terms of Use; (4) you are not a minor in the jurisdiction in which you reside; (5) you will not access the AgriPinas through automated or non-human means, whether through a bot, script or otherwise; (6) you will not use the Services for any illegal or unauthorized purpose; and (7) your use of the AgriPinas will not violate any applicable law or regulation.",
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          "3. USER REGISTRATION",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          "You may be required to register with the Services. You agree to keep your password confidential and will be responsible for all use of your account and password. We reserve the right to remove, reclaim, or change a username you select if we determine, in our sole discretion, that such username is inappropriate, obscene, or otherwise objectionable.",
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          "4. PRIVACY NOTICE",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          "This Privacy Notice applies to personal information we collect and process on all AgriPinas forms, website and online services. Personal information refers to any information, whether recorded in material form or not, that will directly ascertain your identity. This includes your address and contact information. Sensitive personal information is personal information that includes your age, date of birth, email, password, and name.",
+                                        ),
+                                        SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            Checkbox(
+                                              value: _isChecked,
+                                              onChanged: (bool? value) {
+                                                setState(() {
+                                                  _isChecked = value ?? false;
+                                                });
+                                              },
+                                            ),
+                                            Flexible(
+                                              child: Text(
+                                                "I agree to the Terms and Conditions",
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("Decline"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        if (_isChecked) {
+                                          Navigator.of(context).pop();
+                                        } else {}
+                                      },
+                                      child: Text("Accept"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                      child: Text(
+                        "Terms and Conditions",
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontFamily: 'Poppins',
+                          color: Color.fromARGB(255, 85, 113, 83),
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        final form = _formKey.currentState;
+                        if (form!.validate()) {
+                          form.save();
+                        }
+
+                        authService.Register(context);
+                      },
+                      child: Text(
+                        'Register',
+                        style: TextStyle(fontFamily: 'Poppins'),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF27AE60),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Login()));
+                      },
+                      child: Text("Already have an account? Login",
+                          style: TextStyle(
+                              color: Color.fromARGB(
+                            255,
+                            85,
+                            113,
+                            83,
+                          ))),
+                    )
                   ],
-                  onChanged: (value) {
-                    authService.role.text = value as String;
-                  },
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            TextFormField(
-              obscureText: true,
-              controller: authService.password,
-              maxLength: 16,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.password),
-                labelText: "Password",
-                helperText:
-                    "Use a strong password with 16 characters, uppercase, lowercase, number, and symbol",
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 3, color: Colors.green),
-                  borderRadius: BorderRadius.circular(15),
                 ),
               ),
-              onChanged: (value) {
-                bool isValid =
-                    RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9!#%]).{16}$')
-                        .hasMatch(value);
-              },
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return 'Please enter a password';
-                }
-                return null;
-              },
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            TextFormField(
-              controller: authService.confirmpassword,
-              obscureText: true,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.password),
-                labelText: "Confirm Password",
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 3, color: Colors.green),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return 'Please confirm your password';
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                if (authService.email != "" && authService.password != "") {
-                  authService.Register(context);
-                }
-              },
-              child: Text('Register'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF27AE60),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Login()));
-              },
-              child: Text("Already have an account? Login",
-                  style: TextStyle(
-                      color: Color.fromARGB(
-                    255,
-                    85,
-                    113,
-                    83,
-                  ))),
-            )
-          ],
-        ),
-      ),
-    );
+            )));
   }
 }

@@ -121,20 +121,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             children: [
               SizedBox(height: 16.0),
-              CircleAvatar(
-                radius: 70.0,
-                backgroundImage: AssetImage('assets/user.png'),
-              ),
-              SizedBox(height: 16.0),
-              TextField(
-                controller: _nameController,
-                enabled: _isEditing,
-                decoration: InputDecoration(
-                  labelText: 'Name',
-                  hintText: 'Enter your name',
-                  border: OutlineInputBorder(),
-                ),
-              ),
               SizedBox(height: 16.0),
               TextField(
                 controller: _bdateController,

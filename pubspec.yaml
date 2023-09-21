@@ -48,6 +48,8 @@ dependencies:
   cached_network_image: ^3.2.3
   firebase_storage: ^11.0.15
   firebase_admin: ^0.2.0-dev.7
+  localization: ^2.1.0
+  intl_translation: ^0.18.2
 
 
 dev_dependencies:
@@ -82,6 +84,21 @@ flutter:
     - assets/onion.png
     - assets/ellipse3.png
     - assets/user.png
+    - assets/calamansi.png
+    - assets/corn.png
+    - assets/tomato.png
+    - assets/pechay.png
+    - assets/kalabasa.png
+    - assets/pakwan.png
+    - assets/sili.png
+    - assets/user2.png
+    - assets/user3.png
+    - assets/user4.png
+    - assets/user5.png
+    - assets/sun.png
+    - assets/temperature.png
+    - assets/weather.png
+    - assets/windspeed.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

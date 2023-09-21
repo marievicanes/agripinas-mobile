@@ -136,7 +136,7 @@ class AuthService {
 
   void logOutUser(context) async {
     await auth.signOut();
-    Navigator.pushAndRemoveUntil(context,
-        MaterialPageRoute(builder: (C) => WelcomePage()), (route) => false);
+    Navigator.pushAndRemoveUntil(
+        context, MaterialPageRoute(builder: (C) => Login()), (route) => false);
   }
 }

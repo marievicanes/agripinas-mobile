@@ -23,7 +23,7 @@ class ContactUsScreen extends StatelessWidget {
               'AgriPinas',
               style: TextStyle(
                 fontSize: 17.0,
-                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins',
                 color: Colors.white,
               ),
             ),
@@ -45,40 +45,65 @@ class ContactUsScreen extends StatelessWidget {
               SizedBox(height: 16.0),
               Center(
                 child: Text(
-                  'Get in touch!',
-                  style: TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  'GET IN TOUCH!',
+                  style: TextStyle(fontSize: 24.0, fontFamily: 'Poppins-Bold'),
                 ),
               ),
               SizedBox(height: 24.0),
-              Text('Name'),
               TextField(
                 decoration: InputDecoration(
-                  hintText: 'Enter your name',
+                  labelText: 'Name',
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Poppins-Regular',
+                    fontSize: 14,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),
-              Text('Email'),
               TextField(
                 decoration: InputDecoration(
-                  hintText: 'Enter your email',
+                  labelText: 'Email',
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Poppins-Regular',
+                    fontSize: 14,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),
-              Text('Subject'),
               TextField(
                 decoration: InputDecoration(
-                  hintText: 'Enter the subject',
+                  labelText: 'Subject',
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Poppins-Regular',
+                    fontSize: 14,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),
-              Text('Message'),
               TextField(
                 maxLines: 4,
                 decoration: InputDecoration(
-                  hintText: 'Enter your message',
+                  labelText: 'Subject',
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Poppins-Regular',
+                    fontSize: 14,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                  ),
                 ),
               ),
               SizedBox(height: 24.0),
@@ -92,7 +117,10 @@ class ContactUsScreen extends StatelessWidget {
                       primary: Color.fromRGBO(157, 192, 139, 1),
                       onPrimary: Colors.white,
                     ),
-                    child: Text('Send'),
+                    child: Text(
+                      'Send',
+                      style: TextStyle(fontFamily: 'Poppins-Regular'),
+                    ),
                   ),
                 ),
               ),
@@ -101,27 +129,34 @@ class ContactUsScreen extends StatelessWidget {
                 leading: Icon(Icons.location_on),
                 title: Text(
                   'Office Location',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontFamily: 'Poppins'),
                 ),
                 subtitle: Text(
                   '551 M.F. Jhocson St, Sampaloc, Manila, 1008 Metro Manila',
+                  style: TextStyle(fontFamily: 'Poppins-Regular'),
                 ),
               ),
               ListTile(
                 leading: Icon(Icons.phone),
                 title: Text(
                   'Telephone Number',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontFamily: 'Poppins'),
                 ),
-                subtitle: Text('(02) 8712 1922'),
+                subtitle: Text(
+                  '(02) 8712 1922',
+                  style: TextStyle(fontFamily: 'Poppins-Regular'),
+                ),
               ),
               ListTile(
                 leading: Icon(Icons.email),
                 title: Text(
                   'Email',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontFamily: 'Poppins'),
                 ),
-                subtitle: Text('agripinas@gmail.com'),
+                subtitle: Text(
+                  'agripinas@gmail.com',
+                  style: TextStyle(fontFamily: 'Poppins-Regular'),
+                ),
               ),
             ],
           ),

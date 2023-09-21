@@ -1,22 +1,25 @@
 import 'dart:io';
 
-import 'package:capstone/farmer/comment_section.dart';
-import 'package:capstone/farmer/profile_screen.dart';
+import 'package:capstone/farmer/crop_tracker_screen.dart';
+import 'package:capstone/farmer/message.dart';
+import 'package:capstone/farmer/transactions_screen.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'about_us.dart';
+import 'announcement.dart';
 import 'contact_us.dart';
+import 'notification.dart';
+import 'profile_screen.dart';
 
 class MarketplaceItem {
   final String title;
   final String price;
   final String farmer;
+  final String location;
   final String description;
   final String imageUrl;
 
@@ -24,6 +27,7 @@ class MarketplaceItem {
     required this.title,
     required this.price,
     required this.farmer,
+    required this.location,
     required this.description,
     required this.imageUrl,
   });
@@ -34,21 +38,10 @@ class ProfileWall extends StatefulWidget {
   _ProfileWallState createState() => _ProfileWallState();
 }
 
-class _ProfileWallState extends State<ProfileWall>
-    with SingleTickerProviderStateMixin {
+class _ProfileWallState extends State<ProfileWall> {
   bool _isButtonVisible = true;
-  late TabController _tabController;
   final _postController = TextEditingController();
   File? _selectedImage;
-
-  firebase_storage.FirebaseStorage storage =
-      firebase_storage.FirebaseStorage.instance;
-  String imageUrl = '';
-
-  final TextEditingController fullname = TextEditingController();
-  final TextEditingController email = TextEditingController();
-  final TextEditingController contact = TextEditingController();
-  final TextEditingController _imageController = TextEditingController();
 
   Future<void> _selectImage() async {
     final picker = ImagePicker();
@@ -61,976 +54,629 @@ class _ProfileWallState extends State<ProfileWall>
     }
   }
 
-  final List<MarketplaceItem> items = [
-    MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 400',
-      farmer: 'Ryan Amador',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
-    ),
-    MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 400',
-      farmer: 'Ryan Amador',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
-    ),
-    MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 4500',
-      farmer: 'Ryan Amador',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
-    ),
-    MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 400',
-      farmer: 'Ryan Amador',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
-    ),
-    MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 400',
-      farmer: 'Ryan Amador',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
-    ),
-    MarketplaceItem(
-      title: 'Onion',
-      price: 'Php 400',
-      farmer: 'Daniella Marie Tungol',
-      description: 'A red round vegetable with a good storage quality',
-      imageUrl: 'assets/onion.png',
-    ),
+  final List<Map<String, dynamic>> listViewitems = [
+    {
+      'title': 'Crop Tracker',
+      'description': 'Tomato need to harvest',
+      'icon': Icons.agriculture_outlined,
+    },
+    {
+      'title': 'Transactions',
+      'description': "Ryan Amador's order has been completed.",
+      'icon': Icons.money,
+    },
+    {
+      'title': 'Messages',
+      'description': 'Arriane Gatpo messaged you',
+      'icon': Icons.email_outlined,
+    },
   ];
 
-  @override
-  void initState() {
-    super.initState();
-
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  bool _isEditing = false;
-  DateTime? _selectedDate;
-
-  XFile? file;
-  final ImagePicker _picker = ImagePicker();
-
-  Future imgFromGallery() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      if (pickedFile != null) {
-        file = XFile(pickedFile.path);
-
-        uploadFile();
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
-
-  Future UimgFromGallery() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      if (pickedFile != null) {
-        file = XFile(pickedFile.path);
-
-        uploadFile();
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
-
-  Future UimgFromCamera() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
-
-    setState(() {
-      if (pickedFile != null) {
-        file = XFile(pickedFile.path);
-
-        uploadFile();
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
-
-  Future imgFromCamera() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
-
-    setState(() {
-      if (pickedFile != null) {
-        file = XFile(pickedFile.path);
-
-        uploadFile();
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
-
-  Future uploadFile() async {
-    if (file == null) return;
-    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
-
-    Reference referenceRoot = FirebaseStorage.instance.ref();
-    Reference referenceDirImages = referenceRoot.child('images');
-
-    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
-
-    try {
-      await referenceImageToUpload.putFile(File(file!.path));
-      imageUrl = await referenceImageToUpload.getDownloadURL();
-    } catch (error) {}
-  }
+  final List<MarketplaceItem> gridViewitems = [
+    MarketplaceItem(
+      title: 'Tomato',
+      price: '₱400',
+      farmer: 'Arriane Gatpo',
+      location: 'Brgy. Bagong Buhay',
+      description:
+          'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
+      imageUrl: 'assets/tomato.png',
+    ),
+    MarketplaceItem(
+      title: 'Corn',
+      price: '₱4500',
+      farmer: 'Marievic Añes',
+      location: 'Brgy. Bagong Silang',
+      description:
+          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
+      imageUrl: 'assets/corn.png',
+    ),
+    MarketplaceItem(
+      title: 'Calamansi',
+      price: '₱400',
+      farmer: 'Jenkins Mesina',
+      location: 'Brgy. Concepcion',
+      description:
+          'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
+      imageUrl: 'assets/calamansi.png',
+    ),
+    MarketplaceItem(
+      title: 'Corn',
+      price: '₱4500',
+      farmer: 'Marievic Añes',
+      location: 'Brgy. Bagong Silang',
+      description:
+          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
+      imageUrl: 'assets/corn.png',
+    ),
+  ];
 
   final currentUser = FirebaseAuth.instance;
   AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 2,
-        child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Color(0xFFA9AF7E),
-              centerTitle: true,
-              title: Row(
-                children: [
-                  Image.asset(
-                    'assets/logo.png',
-                    height: 32.0,
-                  ),
-                  SizedBox(width: 7.0),
-                  Text(
-                    'AgriPinas',
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFFA9AF7E),
+        centerTitle: true,
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/logo.png',
+              height: 32.0,
+            ),
+            SizedBox(width: 7.0),
+            Text(
+              'AgriPinas',
+              style: TextStyle(
+                fontSize: 17.0,
+                fontFamily: 'Poppins',
+                color: Colors.white,
               ),
             ),
-            drawer: Drawer(
-              child: StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection("Users")
-                    .where("uid", isEqualTo: currentUser.currentUser!.uid)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    var data = snapshot.data!.docs[0];
-                    return ListView(
-                      padding: EdgeInsets.zero,
-                      children: <Widget>[
-                        UserAccountsDrawerHeader(
-                          accountName: Text(data['fullname']),
-                          accountEmail: Text(data['email']),
-                          currentAccountPicture: GestureDetector(
-                            onTap: () {
-                              _showPicker(context);
-                            },
-                            child: CircleAvatar(
-                              radius: 12.0,
-                              backgroundImage: AssetImage('assets/user.png'),
-                            ),
-                          ),
-                          decoration: BoxDecoration(
-                            color: Color(0xFFA9AF7E),
-                          ),
-                          otherAccountsPictures: [
-                            IconButton(
-                              icon: Icon(Icons.notifications),
-                              onPressed: () {},
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.message),
-                              onPressed: () {},
-                            ),
-                          ],
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.settings_accessibility),
-                          title: Text('Profile Information'),
-                          onTap: () {
-                            Navigator.pop(context);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProfileScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.info_outline),
-                          title: Text('About us'),
-                          onTap: () {
-                            Navigator.pop(context);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AboutUsScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.phone),
-                          title: Text('Contact Us'),
-                          onTap: () {
-                            Navigator.pop(context);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ContactUsScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.logout),
-                          title: Text('Logout'),
-                          onTap: () {
-                            AuthService authService = AuthService();
-                            authService.logOutUser(context);
-                          },
-                        ),
-                      ],
-                    );
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                },
-              ),
-            ),
-            body: Column(children: [
-              TabBar(
-                indicatorColor: Color(0xFF557153),
-                tabs: [
-                  Tab(
-                    child: Text(
-                      'Marketplace Wall',
-                      style: TextStyle(color: Color(0xFF718C53)),
+          ],
+        ),
+      ),
+      drawer: Drawer(
+        child: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection("Users")
+              .where("uid", isEqualTo: currentUser.currentUser!.uid)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              var data = snapshot.data!.docs[0];
+              return ListView(
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  UserAccountsDrawerHeader(
+                    accountName: Text(data['fullname']),
+                    accountEmail: Text(data['email']),
+                    currentAccountPicture: CircleAvatar(
+                      radius: 10.0,
+                      backgroundImage: AssetImage('assets/user.png'),
                     ),
-                  ),
-                  Tab(
-                    child: Text(
-                      'Community Forum Wall',
-                      style: TextStyle(color: Color(0xFF718C53)),
+                    decoration: BoxDecoration(
+                      color: Color(0xFFA9AF7E),
                     ),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: TabBarView(children: [
-                  Stack(
-                    children: [
-                      GridView.builder(
-                        padding: EdgeInsets.all(10),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 15,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: 4.1 / 6.8,
-                        ),
-                        itemCount: items.length,
-                        itemBuilder: (context, index) {
-                          final item = items[index];
-                          return GestureDetector(
-                            onTap: () {},
-                            child: Card(
-                              child: Stack(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Center(
-                                          child: Image.asset(
-                                            item.imageUrl,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.all(8),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Center(
-                                              child: Text(
-                                                item.title,
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(height: 4),
-                                            Text(
-                                              item.price,
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            SizedBox(height: 4),
-                                            Text(
-                                              item.farmer,
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                            SizedBox(height: 4),
-                                            Text(
-                                              item.description,
-                                              style: TextStyle(fontSize: 14),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Positioned(
-                                    top: 0,
-                                    right: 8,
-                                    child: PopupMenuButton<String>(
-                                      icon: Icon(
-                                        Icons.more_horiz,
-                                        color: Color(0xFF9DC08B),
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      itemBuilder: (BuildContext context) => [
-                                        PopupMenuItem<String>(
-                                          value: 'edit',
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.edit,
-                                                color: Color(0xFF9DC08B)
-                                                    .withAlpha(180),
-                                              ),
-                                              SizedBox(width: 8),
-                                              Text('Edit'),
-                                            ],
-                                          ),
-                                        ),
-                                        PopupMenuItem<String>(
-                                          value: 'delete',
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.delete,
-                                                color: Color(0xFF9DC08B),
-                                              ),
-                                              SizedBox(width: 8),
-                                              Text('Delete'),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                      onSelected: (String value) {
-                                        if (value == 'edit') {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: Center(
-                                                  child: Text(
-                                                    'Edit Details',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20.0,
-                                                    ),
-                                                  ),
-                                                ),
-                                                content: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Row(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                          'Add photo: ',
-                                                          style: TextStyle(
-                                                            fontSize: 16.5,
-                                                          ),
-                                                        ),
-                                                        IconButton(
-                                                          onPressed:
-                                                              _selectImage,
-                                                          icon:
-                                                              Icon(Icons.image),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(height: 5),
-                                                    _selectedImage != null
-                                                        ? Image.file(
-                                                            _selectedImage!,
-                                                            width: 100,
-                                                            height: 100,
-                                                          )
-                                                        : SizedBox(height: 8),
-                                                    TextField(
-                                                      decoration:
-                                                          InputDecoration(
-                                                        labelText:
-                                                            "Crop's Name",
-                                                        labelStyle: TextStyle(
-                                                            color:
-                                                                Colors.black),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide: BorderSide(
-                                                              color: Color(
-                                                                  0xFFA9AF7E)),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    TextField(
-                                                      decoration:
-                                                          InputDecoration(
-                                                        labelText: 'Price',
-                                                        labelStyle: TextStyle(
-                                                            color:
-                                                                Colors.black),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide: BorderSide(
-                                                              color: Color(
-                                                                  0xFFA9AF7E)),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    TextField(
-                                                      decoration:
-                                                          InputDecoration(
-                                                        labelText:
-                                                            "Farmer's Name",
-                                                        labelStyle: TextStyle(
-                                                            color:
-                                                                Colors.black),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide: BorderSide(
-                                                              color: Color(
-                                                                  0xFFA9AF7E)),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    TextField(
-                                                      decoration:
-                                                          InputDecoration(
-                                                        labelText:
-                                                            'Description',
-                                                        labelStyle: TextStyle(
-                                                            color:
-                                                                Colors.black),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide: BorderSide(
-                                                              color: Color(
-                                                                  0xFFA9AF7E)),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(height: 16.0),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
-                                                      children: [
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                          child: Text(
-                                                            'Cancel',
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            String postContent =
-                                                                _postController
-                                                                    .text;
-                                                            print(postContent);
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                          child: Text('Save'),
-                                                          style: TextButton
-                                                              .styleFrom(
-                                                            backgroundColor:
-                                                                Color.fromRGBO(
-                                                                    157,
-                                                                    192,
-                                                                    139,
-                                                                    1),
-                                                            foregroundColor:
-                                                                Colors.white,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
+                    otherAccountsPictures: [
+                      IconButton(
+                        icon: Icon(Icons.notifications),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AgriNotif(),
                             ),
                           );
                         },
                       ),
-                      Positioned(
-                        bottom: 16.0,
-                        right: 16.0,
-                        child: FloatingActionButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return Dialog(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
+                      IconButton(
+                        icon: Icon(Icons.message),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Message(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.person_outlined),
+                    title: Text(
+                      'Profile',
+                      style: TextStyle(fontFamily: 'Poppins-Medium'),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfileScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.announcement_outlined),
+                    title: Text(
+                      'Announcement',
+                      style: TextStyle(fontFamily: 'Poppins-Medium'),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AnnouncementScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.info_outlined),
+                    title: Text(
+                      'About Us',
+                      style: TextStyle(fontFamily: 'Poppins-Medium'),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AboutUsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.contact_mail_outlined),
+                    title: Text(
+                      'Contact Us',
+                      style: TextStyle(fontFamily: 'Poppins-Medium'),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ContactUsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.logout_outlined),
+                    title: Text(
+                      'Logout',
+                      style: TextStyle(fontFamily: 'Poppins-Medium'),
+                    ),
+                    onTap: () {
+                      AuthService authService = AuthService();
+                      authService.logOutUser(context);
+                    },
+                  ),
+                ],
+              );
+            } else {
+              return CircularProgressIndicator(); // Add loading indicator
+            }
+          }, // Add a closing parenthesis here
+        ), // Add a closing parenthesis here
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: 200,
+              child: ListView.builder(
+                itemCount: listViewitems.length,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (BuildContext context, int index) {
+                  final item = listViewitems[index];
+                  final title = item['title'];
+                  final description = item['description'] ?? '';
+                  return Card(
+                    elevation: 2,
+                    child: SizedBox(
+                      height: 62.8,
+                      child: ListTile(
+                        leading: Icon(
+                          item['icon'],
+                          size: 50,
+                        ),
+                        title: Text(
+                          listViewitems[index]['title'],
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Poppins-Medium'),
+                        ),
+                        subtitle: Text(
+                          listViewitems[index]['description'],
+                          style: TextStyle(
+                              fontSize: 13, fontFamily: 'Poppins-Medium'),
+                        ),
+                        trailing: Icon(Icons.arrow_forward_ios_rounded),
+                        onTap: () {
+                          if (index == 0) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CropTrackerScreen()),
+                            );
+                          } else if (index == 1) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TransactionsScreen()),
+                            );
+                          } else if (index == 2) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Message()),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Container(
+              height: 700,
+              child: GridView.builder(
+                padding: EdgeInsets.all(10),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 15,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 2 / 4,
+                ),
+                itemCount: gridViewitems.length,
+                itemBuilder: (context, index) {
+                  final item = gridViewitems[index];
+                  return GestureDetector(
+                    onTap: () {},
+                    child: Card(
+                      child: Stack(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Center(
+                                  child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.asset(
+                                        item.imageUrl,
+                                        fit: BoxFit.cover,
+                                        width: 200,
+                                        height: 150,
+                                      ),
+                                    ),
                                   ),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20.0, vertical: 10.0),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        item.title,
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Row(
                                       children: [
-                                        SizedBox(height: 16.0),
-                                        Center(
-                                          child: Text(
-                                            'Add New Product',
+                                        Text(
+                                          'Price: ',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          item.price,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Farmer: ',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          item.farmer,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(1.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Location:',
                                             style: TextStyle(
+                                              fontSize: 14,
                                               fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            item.location,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(1.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Description:',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            item.description,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 8,
+                            child: PopupMenuButton<String>(
+                              icon: Icon(
+                                Icons.more_horiz,
+                                color: Color(0xFF9DC08B),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              itemBuilder: (BuildContext context) => [
+                                PopupMenuItem<String>(
+                                  value: 'edit',
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.edit,
+                                        color: Color(0xFF9DC08B).withAlpha(180),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        'Edit',
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins-Regular',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                PopupMenuItem<String>(
+                                  value: 'delete',
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.delete,
+                                        color: Color(0xFF9DC08B),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        'Delete',
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins-Regular',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                              onSelected: (String value) {
+                                if (value == 'edit') {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Center(
+                                          child: Text(
+                                            'Edit Details',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins',
                                               fontSize: 20.0,
                                             ),
                                           ),
                                         ),
-                                        SizedBox(height: 16.0),
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              'Add photo: ',
-                                              style: TextStyle(
-                                                fontSize: 16.5,
-                                              ),
-                                            ),
-                                            IconButton(
-                                              onPressed: _selectImage,
-                                              icon: Icon(Icons.image),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 5),
-                                        _selectedImage != null
-                                            ? Image.file(
-                                                _selectedImage!,
-                                                width: 100,
-                                                height: 100,
-                                              )
-                                            : SizedBox(height: 8),
-                                        TextField(
-                                          decoration: InputDecoration(
-                                            labelText: "Crop's Name",
-                                            labelStyle:
-                                                TextStyle(color: Colors.black),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Color(0xFFA9AF7E)),
-                                            ),
-                                          ),
-                                        ),
-                                        TextField(
-                                          decoration: InputDecoration(
-                                            labelText: 'Price',
-                                            labelStyle:
-                                                TextStyle(color: Colors.black),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Color(0xFFA9AF7E)),
-                                            ),
-                                          ),
-                                        ),
-                                        TextField(
-                                          decoration: InputDecoration(
-                                            labelText: "Farmer's Name",
-                                            labelStyle:
-                                                TextStyle(color: Colors.black),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Color(0xFFA9AF7E)),
-                                            ),
-                                          ),
-                                        ),
-                                        TextField(
-                                          decoration: InputDecoration(
-                                            labelText: 'Description',
-                                            labelStyle:
-                                                TextStyle(color: Colors.black),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Color(0xFFA9AF7E)),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 16.0),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Text(
-                                                'Cancel',
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                String postContent =
-                                                    _postController.text;
-                                                print(postContent);
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Text('Save'),
-                                              style: TextButton.styleFrom(
-                                                backgroundColor: Color.fromRGBO(
-                                                    157, 192, 139, 1),
-                                                primary: Colors.white,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          child: Icon(Icons.add),
-                          backgroundColor: Color.fromRGBO(157, 192, 139, 1),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Stack(
-                    children: [
-                      ListView.builder(
-                        itemCount: 5,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Card(
-                            child: Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Expanded(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
                                               children: [
-                                                CircleAvatar(
-                                                  radius: 15.0,
-                                                  backgroundImage: AssetImage(
-                                                      'assets/user.png'),
-                                                ),
-                                                SizedBox(width: 8.0),
                                                 Text(
-                                                  'Arriane Gatpo',
+                                                  'Add photo: ',
                                                   style: TextStyle(
-                                                    fontSize: 18.0,
-                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    fontSize: 15.5,
                                                   ),
+                                                ),
+                                                IconButton(
+                                                  onPressed: _selectImage,
+                                                  icon: Icon(Icons.image),
                                                 ),
                                               ],
                                             ),
-                                            PopupMenuButton<String>(
-                                              icon: Icon(
-                                                Icons.more_horiz,
-                                                color: Color(0xFF9DC08B),
+                                            SizedBox(height: 5),
+                                            _selectedImage != null
+                                                ? Image.file(
+                                                    _selectedImage!,
+                                                    width: 100,
+                                                    height: 100,
+                                                  )
+                                                : SizedBox(height: 8),
+                                            TextField(
+                                              decoration: InputDecoration(
+                                                labelText: "Crop's Name",
+                                                labelStyle: TextStyle(
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    fontSize: 15.5,
+                                                    color: Colors.black),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Color(0xFFA9AF7E)),
+                                                ),
                                               ),
-                                              onSelected: (value) {
-                                                if (value == 'edit') {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return AlertDialog(
-                                                        title:
-                                                            Text('Edit Post'),
-                                                        content: TextField(
-                                                          maxLines: null,
-                                                          decoration:
-                                                              InputDecoration(
-                                                            hintText:
-                                                                'Edit post here...',
-                                                            border:
-                                                                OutlineInputBorder(),
-                                                          ),
-                                                        ),
-                                                        actions: [
-                                                          TextButton(
-                                                            child: Text(
-                                                              'Cancel',
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                            ),
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                          ),
-                                                          ElevatedButton(
-                                                            child: Text('Post'),
-                                                            onPressed: () {
-                                                              String
-                                                                  postContent =
-                                                                  _postController
-                                                                      .text;
-                                                              print(
-                                                                  postContent);
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                            style:
-                                                                ElevatedButton
-                                                                    .styleFrom(
-                                                              primary: Color
-                                                                  .fromRGBO(
-                                                                      157,
-                                                                      192,
-                                                                      139,
-                                                                      1),
-                                                              onPrimary:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                } else if (value == 'delete') {
-                                                  // Handle delete action
-                                                }
-                                              },
-                                              itemBuilder:
-                                                  (BuildContext context) =>
-                                                      <PopupMenuEntry<String>>[
-                                                PopupMenuItem<String>(
-                                                  value: 'edit',
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.edit,
-                                                        color: Color(0xFF9DC08B)
-                                                            .withAlpha(180),
-                                                      ),
-                                                      SizedBox(width: 8.0),
-                                                      Text('Edit Post'),
-                                                    ],
+                                            ),
+                                            TextField(
+                                              decoration: InputDecoration(
+                                                labelText: 'Price',
+                                                labelStyle: TextStyle(
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    fontSize: 15.5,
+                                                    color: Colors.black),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Color(0xFFA9AF7E)),
+                                                ),
+                                              ),
+                                            ),
+                                            TextField(
+                                              decoration: InputDecoration(
+                                                labelText: "Farmer's Name",
+                                                labelStyle: TextStyle(
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    fontSize: 15.5,
+                                                    color: Colors.black),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Color(0xFFA9AF7E)),
+                                                ),
+                                              ),
+                                            ),
+                                            TextField(
+                                              decoration: InputDecoration(
+                                                labelText: 'Description',
+                                                labelStyle: TextStyle(
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                    fontSize: 15.5,
+                                                    color: Colors.black),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Color(0xFFA9AF7E)),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(height: 16.0),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text(
+                                                    'Cancel',
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontFamily:
+                                                          'Poppins-Regular',
+                                                      fontSize: 15.5,
+                                                    ),
                                                   ),
                                                 ),
-                                                PopupMenuItem<String>(
-                                                  value: 'delete',
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.delete,
-                                                        color:
-                                                            Color(0xFF9DC08B),
-                                                      ),
-                                                      SizedBox(width: 8.0),
-                                                      Text('Delete Post'),
-                                                    ],
+                                                TextButton(
+                                                  onPressed: () {
+                                                    String postContent =
+                                                        _postController.text;
+                                                    print(postContent);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text(
+                                                    'Save',
+                                                    style: TextStyle(
+                                                      fontFamily:
+                                                          'Poppins-Regular',
+                                                    ),
+                                                  ),
+                                                  style: TextButton.styleFrom(
+                                                    backgroundColor:
+                                                        Color.fromRGBO(
+                                                            157, 192, 139, 1),
+                                                    primary: Colors.white,
                                                   ),
                                                 ),
                                               ],
                                             ),
                                           ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 8.0),
-                                  Text(
-                                    'This is the content of the post.',
-                                    style: TextStyle(fontSize: 16.0),
-                                  ),
-                                  SizedBox(height: 8.0),
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(Icons.thumb_up),
-                                        onPressed: () {},
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return Dialog(
-                                                child: CommentSection(),
-                                              );
-                                            },
-                                          );
-                                        },
-                                        style: ButtonStyle(
-                                          foregroundColor:
-                                              MaterialStateProperty.all<Color>(
-                                            Colors.black,
-                                          ),
-                                        ),
-                                        child: Icon(Icons.comment),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      Positioned(
-                        bottom: 16.0,
-                        right: 16.0,
-                        child: FloatingActionButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Write a Post'),
-                                  content: TextField(
-                                    controller: _postController,
-                                    maxLines: null,
-                                    decoration: InputDecoration(
-                                      hintText: 'Something in your mind?',
-                                      border: OutlineInputBorder(),
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      child: Text(
-                                        'Cancel',
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    ElevatedButton(
-                                      child: Text('Post'),
-                                      onPressed: () {
-                                        String postContent =
-                                            _postController.text;
-                                        print(postContent);
-                                        Navigator.of(context).pop();
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        primary:
-                                            Color.fromRGBO(157, 192, 139, 1),
-                                        onPrimary: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                );
+                                      );
+                                    },
+                                  );
+                                }
                               },
-                            );
-                          },
-                          child: Icon(Icons.add),
-                          backgroundColor: Color.fromRGBO(157, 192, 139, 1),
-                        ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  )
-                ]),
-              )
-            ])));
-  }
-
-  void _saveInformation() {}
-
-  void _showPicker(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Container(
-              child: new Wrap(
-                children: <Widget>[
-                  new ListTile(
-                      leading: new Icon(Icons.photo_library),
-                      title: new Text('Gallery'),
-                      onTap: () {
-                        imgFromGallery();
-                        Navigator.of(context).pop();
-                      }),
-                  new ListTile(
-                    leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
-                    onTap: () {
-                      imgFromCamera();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
+                    ),
+                  );
+                },
               ),
-            ),
-          );
-        });
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -1,4 +1,4 @@
-import 'package:capstone/buyer/transaction_screen.dart';
+import 'package:capstone/buyer/transactions_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
