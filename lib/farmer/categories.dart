@@ -22,7 +22,7 @@ class CategoriesScreen extends StatefulWidget {
 class _CategoriesScreenState extends State<CategoriesScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
-  List<CategoryItem> filteredItems = [];
+  List<MarketplaceItem> filteredItems = []; //binago ko to
 
   final List<CategoryItem> items = [
     CategoryItem(
@@ -49,6 +49,25 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     (context) => FertilizersScreen(),
     (context) => OFProductScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    filteredItems = listViewitems; //binago ko to arr
+  }
+
+  void _searchItems() {
+    // pati ito
+    setState(() {
+      _searchText = _searchController.text;
+      filteredItems = listViewitems
+          .where((item) =>
+              item.title.toLowerCase().contains(_searchText.toLowerCase()) ||
+              item.farmer.toLowerCase().contains(_searchText.toLowerCase()) ||
+              item.location.toLowerCase().contains(_searchText.toLowerCase()))
+          .toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +104,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               ),
               child: TextField(
                 controller: _searchController,
+                onChanged: (value) => _searchItems(),
                 decoration: InputDecoration(
                   hintText: 'Search',
                   prefixIcon: Icon(Icons.search),
@@ -214,6 +234,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   ];
   Widget buildMarketplaceSection() {
     return GridView.builder(
+      //pati ito arr
       padding: EdgeInsets.all(10),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -221,20 +242,20 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         mainAxisSpacing: 10,
         childAspectRatio: 2 / 4,
       ),
-      itemCount: listViewitems.length,
+      itemCount: filteredItems.length,
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        final item = listViewitems[index];
+        final item = filteredItems[index];
         return GestureDetector(
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: routes1[index],
+                builder: (context) => routes[index](context),
               ),
             );
-          },
+          }, // hanggang dito
           child: Card(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,7 +362,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   @override
   void dispose() {
-    _searchController.dispose();
     _postController.dispose();
     super.dispose();
   }

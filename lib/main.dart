@@ -1,6 +1,7 @@
 import 'package:capstone/farmer/farmer_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone/buyer/buyer_nav.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 void main() async {
@@ -219,6 +220,25 @@ class Login extends StatelessWidget {
                   SizedBox(
                     height: 10,
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ForgotPassword()),
+                      );
+                    },
+                    child: Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        color: Color(0xFF9DC08B),
+                      ),
+                    ),
+                  ),
                   TextButton(
                     onPressed: () {
                       Navigator.push(
@@ -226,11 +246,22 @@ class Login extends StatelessWidget {
                         MaterialPageRoute(builder: (context) => Register()),
                       );
                     },
-                    child: Text(
-                      "Don't have an account? Register",
-                      style: TextStyle(
-                        fontFamily: 'Poppins-Regular',
-                        color: Color(0xFF27AE60),
+                    child: RichText(
+                      text: TextSpan(
+                        text: "Don't have an account? ",
+                        style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          color: Colors.black,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: "Register",
+                            style: TextStyle(
+                              fontFamily: 'Poppins-Regular',
+                              color: Color(0xFF27AE60),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -239,6 +270,123 @@ class Login extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class ForgotPassword extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email.';
+    }
+    if (!value.contains('@')) {
+      return 'Please enter a valid email address.';
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: Container(
+          color: Colors.transparent, // Set the background color to transparent
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 8.0,
+            ),
+            child: Row(
+              children: [
+                BackButton(color: Colors.black), // Back button
+                SizedBox(width: 10.0),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 0),
+                Text(
+                  'Forgot your password?',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontFamily: 'Poppins',
+                    color: Color.fromARGB(255, 85, 113, 83),
+                  ),
+                ),
+                SizedBox(height: 30),
+                Text(
+                  '   Enter your registered email below \n to receive password reset instruction ',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins-Medium',
+                    color: Colors.black54,
+                  ),
+                ),
+                SizedBox(height: 80),
+                Image.asset(
+                  'assets/email.png',
+                  width: 700,
+                  height: 150,
+                ),
+                SizedBox(height: 40),
+                Container(
+                  width: 350,
+                  child: TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.email,
+                        color: Color(0xFF9DC08B),
+                      ),
+                      labelText: "E-mail",
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 13,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(255, 208, 216, 144),
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    validator: _validateEmail,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  width: 200,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Send',
+                      style: TextStyle(fontFamily: 'Poppins'),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      primary: Color(0xFF27AE60),
+                      minimumSize: Size(5, 50),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -275,7 +423,7 @@ class _RegisterState extends State<Register> {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(1999),
+      firstDate: DateTime(1940),
       lastDate: DateTime.now(),
     );
 
@@ -338,6 +486,7 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                     TextFormField(
+                      //binago ko to arr
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.person,
@@ -356,6 +505,9 @@ class _RegisterState extends State<Register> {
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                      ],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your full name';
@@ -370,6 +522,7 @@ class _RegisterState extends State<Register> {
                       height: 15,
                     ),
                     TextFormField(
+                      //binago ko rin to
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.phone,
@@ -391,9 +544,13 @@ class _RegisterState extends State<Register> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your contact number';
+                        } else if (value.length != 11) {
+                          return 'Contact number must be exactly 11 digits';
                         }
                         return null;
                       },
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      keyboardType: TextInputType.phone,
                       onSaved: (value) {
                         _contactNumber = value;
                       },
@@ -514,8 +671,14 @@ class _RegisterState extends State<Register> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your email';
                         }
+                        if (!RegExp(
+                                r"^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$")
+                            .hasMatch(value)) {
+                          return 'Please enter a valid email address';
+                        }
                         return null;
                       },
+                      keyboardType: TextInputType.emailAddress,
                       onSaved: (value) {
                         _email = value;
                       },
@@ -668,7 +831,23 @@ class _RegisterState extends State<Register> {
                               builder:
                                   (BuildContext context, StateSetter setState) {
                                 return AlertDialog(
-                                  title: Text("Terms and Conditions"),
+                                  title: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Terms and Conditions"),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Icon(
+                                          Icons.close,
+                                          color:
+                                              Color.fromARGB(255, 85, 113, 83),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                   content: SingleChildScrollView(
                                     child: Column(
                                       crossAxisAlignment:
@@ -726,43 +905,9 @@ class _RegisterState extends State<Register> {
                                         Text(
                                           "This Privacy Notice applies to personal information we collect and process on all AgriPinas forms, website and online services. Personal information refers to any information, whether recorded in material form or not, that will directly ascertain your identity. This includes your address and contact information. Sensitive personal information is personal information that includes your age, date of birth, email, password, and name.",
                                         ),
-                                        SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            Checkbox(
-                                              value: _isChecked,
-                                              onChanged: (bool? value) {
-                                                setState(() {
-                                                  _isChecked = value ?? false;
-                                                });
-                                              },
-                                            ),
-                                            Flexible(
-                                              child: Text(
-                                                "I agree to the Terms and Conditions",
-                                              ),
-                                            ),
-                                          ],
-                                        ),
                                       ],
                                     ),
                                   ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text("Decline"),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        if (_isChecked) {
-                                          Navigator.of(context).pop();
-                                        } else {}
-                                      },
-                                      child: Text("Accept"),
-                                    ),
-                                  ],
                                 );
                               },
                             );
