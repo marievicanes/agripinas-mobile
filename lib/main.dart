@@ -205,7 +205,7 @@ class Login extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => BottomNavBar()),
+                              builder: (context) => BuyerNavBar()),
                         );
                       }
                     },
@@ -371,7 +371,7 @@ class ForgotPassword extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {},
                     child: Text(
-                      'Send',
+                      'Send Code',
                       style: TextStyle(fontFamily: 'Poppins'),
                     ),
                     style: ElevatedButton.styleFrom(
