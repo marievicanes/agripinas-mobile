@@ -1,11 +1,10 @@
 import 'dart:io';
 
+import 'package:capstone/buyer/profile_screen.dart';
 import 'package:capstone/farmer/crop_tracker_screen.dart';
 import 'package:capstone/farmer/message.dart';
 import 'package:capstone/farmer/transactions_screen.dart';
-import 'package:capstone/helper.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:capstone/main.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -13,12 +12,10 @@ import 'about_us.dart';
 import 'announcement.dart';
 import 'contact_us.dart';
 import 'notification.dart';
-import 'profile_screen.dart';
 
 class MarketplaceItem {
   final String title;
   final String price;
-  final String farmer;
   final String location;
   final String description;
   final String imageUrl;
@@ -26,7 +23,6 @@ class MarketplaceItem {
   MarketplaceItem({
     required this.title,
     required this.price,
-    required this.farmer,
     required this.location,
     required this.description,
     required this.imageUrl,
@@ -76,7 +72,6 @@ class _ProfileWallState extends State<ProfileWall> {
     MarketplaceItem(
       title: 'Tomato',
       price: '₱400',
-      farmer: 'Arriane Gatpo',
       location: 'Brgy. Bagong Buhay',
       description:
           'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
@@ -85,7 +80,6 @@ class _ProfileWallState extends State<ProfileWall> {
     MarketplaceItem(
       title: 'Corn',
       price: '₱4500',
-      farmer: 'Marievic Añes',
       location: 'Brgy. Bagong Silang',
       description:
           'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
@@ -94,7 +88,6 @@ class _ProfileWallState extends State<ProfileWall> {
     MarketplaceItem(
       title: 'Calamansi',
       price: '₱400',
-      farmer: 'Jenkins Mesina',
       location: 'Brgy. Concepcion',
       description:
           'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
@@ -103,16 +96,12 @@ class _ProfileWallState extends State<ProfileWall> {
     MarketplaceItem(
       title: 'Corn',
       price: '₱4500',
-      farmer: 'Marievic Añes',
       location: 'Brgy. Bagong Silang',
       description:
           'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
       imageUrl: 'assets/corn.png',
     ),
   ];
-
-  final currentUser = FirebaseAuth.instance;
-  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,130 +127,119 @@ class _ProfileWallState extends State<ProfileWall> {
         ),
       ),
       drawer: Drawer(
-        child: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection("Users")
-              .where("uid", isEqualTo: currentUser.currentUser!.uid)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              var data = snapshot.data!.docs[0];
-              return ListView(
-                padding: EdgeInsets.zero,
-                children: <Widget>[
-                  UserAccountsDrawerHeader(
-                    accountName: Text(data['fullname']),
-                    accountEmail: Text(data['email']),
-                    currentAccountPicture: CircleAvatar(
-                      radius: 10.0,
-                      backgroundImage: AssetImage('assets/user.png'),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text(
+                '',
+                style: TextStyle(
+                  fontFamily: 'Poppins-Regular',
+                  fontSize: 0,
+                ),
+              ),
+              accountEmail: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Arriane Gatpo',
+                    style: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                      fontSize: 14.0,
                     ),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFA9AF7E),
-                    ),
-                    otherAccountsPictures: [
-                      IconButton(
-                        icon: Icon(Icons.notifications),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AgriNotif(),
-                            ),
-                          );
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.message),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Message(),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
                   ),
-                  ListTile(
-                    leading: Icon(Icons.person_outlined),
-                    title: Text(
-                      'Profile',
-                      style: TextStyle(fontFamily: 'Poppins-Medium'),
+                  Text(
+                    'Farmer',
+                    style: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                      fontSize: 12.0,
                     ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProfileScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.announcement_outlined),
-                    title: Text(
-                      'Announcement',
-                      style: TextStyle(fontFamily: 'Poppins-Medium'),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AnnouncementScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.info_outlined),
-                    title: Text(
-                      'About Us',
-                      style: TextStyle(fontFamily: 'Poppins-Medium'),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AboutUsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.contact_mail_outlined),
-                    title: Text(
-                      'Contact Us',
-                      style: TextStyle(fontFamily: 'Poppins-Medium'),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ContactUsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.logout_outlined),
-                    title: Text(
-                      'Logout',
-                      style: TextStyle(fontFamily: 'Poppins-Medium'),
-                    ),
-                    onTap: () {
-                      AuthService authService = AuthService();
-                      authService.logOutUser(context);
-                    },
                   ),
                 ],
-              );
-            } else {
-              return CircularProgressIndicator(); // Add loading indicator
-            }
-          }, // Add a closing parenthesis here
-        ), // Add a closing parenthesis here
+              ),
+              currentAccountPicture: CircleAvatar(
+                radius: 10.0,
+                backgroundImage: AssetImage('assets/user.png'),
+              ),
+              decoration: BoxDecoration(
+                color: Color(0xFFA9AF7E),
+              ),
+              otherAccountsPictures: [
+                IconButton(
+                  icon: Icon(Icons.notifications),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => AgriNotif()));
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.message),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Message()));
+                  },
+                ),
+              ],
+            ),
+            ListTile(
+              leading: Icon(Icons.person_outlined),
+              title: Text(
+                'Profile',
+                style: TextStyle(fontFamily: 'Poppins-Medium'),
+              ),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ProfileScreen()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.announcement_outlined),
+              title: Text(
+                'Announcement',
+                style: TextStyle(fontFamily: 'Poppins-Medium'),
+              ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AnnouncementScreen()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.info_outlined),
+              title: Text(
+                'About Us',
+                style: TextStyle(fontFamily: 'Poppins-Medium'),
+              ),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AboutUsScreen()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.contact_mail_outlined),
+              title: Text(
+                'Contact Us',
+                style: TextStyle(fontFamily: 'Poppins-Medium'),
+              ),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ContactUsScreen()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout_outlined),
+              title: Text(
+                'Logout',
+                style: TextStyle(fontFamily: 'Poppins-Medium'),
+              ),
+              onTap: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Login()));
+              },
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -328,6 +306,8 @@ class _ProfileWallState extends State<ProfileWall> {
             Container(
               height: 700,
               child: GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.all(10),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -395,23 +375,6 @@ class _ProfileWallState extends State<ProfileWall> {
                                       ],
                                     ),
                                     SizedBox(height: 4),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'Farmer: ',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          item.farmer,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
                                     Padding(
                                       padding: const EdgeInsets.all(1.0),
                                       child: Column(

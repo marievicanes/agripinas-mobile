@@ -1,6 +1,6 @@
+import 'package:capstone/farmer/categories.dart';
 import 'package:capstone/farmer/community_forum_screen.dart';
 import 'package:capstone/farmer/dashboard_screen.dart';
-import 'package:capstone/farmer/marketplace_screen.dart';
 import 'package:capstone/farmer/profile_wall.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +15,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   final List<Widget> _children = [
     DashboardScreen(),
-    MarketplaceScreen(),
+    CategoriesScreen(),
     CommunityForumScreen(),
     ProfileWall(),
   ];

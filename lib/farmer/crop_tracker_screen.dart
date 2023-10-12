@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class CropTrackerScreen extends StatefulWidget {
@@ -15,6 +19,15 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
   TextEditingController _harvestController = TextEditingController();
   TextEditingController _plantedController = TextEditingController();
   TextEditingController _statusController = TextEditingController();
+
+  TextEditingController _categoryController = TextEditingController();
+  TextEditingController _locationController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _farmerController = TextEditingController();
+  TextEditingController _priceController = TextEditingController();
+  TextEditingController _quantityController = TextEditingController();
+  String imageUrl = '';
+
   String _searchText = '';
   bool _isButtonVisible = true;
   late TabController _tabController;
@@ -73,10 +86,86 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
     }
   }
 
+  XFile? file;
+  final ImagePicker _picker = ImagePicker();
+
+  Future imgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future UimgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future UimgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future imgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future uploadFile() async {
+    if (file == null) return;
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+
+    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+
+    try {
+      await referenceImageToUpload.putFile(File(file!.path));
+      imageUrl = await referenceImageToUpload.getDownloadURL();
+    } catch (error) {}
+  }
+
   final CollectionReference _cropTracker =
       FirebaseFirestore.instance.collection('Croptracker');
   final CollectionReference _harvested =
       FirebaseFirestore.instance.collection('Harvested');
+  final CollectionReference _marketplace =
+      FirebaseFirestore.instance.collection('Marketplace');
 
   Future<void> _create([DocumentSnapshot? documentSnapshot]) async {
     await showModalBottomSheet(
@@ -250,9 +339,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
     await _cropTracker.doc(documentSnapshot.id).delete();
   }
 
-  // Assuming it's a DateTime object
-
-  Future<void> _addProduct([DocumentSnapshot? documentSnapshot]) async {
+  Future<void> sellProduct([DocumentSnapshot? documentSnapshot]) async {
     await showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -267,45 +354,71 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                ElevatedButton(
+                    onPressed: () {
+                      _showPicker(context);
+                    },
+                    child: Text('Add Image')),
                 TextField(
                   controller: _cropNameController,
                   decoration: const InputDecoration(labelText: 'Crop Name'),
                 ),
                 TextField(
-                  controller: _plantedController,
-                  decoration: const InputDecoration(labelText: 'Date Planted'),
+                  controller: _categoryController,
+                  decoration: const InputDecoration(labelText: 'Category'),
                 ),
                 TextField(
-                  controller: _harvestController,
-                  decoration: const InputDecoration(
-                      labelText: 'Estimated Date to Harvest'),
+                  controller: _quantityController,
+                  decoration: const InputDecoration(labelText: 'Quantity'),
                 ),
                 TextField(
-                  controller: _statusController,
-                  decoration: const InputDecoration(labelText: 'Status'),
+                  controller: _priceController,
+                  decoration: const InputDecoration(labelText: 'Price'),
+                ),
+                TextField(
+                  controller: _farmerController,
+                  decoration: const InputDecoration(labelText: 'Farmer'),
+                ),
+                TextField(
+                  controller: _locationController,
+                  decoration: const InputDecoration(labelText: 'Location'),
+                ),
+                TextField(
+                  controller: _descriptionController,
+                  decoration: const InputDecoration(labelText: 'Description'),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
-                  child: const Text('Add'),
+                  child: const Text('Sell Product'),
                   onPressed: () async {
                     final String cropName = _cropNameController.text;
-                    final String planted = _plantedController.text;
-                    final String harvest = _harvestController.text;
-                    final String status = _harvestController.text;
+                    final String category = _categoryController.text;
+                    final String quantity = _quantityController.text;
+                    final String price = _priceController.text;
+                    final String farmer = _farmerController.text;
+                    final String location = _locationController.text;
+                    final String description = _descriptionController.text;
 
                     if (cropName != null) {
-                      await _harvested.add({
+                      await _marketplace.add({
                         "cropName": cropName,
-                        "planted": planted,
-                        "harvest": harvest,
-                        'status': status
+                        "category": category,
+                        "quantity": quantity,
+                        "price": price,
+                        "farmer": farmer,
+                        "location": location,
+                        "description": description,
+                        "image": imageUrl,
                       });
                       _cropNameController.text = '';
-                      _plantedController.text = '';
-                      _harvestController.text = '';
-                      _statusController.text = '';
+                      _categoryController.text = '';
+                      _quantityController.text = '';
+                      _priceController.text = '';
+                      _farmerController.text = '';
+                      _locationController.text = '';
+                      _descriptionController.text = '';
                       Navigator.of(context).pop();
                     }
                   },
@@ -949,143 +1062,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                             ),
                                                             SizedBox(height: 7),
                                                             TextButton(
-                                                              onPressed: () {
-                                                                showDialog(
-                                                                  context:
-                                                                      context,
-                                                                  builder:
-                                                                      (BuildContext
-                                                                          context) {
-                                                                    return AlertDialog(
-                                                                      title:
-                                                                          Center(
-                                                                        child:
-                                                                            Text(
-                                                                          'Add Product',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontFamily:
-                                                                                'Poppins',
-                                                                            fontSize:
-                                                                                20.0,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      content:
-                                                                          Column(
-                                                                        mainAxisSize:
-                                                                            MainAxisSize.min,
-                                                                        children: [
-                                                                          Row(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.center,
-                                                                            children: [
-                                                                              Text('Add Image',
-                                                                                  style: TextStyle(
-                                                                                    fontFamily: 'Poppins-Regular',
-                                                                                    fontSize: 15.5,
-                                                                                  )),
-                                                                              IconButton(
-                                                                                onPressed: () {},
-                                                                                icon: Icon(Icons.file_upload),
-                                                                              ),
-                                                                              IconButton(
-                                                                                onPressed: () {},
-                                                                                icon: Icon(Icons.camera_alt),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                          TextField(
-                                                                            maxLines:
-                                                                                1,
-                                                                            decoration:
-                                                                                InputDecoration(
-                                                                              labelText: "Price",
-                                                                              labelStyle: TextStyle(fontFamily: 'Poppins-Regular', fontSize: 15.5, color: Colors.black),
-                                                                              focusedBorder: OutlineInputBorder(
-                                                                                borderSide: BorderSide(color: Color(0xFFA9AF7E)),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          TextField(
-                                                                            maxLines:
-                                                                                1,
-                                                                            decoration:
-                                                                                InputDecoration(
-                                                                              labelText: "Farmer",
-                                                                              labelStyle: TextStyle(fontFamily: 'Poppins-Regular', fontSize: 15.5, color: Colors.black),
-                                                                              focusedBorder: OutlineInputBorder(
-                                                                                borderSide: BorderSide(color: Color(0xFFA9AF7E)),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          TextField(
-                                                                            maxLines:
-                                                                                2,
-                                                                            decoration:
-                                                                                InputDecoration(
-                                                                              labelText: "Location",
-                                                                              labelStyle: TextStyle(fontFamily: 'Poppins-Regular', fontSize: 15.5, color: Colors.black),
-                                                                              focusedBorder: OutlineInputBorder(
-                                                                                borderSide: BorderSide(color: Color(0xFFA9AF7E)),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          TextField(
-                                                                            maxLines:
-                                                                                4,
-                                                                            decoration:
-                                                                                InputDecoration(
-                                                                              labelText: "Description",
-                                                                              labelStyle: TextStyle(fontFamily: 'Poppins-Regular', fontSize: 15.5, color: Colors.black),
-                                                                              focusedBorder: OutlineInputBorder(
-                                                                                borderSide: BorderSide(color: Color(0xFFA9AF7E)),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          SizedBox(
-                                                                              height: 16.0),
-                                                                          Row(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.end,
-                                                                            children: [
-                                                                              TextButton(
-                                                                                onPressed: () {
-                                                                                  Navigator.of(context).pop();
-                                                                                },
-                                                                                child: Text(
-                                                                                  'Cancel',
-                                                                                  style: TextStyle(
-                                                                                    color: Colors.black,
-                                                                                    fontFamily: 'Poppins-Regular',
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              TextButton(
-                                                                                onPressed: () {
-                                                                                  String postContent = _postController.text;
-                                                                                  print(postContent);
-                                                                                  Navigator.of(context).pop();
-                                                                                },
-                                                                                child: Text(
-                                                                                  'Save',
-                                                                                  style: TextStyle(
-                                                                                    fontFamily: 'Poppins-Regular',
-                                                                                  ),
-                                                                                ),
-                                                                                style: TextButton.styleFrom(
-                                                                                  backgroundColor: Color.fromRGBO(157, 192, 139, 1),
-                                                                                  foregroundColor: Colors.white,
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    );
-                                                                  },
-                                                                );
-                                                              },
+                                                              onPressed: () =>
+                                                                  sellProduct(),
                                                               child: Text(
                                                                 'Add Product in Marketplace',
                                                                 style:
@@ -1369,6 +1347,66 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                     child: CircularProgressIndicator(),
                   );
                 })));
+  }
+
+  void _UshowPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Gallery'),
+                      onTap: () {
+                        UimgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      UimgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Gallery'),
+                      onTap: () {
+                        imgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      imgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   void _saveInformation() {}
