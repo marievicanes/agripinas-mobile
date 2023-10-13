@@ -1,4 +1,3 @@
-import 'package:capstone/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -107,10 +106,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ListTile(
               leading: Icon(Icons.logout),
               title: Text('Logout'),
-              onTap: () {
-                AuthService authService = AuthService();
-                authService.logOutUser(context);
-              },
+              onTap: () {},
             ),
           ],
         ),
@@ -121,6 +117,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             children: [
               SizedBox(height: 16.0),
+              CircleAvatar(
+                radius: 70.0,
+                backgroundImage: AssetImage('assets/user.png'),
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _nameController,
+                enabled: _isEditing,
+                decoration: InputDecoration(
+                  labelText: 'Name',
+                  hintText: 'Enter your name',
+                  border: OutlineInputBorder(),
+                ),
+              ),
               SizedBox(height: 16.0),
               TextField(
                 controller: _bdateController,

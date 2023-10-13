@@ -1,3 +1,6 @@
+import 'package:capstone/helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
@@ -293,6 +296,8 @@ class _TransactionBuyerState extends State<TransactionBuyer>
     });
   }
 
+  final currentUser = FirebaseAuth.instance;
+  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -320,110 +325,105 @@ class _TransactionBuyerState extends State<TransactionBuyer>
           ),
         ),
         drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              UserAccountsDrawerHeader(
-                accountName: Text(
-                  '',
-                  style: TextStyle(
-                    fontFamily: 'Poppins-Regular',
-                    fontSize: 0,
-                  ),
-                ),
-                accountEmail: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Arriane Gatpo',
-                      style: TextStyle(
-                        fontFamily: 'Poppins-Regular',
-                        fontSize: 14.0,
+          child: StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection("Users")
+                .where("uid", isEqualTo: currentUser.currentUser!.uid)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                var data = snapshot.data!.docs[0];
+                return ListView(
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    UserAccountsDrawerHeader(
+                      accountName: Text(data['fullname']),
+                      accountEmail: Text(data['email']),
+                      currentAccountPicture: CircleAvatar(
+                        radius: 10.0,
+                        backgroundImage: AssetImage('assets/user.png'),
                       ),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFA9AF7E),
+                      ),
+                      otherAccountsPictures: [
+                        IconButton(
+                          icon: Icon(Icons.notifications),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => BuyerAgriNotif()));
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.message),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Message()));
+                          },
+                        ),
+                      ],
                     ),
-                    Text(
-                      'Buyer',
-                      style: TextStyle(
-                        fontFamily: 'Poppins-Regular',
-                        fontSize: 12.0,
+                    ListTile(
+                      leading: Icon(Icons.person_2_outlined),
+                      title: Text(
+                        'Profile',
+                        style: TextStyle(fontFamily: 'Poppins-Medium'),
                       ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProfileScreen()));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.info_outlined),
+                      title: Text(
+                        'About Us',
+                        style: TextStyle(fontFamily: 'Poppins-Medium'),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AboutUsScreen()));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.contact_mail_outlined),
+                      title: Text(
+                        'Contact Us',
+                        style: TextStyle(fontFamily: 'Poppins-Medium'),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ContactUsScreen()));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.logout_outlined),
+                      title: Text(
+                        'Logout',
+                        style: TextStyle(fontFamily: 'Poppins-Medium'),
+                      ),
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Login()));
+                      },
                     ),
                   ],
-                ),
-                currentAccountPicture: CircleAvatar(
-                  radius: 10.0,
-                  backgroundImage: AssetImage('assets/user.png'),
-                ),
-                decoration: BoxDecoration(
-                  color: Color(0xFFA9AF7E),
-                ),
-                otherAccountsPictures: [
-                  IconButton(
-                    icon: Icon(Icons.notifications),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BuyerAgriNotif()));
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.message),
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Message()));
-                    },
-                  ),
-                ],
-              ),
-              ListTile(
-                leading: Icon(Icons.person_2_outlined),
-                title: Text(
-                  'Profile',
-                  style: TextStyle(fontFamily: 'Poppins-Medium'),
-                ),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()));
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.info_outlined),
-                title: Text(
-                  'About Us',
-                  style: TextStyle(fontFamily: 'Poppins-Medium'),
-                ),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AboutUsScreen()));
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.contact_mail_outlined),
-                title: Text(
-                  'Contact Us',
-                  style: TextStyle(fontFamily: 'Poppins-Medium'),
-                ),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ContactUsScreen()));
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.logout_outlined),
-                title: Text(
-                  'Logout',
-                  style: TextStyle(fontFamily: 'Poppins-Medium'),
-                ),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Login()));
-                },
-              ),
-            ],
-          ),
+                );
+              } else {
+                return CircularProgressIndicator(); // Add loading indicator
+              }
+            }, // Add a closing parenthesis here
+          ), // Add a closing parenthesis here
         ),
         body: Column(
           children: [

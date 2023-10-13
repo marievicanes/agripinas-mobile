@@ -1,54 +1,72 @@
-import 'package:capstone/farmer/category_fertilizer.dart';
-import 'package:capstone/farmer/category_fruits.dart';
-import 'package:capstone/farmer/category_ofproducts.dart';
-import 'package:capstone/farmer/category_veggies.dart';
+import 'package:capstone/buyer/buyer_category_fertilizer.dart';
+import 'package:capstone/buyer/buyer_category_fruits.dart';
+import 'package:capstone/buyer/buyer_category_ofproducts.dart';
+import 'package:capstone/buyer/buyer_category_veggies.dart';
 import 'package:flutter/material.dart';
 
-class CategoryItem {
+class BuyerCategoryItem {
   final String title;
   final String imageUrl;
 
-  CategoryItem({
+  BuyerCategoryItem({
     required this.title,
     required this.imageUrl,
   });
 }
 
-class CategoriesScreen extends StatefulWidget {
+class BuyerCategoriesScreen extends StatefulWidget {
   @override
-  _CategoriesScreenState createState() => _CategoriesScreenState();
+  _BuyerCategoriesScreenState createState() => _BuyerCategoriesScreenState();
 }
 
-class _CategoriesScreenState extends State<CategoriesScreen> {
+class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
-  List<CategoryItem> filteredItems = [];
+  List<MarketplaceItem> filteredItems = []; //binago ko to
 
-  final List<CategoryItem> items = [
-    CategoryItem(
+  final List<BuyerCategoryItem> items = [
+    BuyerCategoryItem(
       title: 'Fruits',
       imageUrl: 'assets/fruits.png',
     ),
-    CategoryItem(
+    BuyerCategoryItem(
       title: 'Vegetables',
       imageUrl: 'assets/veggies.png',
     ),
-    CategoryItem(
+    BuyerCategoryItem(
       title: 'Fertilizers',
       imageUrl: 'assets/fertilizer.png',
     ),
-    CategoryItem(
+    BuyerCategoryItem(
       title: 'Other Farm Products',
       imageUrl: 'assets/products.png',
     ),
   ];
 
   final List<Widget Function(BuildContext)> routes = [
-    (context) => FruitsScreen(),
-    (context) => VegetablesScreen(),
-    (context) => FertilizersScreen(),
-    (context) => OFProductScreen(),
+    (context) => BuyerFruitsScreen(),
+    (context) => BuyerVegetablesScreen(),
+    (context) => BuyerFertilizersScreen(),
+    (context) => BuyerOFProductScreen(),
   ];
+  @override
+  void initState() {
+    super.initState();
+    filteredItems = listViewitems; //binago ko to arr
+  }
+
+  void _searchItems() {
+    // pati ito
+    setState(() {
+      _searchText = _searchController.text;
+      filteredItems = listViewitems
+          .where((item) =>
+              item.title.toLowerCase().contains(_searchText.toLowerCase()) ||
+              item.farmer.toLowerCase().contains(_searchText.toLowerCase()) ||
+              item.location.toLowerCase().contains(_searchText.toLowerCase()))
+          .toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +103,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               ),
               child: TextField(
                 controller: _searchController,
+                onChanged: (value) => _searchItems(),
                 decoration: InputDecoration(
                   hintText: 'Search',
                   prefixIcon: Icon(Icons.search),
@@ -206,11 +225,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     );
   }
 
-  final List<Widget Function(BuildContext)> routes1 = [
-    (context) => FruitTomatoScreen(),
-  ];
+  final List<Widget Function(BuildContext)> routes1 = [];
   Widget buildMarketplaceSection() {
     return GridView.builder(
+      //pati ito arr
       padding: EdgeInsets.all(10),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -218,20 +236,20 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         mainAxisSpacing: 10,
         childAspectRatio: 2 / 4,
       ),
-      itemCount: listViewitems.length,
+      itemCount: filteredItems.length,
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        final item = listViewitems[index];
+        final item = filteredItems[index];
         return GestureDetector(
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: routes1[index],
+                builder: (context) => routes[index](context),
               ),
             );
-          },
+          }, // hanggang dito
           child: Card(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -338,7 +356,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   @override
   void dispose() {
-    _searchController.dispose();
     _postController.dispose();
     super.dispose();
   }

@@ -26,23 +26,36 @@ class BuyerAgriNotif extends StatelessWidget {
           itemCount: notifications.length,
           itemBuilder: (context, index) {
             NotificationItem notification = notifications[index];
-            return ListTile(
-              leading: CircleAvatar(
-                backgroundImage: AssetImage(notification.icon),
-              ),
-              title: Text(
-                notification.title,
-                style: TextStyle(fontFamily: 'Poppins-Medium', fontSize: 14.5),
-              ),
-              subtitle: Text(
-                notification.description,
-                style: TextStyle(fontFamily: 'Poppins-Regular', fontSize: 12.5),
-              ),
-              trailing: Text(
-                notification.time,
-                style: TextStyle(fontFamily: 'Poppins-Regular', fontSize: 10.0),
-              ),
-              onTap: () {},
+            return Column(
+              children: [
+                SizedBox(height: 20.0),
+                ListTile(
+                  leading: Container(
+                    width: 80.0,
+                    height: 80.0,
+                    child: Image.asset(
+                      notification.icon,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  title: Text(
+                    notification.title,
+                    style:
+                        TextStyle(fontFamily: 'Poppins-Medium', fontSize: 14.5),
+                  ),
+                  subtitle: Text(
+                    notification.description,
+                    style: TextStyle(
+                        fontFamily: 'Poppins-Regular', fontSize: 12.5),
+                  ),
+                  trailing: Text(
+                    notification.time,
+                    style: TextStyle(
+                        fontFamily: 'Poppins-Regular', fontSize: 10.0),
+                  ),
+                  onTap: () {},
+                ),
+              ],
             );
           },
         ),
@@ -67,27 +80,27 @@ class NotificationItem {
 
 List<NotificationItem> notifications = [
   NotificationItem(
-    title: 'Jenkins Mesina',
-    description: 'Received his order',
-    icon: 'assets/user4.png',
+    title: 'Parcel Delivered',
+    description: 'Parcel for your order has been delivered',
+    icon: 'assets/tomato.png',
     time: '2 hours ago',
   ),
   NotificationItem(
-    title: 'Daniella Tungol',
-    description: 'Received her order',
-    icon: 'assets/user2.png',
+    title: 'Parcel Delivered',
+    description: 'Parcel for your order has been delivered',
+    icon: 'assets/onion.png',
     time: '1 day ago',
   ),
   NotificationItem(
-    title: 'Ryan Amador',
-    description: 'Received his order',
-    icon: 'assets/user5.png',
+    title: 'Parcel Delivered',
+    description: 'Parcel for your order has been delivered',
+    icon: 'assets/pechay.png',
     time: '2 days ago',
   ),
   NotificationItem(
-    title: 'Romeo London',
-    description: 'Received his order',
-    icon: 'assets/user4.png',
+    title: 'Parcel Delivered',
+    description: 'Parcel for your order has been delivered',
+    icon: 'assets/kalabasa.png',
     time: '3 days ago',
   ),
 ];

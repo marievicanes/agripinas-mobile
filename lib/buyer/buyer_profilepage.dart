@@ -1,88 +1,316 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'dart:io';
 
-class ProfilePage extends StatefulWidget {
+import 'package:capstone/helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+class ProfileScreen extends StatefulWidget {
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-  final _formKey = GlobalKey<FormState>();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController contactNumberController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
-  DateTime? birthdate;
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController confirmPasswordController = TextEditingController();
-  final _dateFormat = DateFormat('yyyy-MM-dd');
-  int age = 0;
+class _ProfileScreenState extends State<ProfileScreen> {
+  firebase_storage.FirebaseStorage storage =
+      firebase_storage.FirebaseStorage.instance;
+  String imageUrl = '';
+  String? _imageUrl;
 
-  @override
-  void initState() {
-    super.initState();
-    nameController.text = "Arriane Gatpo";
-    contactNumberController.text = "09675046713";
-    addressController.text = "Cabiao, Nueva Ecija";
-    birthdate = DateTime(1999, 7, 15);
-    emailController.text = "acg@gmail.com";
-    passwordController.text = "password";
-    _calculateAge();
-  }
+  final TextEditingController _fullnameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  TextEditingController _birthdateController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _contactController = TextEditingController();
+  final TextEditingController password = TextEditingController();
 
-  @override
-  void dispose() {
-    nameController.dispose();
-    contactNumberController.dispose();
-    addressController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
+  final CollectionReference _users =
+      FirebaseFirestore.instance.collection('Users');
 
-  void _calculateAge() {
-    if (birthdate != null) {
-      final now = DateTime.now();
-      age = now.year - birthdate!.year;
-      if (now.month < birthdate!.month ||
-          (now.month == birthdate!.month && now.day < birthdate!.day)) {
-        age--;
+  bool _isEditing = false;
+  DateTime? _selectedDate;
+
+  XFile? file;
+  final ImagePicker _picker = ImagePicker();
+
+  Future imgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
       }
+    });
+  }
+
+  Future UimgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future UimgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future imgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future uploadFile() async {
+    if (file == null) return;
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    firebase_storage.Reference referenceRoot =
+        firebase_storage.FirebaseStorage.instance.ref();
+    firebase_storage.Reference referenceDirImages =
+        referenceRoot.child('images');
+
+    firebase_storage.Reference referenceImageToUpload =
+        referenceDirImages.child(uniqueFileName);
+
+    try {
+      await referenceImageToUpload.putFile(File(file!.path));
+      imageUrl = await referenceImageToUpload.getDownloadURL();
+    } catch (error) {}
+  }
+
+  Future<void> _updateName([DocumentSnapshot? documentSnapshot]) async {
+    if (documentSnapshot != null) {
+      _fullnameController.text = documentSnapshot['fullname'];
     }
+
+    await showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext ctx) {
+          return Padding(
+            padding: EdgeInsets.only(
+                top: 20,
+                left: 20,
+                right: 20,
+                bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _fullnameController,
+                  decoration: const InputDecoration(labelText: 'Fullname'),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Color.fromRGBO(157, 192, 139, 1), // Background color
+                    foregroundColor: Colors.white, // Text color
+                  ),
+                  child: const Text('Update'),
+                  onPressed: () async {
+                    final String fullname = _fullnameController.text;
+                    if (fullname != null) {
+                      await _users
+                          .doc(documentSnapshot!.id)
+                          .update({"fullname": fullname});
+                      _fullnameController.text = '';
+                      Navigator.of(context).pop();
+                    }
+                  },
+                )
+              ],
+            ),
+          );
+        });
   }
 
-  bool _validateFields() {
-    if (nameController.text.isEmpty ||
-        contactNumberController.text.isEmpty ||
-        addressController.text.isEmpty ||
-        birthdate == null ||
-        emailController.text.isEmpty ||
-        passwordController.text.isEmpty ||
-        confirmPasswordController.text.isEmpty) {
-      return false;
+  Future<void> _updateBirthdate([DocumentSnapshot? documentSnapshot]) async {
+    if (documentSnapshot != null) {
+      _birthdateController.text = documentSnapshot['birthdate'];
     }
 
-    return true;
+    await showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext ctx) {
+          return Padding(
+            padding: EdgeInsets.only(
+                top: 20,
+                left: 20,
+                right: 20,
+                bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _birthdateController,
+                  decoration: const InputDecoration(labelText: 'Birthdate'),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Color.fromRGBO(157, 192, 139, 1), // Background color
+                    foregroundColor: Colors.white, // Text color
+                  ),
+                  child: const Text('Update'),
+                  onPressed: () async {
+                    final String birthdate = _birthdateController.text;
+                    if (birthdate != null) {
+                      await _users
+                          .doc(documentSnapshot!.id)
+                          .update({"birthdate": birthdate});
+                      _birthdateController.text = '';
+                      Navigator.of(context).pop();
+                    }
+                  },
+                )
+              ],
+            ),
+          );
+        });
   }
 
-  void _saveProfile() {
-    String name = nameController.text;
-    String contactNumber = contactNumberController.text;
-    String address = addressController.text;
-    DateTime? selectedBirthdate = birthdate;
-    String email = emailController.text;
-    String password = passwordController.text;
-    String confirmPassword = confirmPasswordController.text;
+  Future<void> _updateAddress([DocumentSnapshot? documentSnapshot]) async {
+    if (documentSnapshot != null) {
+      _addressController.text = documentSnapshot['address'];
+    }
 
-    print('Name: $name');
-    print('Contact Number: $contactNumber');
-    print('Address: $address');
-    print('Birthdate: $selectedBirthdate');
-    print('Email: $email');
-    print('Password: $password');
-    print('Confirm Password: $confirmPassword');
+    await showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext ctx) {
+          return Padding(
+            padding: EdgeInsets.only(
+                top: 20,
+                left: 20,
+                right: 20,
+                bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _addressController,
+                  decoration: const InputDecoration(labelText: 'Address'),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Color.fromRGBO(157, 192, 139, 1), // Background color
+                    foregroundColor: Colors.white, // Text color
+                  ),
+                  child: const Text('Update'),
+                  onPressed: () async {
+                    final String address = _addressController.text;
+                    if (address != null) {
+                      await _users
+                          .doc(documentSnapshot!.id)
+                          .update({"address": address});
+                      _addressController.text = '';
+                      Navigator.of(context).pop();
+                    }
+                  },
+                )
+              ],
+            ),
+          );
+        });
   }
 
+  Future<void> _updateContact([DocumentSnapshot? documentSnapshot]) async {
+    if (documentSnapshot != null) {
+      _contactController.text = documentSnapshot['contact'];
+    }
+
+    await showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext ctx) {
+          return Padding(
+            padding: EdgeInsets.only(
+                top: 20,
+                left: 20,
+                right: 20,
+                bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _contactController,
+                  decoration:
+                      const InputDecoration(labelText: 'Contact Number'),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Color.fromRGBO(157, 192, 139, 1), // Background color
+                    foregroundColor: Colors.white, // Text color
+                  ),
+                  child: const Text('Update'),
+                  onPressed: () async {
+                    final String contact = _contactController.text;
+                    if (contact != null) {
+                      await _users
+                          .doc(documentSnapshot!.id)
+                          .update({"contact": contact});
+                      _contactController.text = '';
+                      Navigator.of(context).pop();
+                    }
+                  },
+                )
+              ],
+            ),
+          );
+        });
+  }
+
+  final currentUser = FirebaseAuth.instance;
+  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,455 +322,192 @@ class _ProfilePageState extends State<ProfilePage> {
             Navigator.pop(context);
           },
         ),
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/logo.png',
-              height: 32.0,
-            ),
-            SizedBox(width: 7.0),
-            Text(
-              'AgriPinas',
-              style: TextStyle(
-                fontSize: 17.0,
-                fontFamily: 'Poppins',
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
       ),
-      body: Padding(
-        key: Key('padding'),
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            CircleAvatar(
-              radius: 60,
-              backgroundImage: AssetImage('assets/user.png'),
-            ),
-            SizedBox(height: 16.0),
-            TextButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text(
-                        'Edit Profile',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: 'Poppins-Bold',
-                        ),
-                      ),
-                      content: SingleChildScrollView(
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            children: [
-                              TextFormField(
-                                controller: nameController,
-                                decoration: InputDecoration(
-                                  labelText: 'Name',
-                                  labelStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Poppins-Regular',
-                                    fontSize: 13,
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 208, 216, 144),
-                                    ),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                                style: TextStyle(
-                                  fontFamily: 'Poppins-Regular',
-                                  fontSize: 14,
-                                ),
-                                validator: (value) {
-                                  if (value?.isEmpty ?? true) {
-                                    return 'Please enter your name';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                controller: contactNumberController,
-                                decoration: InputDecoration(
-                                  labelText: 'Contact Number',
-                                  labelStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Poppins-Regular',
-                                    fontSize: 13,
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 208, 216, 144),
-                                    ),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                                style: TextStyle(
-                                  fontFamily: 'Poppins-Regular',
-                                  fontSize: 14,
-                                ),
-                                validator: (value) {
-                                  if (value?.isEmpty ?? true) {
-                                    return 'Please enter your contact number';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                controller: addressController,
-                                decoration: InputDecoration(
-                                  labelText: 'Address',
-                                  labelStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Poppins-Regular',
-                                    fontSize: 13,
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 208, 216, 144),
-                                    ),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                                style: TextStyle(
-                                  fontFamily: 'Poppins-Regular',
-                                  fontSize: 14,
-                                ),
-                                validator: (value) {
-                                  if (value?.isEmpty ?? true) {
-                                    return 'Please enter your address';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              SizedBox(height: 16.0),
-                              TextFormField(
-                                readOnly: true,
-                                controller: TextEditingController(
-                                  text: _dateFormat
-                                      .format(birthdate ?? DateTime.now()),
-                                ),
-                                onTap: () {
-                                  showDatePicker(
-                                    context: context,
-                                    initialDate: birthdate ?? DateTime.now(),
-                                    firstDate: DateTime(1900),
-                                    lastDate: DateTime.now(),
-                                  ).then((selectedDate) {
-                                    setState(() {
-                                      if (selectedDate != null) {
-                                        birthdate = selectedDate;
-                                        _calculateAge();
-                                      }
-                                    });
-                                  });
-                                },
-                                decoration: InputDecoration(
-                                  labelText: 'Birthdate',
-                                  labelStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Poppins-Regular',
-                                    fontSize: 13,
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 208, 216, 144),
-                                    ),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                                style: TextStyle(
-                                  fontFamily: 'Poppins-Regular',
-                                  fontSize: 14,
-                                ),
-                                validator: (value) {
-                                  if (value?.isEmpty ?? true) {
-                                    return 'Please select your birthdate';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                readOnly: true,
-                                controller: TextEditingController(
-                                  text: age.toString(),
-                                ),
-                                decoration: InputDecoration(
-                                  labelText: 'Age',
-                                  labelStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Poppins-Regular',
-                                    fontSize: 13,
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 208, 216, 144),
-                                    ),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                                style: TextStyle(
-                                  fontFamily: 'Poppins-Regular',
-                                  fontSize: 14,
-                                ),
-                                validator: (value) {
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                controller: emailController,
-                                decoration: InputDecoration(
-                                  labelText: 'Email',
-                                  labelStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Poppins-Regular',
-                                    fontSize: 13,
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 208, 216, 144),
-                                    ),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                                style: TextStyle(
-                                  fontFamily: 'Poppins-Regular',
-                                  fontSize: 14,
-                                ),
-                                validator: (value) {
-                                  if (value?.isEmpty ?? true) {
-                                    return 'Please enter your email';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                controller: passwordController,
-                                decoration: InputDecoration(
-                                  labelText: 'Password',
-                                  labelStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Poppins-Regular',
-                                    fontSize: 13,
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 208, 216, 144),
-                                    ),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                                style: TextStyle(
-                                  fontFamily: 'Poppins-Regular',
-                                  fontSize: 14,
-                                ),
-                                obscureText: true,
-                                validator: (value) {
-                                  if (value?.isEmpty ?? true) {
-                                    return 'Please enter a password';
-                                  }
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection("Users")
+            .where("uid", isEqualTo: currentUser.currentUser!.uid)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator(); // Show loading indicator while fetching data.
+          }
 
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                controller: confirmPasswordController,
-                                decoration: InputDecoration(
-                                  labelText: 'Confirm Password',
-                                  labelStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Poppins-Regular',
-                                    fontSize: 13,
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 208, 216, 144),
-                                    ),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                                style: TextStyle(
-                                  fontFamily: 'Poppins-Regular',
-                                  fontSize: 14,
-                                ),
-                                obscureText: true,
-                                validator: (value) {
-                                  if (value?.isEmpty ?? true) {
-                                    return 'Please confirm your password';
-                                  }
-                                  if (value != passwordController.text) {
-                                    return 'Passwords do not match';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            if (_formKey.currentState?.validate() ?? false) {
-                              _saveProfile();
-                              Navigator.pop(context);
-                            }
-                          },
-                          child: Text(
-                            'Save',
-                            style: TextStyle(
-                              color: Color(0xFF27AE60),
-                              fontFamily: 'Poppins-Regular',
-                              fontSize: 15.5,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            'Cancel',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: 'Poppins-Regular',
-                              fontSize: 15.5,
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              child: Text(
-                'Edit Profile',
-                style: TextStyle(
-                  color: Color(0xFF9DC08B),
-                  fontSize: 16.0,
+          if (!snapshot.hasData) {
+            return Text("No data available."); // Handle when there's no data.
+          }
+
+          var data = snapshot.data!.docs[0];
+          DocumentSnapshot documentSnapshot = snapshot.data!.docs[0];
+
+          _fullnameController.text = data['fullname'];
+          _emailController.text = data['email'];
+          _birthdateController.text = data['birthdate'];
+          _addressController.text = data['address'];
+          _contactController.text = data['contact'];
+          password.text = "password";
+
+          return Container(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                SizedBox(height: 16.0),
+                Text('Account Information',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: 'Poppins-Bold',
+                    )),
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _fullnameController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    suffixIcon: IconButton(
+                        icon: Icon(Icons.arrow_forward_ios),
+                        iconSize: 18, // You can use any icon you prefer
+                        onPressed: () => _updateName(documentSnapshot)),
+                  ),
                 ),
-              ),
-            ),
-            SizedBox(height: 20.0),
-            TextField(
-              controller: nameController,
-              readOnly: true,
-              style: TextStyle(
-                fontFamily: 'Poppins-Regular',
-              ),
-              decoration: InputDecoration(
-                labelText: 'Name',
-                labelStyle: TextStyle(
-                  fontFamily: 'Poppins-Regular',
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _birthdateController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: 'Birth Date',
+                    suffixIcon: IconButton(
+                        icon: Icon(Icons.arrow_forward_ios),
+                        iconSize: 18, // You can use any icon you prefer
+                        onPressed: () => _updateBirthdate(documentSnapshot)),
+                  ),
                 ),
-              ),
-            ),
-            TextField(
-              controller: contactNumberController,
-              readOnly: true,
-              style: TextStyle(
-                fontFamily: 'Poppins-Regular',
-              ),
-              decoration: InputDecoration(
-                labelText: 'Contact Number',
-                labelStyle: TextStyle(
-                  fontFamily: 'Poppins-Regular',
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _addressController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: 'Address',
+                    suffixIcon: IconButton(
+                        icon: Icon(Icons.arrow_forward_ios),
+                        iconSize: 18, // You can use any icon you prefer
+                        onPressed: () => _updateAddress(documentSnapshot)),
+                  ),
                 ),
-              ),
-            ),
-            TextField(
-              controller: addressController,
-              readOnly: true,
-              style: TextStyle(
-                fontFamily: 'Poppins-Regular',
-              ),
-              decoration: InputDecoration(
-                labelText: 'Address',
-                labelStyle: TextStyle(
-                  fontFamily: 'Poppins-Regular',
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _contactController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: 'Contact Number',
+                    suffixIcon: IconButton(
+                        icon: Icon(Icons.arrow_forward_ios),
+                        iconSize: 18, // You can use any icon you prefer
+                        onPressed: () => _updateContact(documentSnapshot)),
+                  ),
                 ),
-              ),
-            ),
-            SizedBox(height: 16.0),
-            TextField(
-              readOnly: true,
-              controller: TextEditingController(
-                text: _dateFormat.format(birthdate ?? DateTime.now()),
-              ),
-              onTap: () {
-                showDatePicker(
-                  context: context,
-                  initialDate: birthdate ?? DateTime.now(),
-                  firstDate: DateTime(1900),
-                  lastDate: DateTime.now(),
-                ).then((selectedDate) {
-                  setState(() {
-                    if (selectedDate != null) {
-                      birthdate = selectedDate;
-                      _calculateAge();
-                    }
-                  });
-                });
-              },
-              style: TextStyle(
-                fontFamily: 'Poppins-Regular',
-              ),
-              decoration: InputDecoration(
-                labelText: 'Birthdate',
-              ),
-            ),
-            SizedBox(height: 16.0),
-            TextField(
-              readOnly: true,
-              controller: TextEditingController(
-                text: age.toString(),
-              ),
-              style: TextStyle(
-                fontFamily: 'Poppins-Regular',
-              ),
-              decoration: InputDecoration(
-                labelText: 'Age',
-              ),
-            ),
-            TextField(
-              controller: emailController,
-              readOnly: true,
-              style: TextStyle(
-                fontFamily: 'Poppins-Regular',
-              ),
-              decoration: InputDecoration(
-                labelText: 'Email',
-                labelStyle: TextStyle(
-                  fontFamily: 'Poppins-Regular',
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _emailController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons
+                          .arrow_forward_ios), // You can use any icon you prefer
+                      onPressed: () {
+                        // Handle the button press event here
+                      },
+                      iconSize: 18,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            TextField(
-              controller: passwordController,
-              readOnly: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                labelStyle: TextStyle(
-                  fontFamily: 'Poppins-Regular',
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: password,
+                  obscureText: true,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons
+                          .arrow_forward_ios), // You can use any icon you prefer
+                      onPressed: () {
+                        // Handle the button press event here
+                      },
+                      iconSize: 18,
+                    ),
+                  ),
                 ),
-              ),
-              obscureText: true,
+                SizedBox(height: 16.0),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
-}
 
-void main() {
-  runApp(MaterialApp(
-    home: ProfilePage(),
-  ));
+  void _saveInformation() {}
+
+  void _UshowPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Gallery'),
+                      onTap: () {
+                        UimgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      UimgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Container(
+            child: new Wrap(
+              children: <Widget>[
+                new ListTile(
+                  leading: new Icon(Icons.photo_library),
+                  title: new Text('Gallery'),
+                  onTap: () {
+                    imgFromGallery();
+                    Navigator.of(context).pop();
+                  },
+                ),
+                new ListTile(
+                  leading: new Icon(Icons.photo_camera),
+                  title: new Text('Camera'),
+                  onTap: () {
+                    imgFromCamera();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
