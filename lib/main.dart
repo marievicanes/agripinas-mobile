@@ -48,15 +48,19 @@ class WelcomePage extends StatelessWidget {
                 Text(
                   'Grown with care,\ntraded with trust.',
                   style: TextStyle(
-                      fontSize: 28,
-                      fontFamily: 'Averta-Regular',
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 85, 113, 83)),
+                    fontSize: 25,
+                    fontFamily: 'Poppins',
+                    color: Color.fromARGB(255, 85, 113, 83),
+                  ),
                 ),
                 SizedBox(height: 30),
                 Text(
-                  '                         Let’s help farmers! \n   Direct link between farmers and consumers.',
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
+                  '                           Let’s help farmers! \n     Direct link between farmers and consumers.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins-Medium',
+                    color: Colors.black54,
+                  ),
                 ),
                 SizedBox(height: 80),
                 Image.asset(
@@ -72,7 +76,10 @@ class WelcomePage extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => Login()),
                     );
                   },
-                  child: Text('More'),
+                  child: Text(
+                    'More',
+                    style: TextStyle(fontFamily: 'Poppins'),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF27AE60),
                   ),
@@ -114,158 +121,304 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-        child: Form(
-          key: _formkey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 0),
+        resizeToAvoidBottomInset: false,
+        body: Padding(
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+            child: Form(
+                key: _formkey,
                 child: Column(
-                  children: [
-                    Hero(
-                      tag: 'hero',
-                      child: SizedBox(
-                        height: 200,
-                        width: 200,
-                        child: Image.asset('assets/logo.png'),
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 40, vertical: 0),
+                        child: Column(
+                          children: [
+                            Hero(
+                              tag: 'hero',
+                              child: SizedBox(
+                                height: 200,
+                                width: 200,
+                                child: Image.asset('assets/logo.png'),
+                              ),
+                            ),
+                            SizedBox(height: 0),
+                            Text(
+                              "AgriPinas",
+                              style: TextStyle(
+                                fontSize: 40,
+                                fontFamily: 'Poppins',
+                                letterSpacing: 8,
+                                color: Color.fromARGB(255, 85, 113, 83),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 0),
-                    Text(
-                      "AgriPinas",
-                      style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 8,
-                        color: Color.fromARGB(255, 85, 113, 83),
+                      SizedBox(height: 40),
+                      Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        child: Text(
+                          "Sign-in",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontFamily: 'Poppins',
+                            color: Color.fromARGB(255, 85, 113, 83),
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 40),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: Text(
-                  "Sign-in",
+                      TextFormField(
+                        controller: authService.email,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.email,
+                            color: Color(0xFF9DC08B),
+                          ),
+                          labelText: "E-mail",
+                          labelStyle: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Poppins-Regular',
+                            fontSize: 13,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 208, 216, 144),
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        validator: _validateEmail,
+                      ),
+                      SizedBox(height: 15),
+                      TextFormField(
+                        obscureText: true,
+                        controller: authService.password,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: Color(0xFF9DC08B),
+                          ),
+                          labelText: "Password",
+                          labelStyle: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Poppins-Regular',
+                            fontSize: 14,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        validator: _validatePassword,
+                      ),
+                      SizedBox(height: 30),
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (_formkey.currentState!.validate()) {
+                            UserCredential userCredential =
+                                await AuthHelper.loginUser(
+                                    authService.email.text,
+                                    authService.password.text);
+                            String uid = userCredential.user!.uid;
+
+                            DocumentSnapshot userSnapshot =
+                                await AuthHelper.getUserDocument(uid);
+                            String role = userSnapshot.get('role');
+
+                            if (role == "Farmer") {
+                              authService.loginFarmer(context);
+                            } else if (role == "Buyer") {
+                              authService.loginBuyer(context);
+                            } else {
+                              // Handle unknown role or other cases
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Invalid Role'),
+                                    content: Text(
+                                        'The role of the user is invalid.'),
+                                    actions: [
+                                      TextButton(
+                                        child: Text('OK'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          }
+                        },
+                        child: Text('Login'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF27AE60),
+                          textStyle: TextStyle(fontFamily: 'Poppins'),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ForgotPassword()),
+                          );
+                        },
+                        child: Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            color: Color(0xFF9DC08B),
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Register()),
+                          );
+                        },
+                        child: RichText(
+                          text: TextSpan(
+                            text: "Don't have an account? ",
+                            style: TextStyle(
+                              fontFamily: 'Poppins-Regular',
+                              color: Colors.black,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: "Register",
+                                style: TextStyle(
+                                  fontFamily: 'Poppins-Regular',
+                                  color: Color(0xFF27AE60),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ]))));
+  }
+}
+
+class ForgotPassword extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email.';
+    }
+    if (!value.contains('@')) {
+      return 'Please enter a valid email address.';
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: Container(
+          color: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 8.0,
+            ),
+            child: Row(
+              children: [
+                BackButton(color: Colors.black), // Back button
+                SizedBox(width: 10.0),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 0),
+                Text(
+                  'Forgot your password?',
                   style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                    fontFamily: 'Poppins',
                     color: Color.fromARGB(255, 85, 113, 83),
                   ),
                 ),
-              ),
-              TextFormField(
-                controller: authService.email,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(
-                    Icons.email,
-                    color: Color(0xFF9DC08B),
-                  ),
-                  labelText: "E-mail",
-                  labelStyle: TextStyle(
-                    color: Colors.black,
-                    fontFamily: 'Poppins-Regular',
-                    fontSize: 13,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color.fromARGB(255, 208, 216, 144),
-                    ),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                validator: _validateEmail,
-              ),
-              SizedBox(height: 15),
-              TextFormField(
-                obscureText: true,
-                controller: authService.password,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(
-                    Icons.lock,
-                    color: Color(0xFF9DC08B),
-                  ),
-                  labelText: "Password",
-                  labelStyle: TextStyle(
-                    color: Colors.black,
-                    fontFamily: 'Poppins-Regular',
-                    fontSize: 14,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFFA9AF7E)),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                validator: _validatePassword,
-              ),
-              SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formkey.currentState!.validate()) {
-                    UserCredential userCredential = await AuthHelper.loginUser(
-                        authService.email.text, authService.password.text);
-                    String uid = userCredential.user!.uid;
-
-                    DocumentSnapshot userSnapshot =
-                        await AuthHelper.getUserDocument(uid);
-                    String role = userSnapshot.get('role');
-
-                    if (role == "Farmer") {
-                      authService.loginFarmer(context);
-                    } else if (role == "Buyer") {
-                      authService.loginBuyer(context);
-                    } else {
-                      // Handle unknown role or other cases
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Invalid Role'),
-                            content: Text('The role of the user is invalid.'),
-                            actions: [
-                              TextButton(
-                                child: Text('OK'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-                  }
-                },
-                child: Text('Login'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF27AE60),
-                ),
-              ),
-              SizedBox(height: 10),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Register()),
-                  );
-                },
-                child: Text(
-                  "Don't have an account? Register",
+                SizedBox(height: 30),
+                Text(
+                  '   Enter your registered email below \n to receive password reset instruction ',
                   style: TextStyle(
-                    color: Color(0xFF27AE60),
-                    fontSize: 15,
+                    fontSize: 14,
+                    fontFamily: 'Poppins-Medium',
+                    color: Colors.black54,
                   ),
                 ),
-              ),
-            ],
+                SizedBox(height: 80),
+                Image.asset(
+                  'assets/email.png',
+                  width: 700,
+                  height: 150,
+                ),
+                SizedBox(height: 40),
+                Container(
+                  width: 350,
+                  child: TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.email,
+                        color: Color(0xFF9DC08B),
+                      ),
+                      labelText: "E-mail",
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 13,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(255, 208, 216, 144),
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    validator: _validateEmail,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  width: 200,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Send Code',
+                      style: TextStyle(fontFamily: 'Poppins'),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      primary: Color(0xFF27AE60),
+                      minimumSize: Size(5, 50),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

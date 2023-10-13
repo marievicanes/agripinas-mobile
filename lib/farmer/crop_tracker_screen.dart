@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -14,12 +15,20 @@ class CropTrackerScreen extends StatefulWidget {
 class _CropTrackerScreenState extends State<CropTrackerScreen>
     with SingleTickerProviderStateMixin {
   String? selectedStatus;
+  DateTime? _selectedDatePlanted;
+  DateTime? _selectedDateEstimated;
+  String selectedCategory = "Fruits";
+  String selectedUnit = "Sacks";
+  bool _isImageSelected = false;
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _searchController = TextEditingController();
   TextEditingController _cropNameController = TextEditingController();
   TextEditingController _harvestController = TextEditingController();
   TextEditingController _plantedController = TextEditingController();
   TextEditingController _statusController = TextEditingController();
-
+  TextEditingController _datePlantedController = TextEditingController();
+  TextEditingController _estimatedDateController = TextEditingController();
   TextEditingController _categoryController = TextEditingController();
   TextEditingController _locationController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
@@ -27,6 +36,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
   TextEditingController _priceController = TextEditingController();
   TextEditingController _quantityController = TextEditingController();
   String imageUrl = '';
+  File? _selectedImage;
 
   String _searchText = '';
   bool _isButtonVisible = true;
@@ -38,12 +48,35 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(1999),
+      firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     );
 
     if (picked != null) {
-      _plantedController.text = picked.toIso8601String().split('T')[0];
+      setState(() {
+        _selectedDatePlanted = picked;
+        _datePlantedController.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
+    }
+  }
+
+  void _pickImageFromGallery() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+      });
+    }
+  }
+
+  void _captureImageFromCamera() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.camera);
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+      });
     }
   }
 
@@ -51,12 +84,15 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(1999),
-      lastDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
     );
 
     if (picked != null) {
-      _harvestController.text = picked.toIso8601String().split('T')[0];
+      setState(() {
+        _selectedDateEstimated = picked;
+        _estimatedDateController.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
     }
   }
 
@@ -169,66 +205,212 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
 
   Future<void> _create([DocumentSnapshot? documentSnapshot]) async {
     await showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext ctx) {
-          return Padding(
-            padding: EdgeInsets.only(
-                top: 20,
-                left: 20,
-                right: 20,
-                bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextField(
-                  controller: _cropNameController,
-                  decoration: const InputDecoration(labelText: 'Crop Name'),
-                ),
-                TextField(
-                  controller: _plantedController,
-                  decoration: const InputDecoration(labelText: 'Date Planted'),
-                ),
-                TextField(
-                  controller: _harvestController,
-                  decoration: const InputDecoration(
-                      labelText: 'Estimated Date to Harvest'),
-                ),
-                TextField(
-                  controller: _statusController,
-                  decoration: const InputDecoration(labelText: 'Status'),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                  child: const Text('Add'),
-                  onPressed: () async {
-                    final String cropName = _cropNameController.text;
-                    final String planted = _plantedController.text;
-                    final String harvest = _harvestController.text;
-                    final String status = _statusController.text;
-
-                    if (cropName != null) {
-                      await _cropTracker.add({
-                        "cropName": cropName,
-                        "planted": planted,
-                        "harvest": harvest,
-                        "status": status,
-                      });
-                      _cropNameController.text = '';
-                      _plantedController.text = '';
-                      _harvestController.text = '';
-                      _statusController.text = '';
-                      Navigator.of(context).pop();
-                    }
-                  },
-                )
-              ],
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              ),
             ),
-          );
-        });
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 16.0),
+                  Center(
+                    child: Text(
+                      'Add New Crop',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 20.0,
+                      ),
+                    ),
+                  ),
+                  TextFormField(
+                    controller: _cropNameController,
+                    decoration: InputDecoration(
+                      labelText: "Crop's Name",
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15.5,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xFFA9AF7E),
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Crop's name is required";
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(1990),
+                        lastDate: DateTime.now(),
+                      );
+
+                      if (pickedDate != null) {
+                        _datePlantedController.text =
+                            pickedDate.toIso8601String().split('T')[0];
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Date Planted',
+                      labelStyle: const TextStyle(
+                        color: Colors.black,
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 13,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(255, 208, 216, 144),
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Date Planted is required';
+                      }
+                      return null;
+                    },
+                    controller: _datePlantedController,
+                    onSaved: (value) {},
+                  ),
+                  TextFormField(
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(1990),
+                        lastDate: DateTime(2101),
+                      );
+
+                      if (pickedDate != null) {
+                        _harvestController.text =
+                            pickedDate.toIso8601String().split('T')[0];
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Estimated Date of Harvest',
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 13,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(255, 208, 216, 144),
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Estimated Date of Harvest is required';
+                      }
+                      return null;
+                    },
+                    controller: _harvestController,
+                    onSaved: (value) {},
+                  ),
+                  TextFormField(
+                    controller: _statusController,
+                    decoration: InputDecoration(
+                      labelText: "Status",
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15.5,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xFFA9AF7E),
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Status is required';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Poppins-Regular',
+                            fontSize: 13.5,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      ElevatedButton(
+                        child: Text(
+                          'Add',
+                          style: TextStyle(
+                            fontFamily: 'Poppins-Regular',
+                          ),
+                        ),
+                        onPressed: () async {
+                          final String cropName = _cropNameController.text;
+                          final String planted = _plantedController.text;
+                          final String harvest = _harvestController.text;
+                          final String status = _statusController.text;
+
+                          if (cropName != null) {
+                            await _cropTracker.add({
+                              "cropName": cropName,
+                              "planted": planted,
+                              "harvest": harvest,
+                              "status": status,
+                            });
+                            _cropNameController.text = '';
+                            _plantedController.text = '';
+                            _harvestController.text = '';
+                            _statusController.text = '';
+                            Navigator.of(context).pop();
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Color.fromRGBO(157, 192, 139, 1),
+                          onPrimary: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _update([DocumentSnapshot? documentSnapshot]) async {
@@ -240,65 +422,201 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
     }
 
     await showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext ctx) {
-          return Padding(
-            padding: EdgeInsets.only(
-                top: 20,
-                left: 20,
-                right: 20,
-                bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+          ),
+          child: Form(
+            key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextField(
+                TextFormField(
                   controller: _cropNameController,
-                  decoration: const InputDecoration(labelText: 'Crop Name'),
+                  decoration: InputDecoration(
+                    labelText: "Crop's Name",
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                      fontSize: 15.5,
+                      color: Colors.black,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFFA9AF7E),
+                      ),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Crop's name is required";
+                    }
+                    return null;
+                  },
                 ),
-                TextField(
-                  controller: _plantedController,
-                  decoration: const InputDecoration(labelText: 'Date Planted'),
-                ),
-                TextField(
-                  controller: _harvestController,
-                  decoration: const InputDecoration(
-                      labelText: 'Estimated Date of Harvest'),
-                ),
-                TextField(
-                  controller: _statusController,
-                  decoration: const InputDecoration(labelText: 'Status'),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                  child: const Text('Update'),
-                  onPressed: () async {
-                    final String cropName = _cropNameController.text;
-                    final String planted = _plantedController.text;
-                    final String harvest = _harvestController.text;
-                    final String status = _statusController.text;
-                    if (cropName != null) {
-                      await _cropTracker.doc(documentSnapshot!.id).update({
-                        "cropName": cropName,
-                        "planted": planted,
-                        "harvest": harvest,
-                        "status": status,
-                      });
-                      _cropNameController.text = '';
-                      _plantedController.text = '';
-                      _harvestController.text = '';
-                      _statusController.text = '';
-                      Navigator.of(context).pop();
+                //dp
+                TextFormField(
+                  readOnly: true,
+                  onTap: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1990),
+                      lastDate: DateTime.now(),
+                    );
+
+                    if (pickedDate != null) {
+                      _plantedController.text =
+                          pickedDate.toIso8601String().split('T')[0];
                     }
                   },
-                )
+                  decoration: InputDecoration(
+                    labelText: 'Date Planted',
+                    labelStyle: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'Poppins-Regular',
+                      fontSize: 13,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color.fromARGB(255, 208, 216, 144),
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Date Planted is required';
+                    }
+                    return null;
+                  },
+                  controller: _plantedController,
+                  onSaved: (value) {},
+                ),
+
+                //eth
+                TextFormField(
+                  readOnly: true,
+                  onTap: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1990),
+                      lastDate: DateTime(2101),
+                    );
+
+                    if (pickedDate != null) {
+                      _harvestController.text =
+                          pickedDate.toIso8601String().split('T')[0];
+                    }
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Estimated Date of Harvest',
+                    labelStyle: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'Poppins-Regular',
+                      fontSize: 13,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color.fromARGB(255, 208, 216, 144),
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Estimated Date of Harvest is required';
+                    }
+                    return null;
+                  },
+                  controller: _harvestController,
+                  onSaved: (value) {},
+                ),
+
+                TextFormField(
+                  controller: _statusController,
+                  decoration: InputDecoration(
+                    labelText: "Status",
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                      fontSize: 15.5,
+                      color: Colors.black,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFFA9AF7E),
+                      ),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Status is required";
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Poppins-Regular',
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        final String cropName = _cropNameController.text;
+                        final String planted = _plantedController.text;
+                        final String harvest = _harvestController.text;
+                        final String status = _statusController.text;
+                        if (cropName != null) {
+                          await _cropTracker.doc(documentSnapshot!.id).update({
+                            "cropName": cropName,
+                            "planted": planted,
+                            "harvest": harvest,
+                            "status": status,
+                          });
+                          _cropNameController.text = '';
+                          _plantedController.text = '';
+                          _harvestController.text = '';
+                          _statusController.text = '';
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                        primary: Colors.white,
+                      ),
+                      child: Text(
+                        'Save',
+                        style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _delete(
@@ -341,91 +659,290 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
 
   Future<void> sellProduct([DocumentSnapshot? documentSnapshot]) async {
     await showModalBottomSheet(
-        isScrollControlled: true,
         context: context,
-        builder: (BuildContext ctx) {
-          return Padding(
-            padding: EdgeInsets.only(
-                top: 20,
-                left: 20,
-                right: 20,
-                bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ElevatedButton(
-                    onPressed: () {
-                      _showPicker(context);
-                    },
-                    child: Text('Add Image')),
-                TextField(
-                  controller: _cropNameController,
-                  decoration: const InputDecoration(labelText: 'Crop Name'),
-                ),
-                TextField(
-                  controller: _categoryController,
-                  decoration: const InputDecoration(labelText: 'Category'),
-                ),
-                TextField(
-                  controller: _quantityController,
-                  decoration: const InputDecoration(labelText: 'Quantity'),
-                ),
-                TextField(
-                  controller: _priceController,
-                  decoration: const InputDecoration(labelText: 'Price'),
-                ),
-                TextField(
-                  controller: _farmerController,
-                  decoration: const InputDecoration(labelText: 'Farmer'),
-                ),
-                TextField(
-                  controller: _locationController,
-                  decoration: const InputDecoration(labelText: 'Location'),
-                ),
-                TextField(
-                  controller: _descriptionController,
-                  decoration: const InputDecoration(labelText: 'Description'),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                  child: const Text('Sell Product'),
-                  onPressed: () async {
-                    final String cropName = _cropNameController.text;
-                    final String category = _categoryController.text;
-                    final String quantity = _quantityController.text;
-                    final String price = _priceController.text;
-                    final String farmer = _farmerController.text;
-                    final String location = _locationController.text;
-                    final String description = _descriptionController.text;
-
-                    if (cropName != null) {
-                      await _marketplace.add({
-                        "cropName": cropName,
-                        "category": category,
-                        "quantity": quantity,
-                        "price": price,
-                        "farmer": farmer,
-                        "location": location,
-                        "description": description,
-                        "image": imageUrl,
-                      });
-                      _cropNameController.text = '';
-                      _categoryController.text = '';
-                      _quantityController.text = '';
-                      _priceController.text = '';
-                      _farmerController.text = '';
-                      _locationController.text = '';
-                      _descriptionController.text = '';
-                      Navigator.of(context).pop();
-                    }
-                  },
-                )
-              ],
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return SingleChildScrollView(
+              child: Container(
+            padding: EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              ),
             ),
-          );
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 16.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Add Image',
+                        style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 15.5,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          _pickImageFromGallery();
+                          setState(() {
+                            _isImageSelected = true;
+                          });
+                        },
+                        icon: Icon(Icons.file_upload),
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          _captureImageFromCamera();
+                          setState(() {
+                            _isImageSelected = true;
+                          });
+                        },
+                        icon: Icon(Icons.camera_alt),
+                      ),
+                    ],
+                  ),
+                  if (!_isImageSelected)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Image is required",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      ),
+                    ),
+                  DropdownButtonFormField<String>(
+                    value: selectedCategory,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedCategory = newValue!;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Category",
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15.5,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xFFA9AF7E),
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Category is required";
+                      }
+                      return null;
+                    },
+                    items: <String>[
+                      "Fruits",
+                      "Vegetables",
+                      "Fertilizer",
+                      "Others",
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  TextFormField(
+                    maxLines: 1,
+                    decoration: InputDecoration(
+                      labelText: "Product",
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15.5,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Product is required";
+                      }
+                      return null;
+                    },
+                  ),
+                  DropdownButtonFormField<String>(
+                    value: selectedUnit,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedUnit = newValue!;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Unit",
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15.5,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xFFA9AF7E),
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Unit is required";
+                      }
+                      return null;
+                    },
+                    items: <String>[
+                      "Kilograms",
+                      "Sacks",
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  TextFormField(
+                    maxLines: 1,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    ],
+                    decoration: InputDecoration(
+                      labelText: "Price",
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15.5,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Price is required";
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    maxLines: 1,
+                    decoration: InputDecoration(
+                      labelText: "Farmer",
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15.5,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Farmer is required";
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    maxLines: 2,
+                    decoration: InputDecoration(
+                      labelText: "Location ",
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15.5,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Location is required";
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      labelText: "Description",
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15.5,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Description is required";
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Poppins-Regular',
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          if (!_isImageSelected) {
+                            return;
+                          }
+                          if (_formKey.currentState!.validate()) {
+                            String postContent = _postController.text;
+                            print(postContent);
+                            Navigator.of(context).pop();
+                          }
+                        },
+                        child: Text(
+                          'Save',
+                          style: TextStyle(
+                            fontFamily: 'Poppins-Regular',
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                          primary: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ));
         });
   }
 

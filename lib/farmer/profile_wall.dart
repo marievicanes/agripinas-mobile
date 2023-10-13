@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:capstone/buyer/profile_screen.dart';
+import 'package:capstone/farmer/profile_screen.dart';
 import 'package:capstone/farmer/crop_tracker_screen.dart';
 import 'package:capstone/farmer/message.dart';
 import 'package:capstone/farmer/transactions_screen.dart';
