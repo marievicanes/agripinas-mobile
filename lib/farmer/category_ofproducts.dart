@@ -59,7 +59,8 @@ class _OFProductsScreenState extends State<OFProductScreen> {
           ],
         ),
         body: StreamBuilder(
-            stream: _marketplace.snapshots(),
+            stream:
+                _marketplace.where('category', isEqualTo: 'Others').snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
               if (streamSnapshot.hasError) {
                 return Center(

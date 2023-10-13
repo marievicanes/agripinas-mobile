@@ -58,7 +58,9 @@ class _BuyerVegetablesScreenState extends State<BuyerVegetablesScreen> {
           ],
         ),
         body: StreamBuilder(
-            stream: _marketplace.snapshots(),
+            stream: _marketplace
+                .where('category', isEqualTo: 'Vegetables')
+                .snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
               if (streamSnapshot.hasError) {
                 return Center(
@@ -90,7 +92,7 @@ class _BuyerVegetablesScreenState extends State<BuyerVegetablesScreen> {
                     Padding(
                       padding: EdgeInsets.all(10.0),
                       child: Text(
-                        'Fruits',
+                        'Vegetables',
                         style: TextStyle(
                           fontSize: 20,
                           fontFamily: 'Poppins-Regular',

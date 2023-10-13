@@ -59,7 +59,9 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
           ],
         ),
         body: StreamBuilder(
-            stream: _marketplace.snapshots(),
+            stream: _marketplace
+                .where('category', isEqualTo: 'Fertilizers')
+                .snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
               if (streamSnapshot.hasError) {
                 return Center(
