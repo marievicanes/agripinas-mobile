@@ -1,4 +1,4 @@
-import 'package:capstone/farmer/fruit_details.dart';
+import 'package:capstone/farmer/product_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +11,7 @@ class _VegetablesScreenState extends State<VegetablesScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
 
-    final CollectionReference _marketplace =
+  final CollectionReference _marketplace =
       FirebaseFirestore.instance.collection('Marketplace');
 
   @override
@@ -53,13 +53,11 @@ class _VegetablesScreenState extends State<VegetablesScreen> {
                     prefixIcon: Icon(Icons.search),
                     border: InputBorder.none,
                   ),
-
                 ),
               ),
             ),
           ],
         ),
-
         body: StreamBuilder(
             stream: _marketplace.snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
@@ -85,9 +83,8 @@ class _VegetablesScreenState extends State<VegetablesScreen> {
                   querySnapshot?.docs;
               List<Map>? items =
                   documents?.map((e) => e.data() as Map).toList();
-        
-        
-          return Column(
+
+              return Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -118,100 +115,104 @@ class _VegetablesScreenState extends State<VegetablesScreen> {
                         final Map thisItem = items![index];
 
                         return InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => FruitDetails(thisItem),
-                                ),
-                              );
-                            },
-                    child: Card(
-                      child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Center(
-                                      child: Container(
-                                        width: 200,
-                                        height: 250,
-                                        child: thisItem.containsKey('image')
-                                            ? Image.network(
-                                                '${thisItem['image']}')
-                                            : Container(),
-                                      ),
-                                    ),
-                                  ),
-                          Padding(
-                            padding: EdgeInsets.all(8),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductDetails(thisItem),
+                              ),
+                            );
+                          },
+                          child: Card(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Center(
-                                  child: Text(
-                                    '${thisItem['cropName']}',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontFamily: 'Poppins',
+                                Expanded(
+                                  child: Center(
+                                    child: Container(
+                                      width: 200,
+                                      height: 250,
+                                      child: thisItem.containsKey('image')
+                                          ? Image.network(
+                                              '${thisItem['image']}')
+                                          : Container(),
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Price: ',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: 'Poppins',
-                                      ),
-                                    ),
-                                    Text(
-                                      '${thisItem['price']}',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Farmer: ',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: 'Poppins',
-                                      ),
-                                    ),
-                                    Text(
-                                      '${thisItem['farmer']}',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontFamily: 'Poppins-Regular',
-                                      ),
-                                    ),
-                                  ],
-                                ),
                                 Padding(
-                                  padding: const EdgeInsets.all(1.0),
+                                  padding: EdgeInsets.all(8),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        'Location:',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontFamily: 'Poppins',
+                                      Center(
+                                        child: Text(
+                                          '${thisItem['cropName']}',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontFamily: 'Poppins',
+                                          ),
                                         ),
                                       ),
                                       SizedBox(height: 4),
-                                      Text(
-                                        '${thisItem['location']}',
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontFamily: 'Poppins-Regular',
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Price: ',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: 'Poppins',
+                                            ),
+                                          ),
+                                          Text(
+                                            '${thisItem['price']}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Farmer: ',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: 'Poppins',
+                                            ),
+                                          ),
+                                          Text(
+                                            '${thisItem['farmer']}',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontFamily: 'Poppins-Regular',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(1.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Location:',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontFamily: 'Poppins',
+                                              ),
+                                            ),
+                                            SizedBox(height: 4),
+                                            Text(
+                                              '${thisItem['location']}',
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                fontFamily: 'Poppins-Regular',
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
@@ -220,15 +221,12 @@ class _VegetablesScreenState extends State<VegetablesScreen> {
                               ],
                             ),
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-            ),
-          ],
-        );
+                  ),
+                ],
+              );
             }));
   }
 }

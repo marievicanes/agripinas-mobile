@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -166,6 +168,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
       FirebaseFirestore.instance.collection('Harvested');
   final CollectionReference _marketplace =
       FirebaseFirestore.instance.collection('Marketplace');
+  final currentUser = FirebaseAuth.instance.currentUser;
+  AuthService authService = AuthService();
 
   Future<void> _create([DocumentSnapshot? documentSnapshot]) async {
     await showModalBottomSheet(
@@ -209,9 +213,12 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                     final String planted = _plantedController.text;
                     final String harvest = _harvestController.text;
                     final String status = _statusController.text;
-
+                    FirebaseAuth auth = FirebaseAuth.instance;
+                    User? user = auth.currentUser;
                     if (cropName != null) {
+                      String? uid = user?.uid;
                       await _cropTracker.add({
+                        "uid": uid,
                         "cropName": cropName,
                         "planted": planted,
                         "harvest": harvest,
@@ -320,6 +327,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
   Future<void> transferData(DocumentSnapshot documentSnapshot) async {
     String cropName = documentSnapshot['cropName'];
     String planted = documentSnapshot['planted'];
+    String uid = documentSnapshot['uid'];
 
     DateTime currentDate = DateTime.now();
 
@@ -331,6 +339,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
         DateFormat('yyyy-MM-dd').format(currentDate); // Format the date
     // Transfer the data to _harvested with the formatted date
     await _harvested.add({
+      "uid": uid,
       'cropName': cropName,
       'planted': planted,
       'harvestedDate': formattedDate,
@@ -341,77 +350,101 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
 
   Future<void> sellProduct([DocumentSnapshot? documentSnapshot]) async {
     await showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext ctx) {
-          return Padding(
-            padding: EdgeInsets.only(
-                top: 20,
-                left: 20,
-                right: 20,
-                bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ElevatedButton(
-                    onPressed: () {
-                      _showPicker(context);
-                    },
-                    child: Text('Add Image')),
-                TextField(
-                  controller: _cropNameController,
-                  decoration: const InputDecoration(labelText: 'Crop Name'),
-                ),
-                TextField(
-                  controller: _categoryController,
-                  decoration: const InputDecoration(labelText: 'Category'),
-                ),
-                TextField(
-                  controller: _quantityController,
-                  decoration: const InputDecoration(labelText: 'Quantity'),
-                ),
-                TextField(
-                  controller: _priceController,
-                  decoration: const InputDecoration(labelText: 'Price'),
-                ),
-                TextField(
-                  controller: _farmerController,
-                  decoration: const InputDecoration(labelText: 'Farmer'),
-                ),
-                TextField(
-                  controller: _locationController,
-                  decoration: const InputDecoration(labelText: 'Location'),
-                ),
-                TextField(
-                  controller: _descriptionController,
-                  decoration: const InputDecoration(labelText: 'Description'),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                  child: const Text('Sell Product'),
-                  onPressed: () async {
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext ctx) {
+        return Padding(
+          padding: EdgeInsets.only(
+              top: 20,
+              left: 20,
+              right: 20,
+              bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    _showPicker(context);
+                  },
+                  child: Text('Add Image')),
+              TextField(
+                controller: _cropNameController,
+                decoration: const InputDecoration(labelText: 'Crop Name'),
+              ),
+              TextField(
+                controller: _categoryController,
+                decoration: const InputDecoration(labelText: 'Category'),
+              ),
+              TextField(
+                controller: _quantityController,
+                decoration: const InputDecoration(labelText: 'Quantity'),
+              ),
+              TextField(
+                controller: _priceController,
+                decoration: const InputDecoration(labelText: 'Price'),
+              ),
+              TextField(
+                controller: _farmerController,
+                decoration: const InputDecoration(labelText: 'Farmer'),
+              ),
+              TextField(
+                controller: _locationController,
+                decoration: const InputDecoration(labelText: 'Location'),
+              ),
+              TextField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(labelText: 'Description'),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+                child: const Text('Sell Product'),
+                onPressed: () async {
+                  // Validate required fields
+                  if (_cropNameController.text.isEmpty ||
+                      _priceController.text.isEmpty) {
+                    // Show an error message or handle it in some way
+                    return;
+                  }
+
+                  try {
                     final String cropName = _cropNameController.text;
                     final String category = _categoryController.text;
                     final String quantity = _quantityController.text;
                     final String price = _priceController.text;
-                    final String farmer = _farmerController.text;
-                    final String location = _locationController.text;
-                    final String description = _descriptionController.text;
+                    final String farmerId =
+                        _farmerController.text; // Assuming you have a farmerId
 
-                    if (cropName != null) {
+                    FirebaseAuth auth = FirebaseAuth.instance;
+                    User? user = auth.currentUser;
+                    String? uid = user?.uid;
+
+                    // Fetch farmer's fullname from the "farmers" collection
+                    DocumentSnapshot farmerSnapshot = await FirebaseFirestore
+                        .instance
+                        .collection("farmers")
+                        .doc(farmerId)
+                        .get();
+                    if (farmerSnapshot.exists) {
+                      String fullname = farmerSnapshot["fullname"];
+
+                      // Ensure that your image handling logic is correctly implemented
+                      String imageUrl = "your_image_url_here";
+
                       await _marketplace.add({
+                        "uid": uid,
                         "cropName": cropName,
                         "category": category,
                         "quantity": quantity,
                         "price": price,
-                        "farmer": farmer,
-                        "location": location,
-                        "description": description,
+                        "farmer": fullname,
+                        "location": _locationController.text,
+                        "description": _descriptionController.text,
                         "image": imageUrl,
                       });
+
                       _cropNameController.text = '';
                       _categoryController.text = '';
                       _quantityController.text = '';
@@ -419,14 +452,23 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                       _farmerController.text = '';
                       _locationController.text = '';
                       _descriptionController.text = '';
+
                       Navigator.of(context).pop();
+                    } else {
+                      // Handle the case where the farmer document doesn't exist
+                      print("Farmer not found");
                     }
-                  },
-                )
-              ],
-            ),
-          );
-        });
+                  } catch (e) {
+                    // Handle errors (e.g., show an error message)
+                    print("Error: $e");
+                  }
+                },
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -456,7 +498,9 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
               ),
             ),
             body: StreamBuilder(
-                stream: _cropTracker.snapshots(),
+                stream: _cropTracker
+                    .where('uid', isEqualTo: currentUser?.uid)
+                    .snapshots(),
                 builder:
                     (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
                   if (streamSnapshot.hasError) {
@@ -470,6 +514,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                         querySnapshot?.docs;
                     List<Map>? items =
                         documents?.map((e) => e.data() as Map).toList();
+
                     return Column(children: [
                       TabBar(
                         indicatorColor: Color(0xFF557153),

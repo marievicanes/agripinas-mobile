@@ -208,8 +208,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   final List<Widget Function(BuildContext)> routes1 = [
     (context) => FruitTomatoScreen(),
-    (context) => Fertilizer1Screen(),
-    (context) => CropsScreen(),
   ];
   Widget buildMarketplaceSection() {
     return GridView.builder(

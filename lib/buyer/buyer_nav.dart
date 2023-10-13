@@ -1,6 +1,6 @@
 import 'package:capstone/buyer/add_to_cart.dart';
+import 'package:capstone/buyer/buyer_categories.dart';
 import 'package:capstone/buyer/community_forum_screen.dart';
-import 'package:capstone/buyer/marketplace_screen.dart';
 import 'package:capstone/buyer/transactions_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ class _BuyerNavBarState extends State<BuyerNavBar> {
   int _currentIndex = 0;
 
   final List<Widget> _children = [
-    MarketplaceScreen(),
+    BuyerCategoriesScreen(),
     AddToCart(),
     CommunityForumScreen(),
     TransactionBuyer(),
