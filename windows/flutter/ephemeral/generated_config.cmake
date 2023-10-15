@@ -10,7 +10,6 @@ set(FLUTTER_VERSION_BUILD 1 PARENT_SCOPE)
 
 # Environment variables to pass to tool_backend.sh
 list(APPEND FLUTTER_TOOL_ENVIRONMENT
-<<<<<<< HEAD
   "FLUTTER_ROOT=C:\\Users\\USER\\AppData\\Local\\flutter"
   "PROJECT_DIR=C:\\Users\\USER\\Documents\\GitHub\\agrimob"
   "FLUTTER_ROOT=C:\\Users\\USER\\AppData\\Local\\flutter"
@@ -18,15 +17,6 @@ list(APPEND FLUTTER_TOOL_ENVIRONMENT
   "PROJECT_DIR=C:\\Users\\USER\\Documents\\GitHub\\agrimob"
   "FLUTTER_TARGET=C:\\Users\\USER\\Documents\\GitHub\\agrimob\\lib\\main.dart"
   "DART_DEFINES=RkxVVFRFUl9XRUJfQVVUT19ERVRFQ1Q9dHJ1ZQ==,RkxVVFRFUl9XRUJfQ0FOVkFTS0lUX1VSTD1odHRwczovL3d3dy5nc3RhdGljLmNvbS9mbHV0dGVyLWNhbnZhc2tpdC9iOGQzNTgxMGU5MWFiOGZjMzliYTVlN2E0MWJmZjZmNjk3ZThlM2E4Lw=="
-=======
-  "FLUTTER_ROOT=C:\\Users\\arria\\Documents\\flutter"
-  "PROJECT_DIR=C:\\Users\\arria\\Documents\\GitHub\\capstone"
-  "FLUTTER_ROOT=C:\\Users\\arria\\Documents\\flutter"
-  "FLUTTER_EPHEMERAL_DIR=C:\\Users\\arria\\Documents\\GitHub\\capstone\\windows\\flutter\\ephemeral"
-  "PROJECT_DIR=C:\\Users\\arria\\Documents\\GitHub\\capstone"
-  "FLUTTER_TARGET=C:\\Users\\arria\\Documents\\GitHub\\capstone\\lib\\main.dart"
-  "DART_DEFINES=RkxVVFRFUl9XRUJfQVVUT19ERVRFQ1Q9dHJ1ZQ==,RkxVVFRFUl9XRUJfQ0FOVkFTS0lUX1VSTD1odHRwczovL3d3dy5nc3RhdGljLmNvbS9mbHV0dGVyLWNhbnZhc2tpdC9hNzk0Y2YyNjgxYzZjOWZlN2IyNjBlMGU4NGRlOTYyOThkYzljMThiLw=="
->>>>>>> 091f3e86e03c2bdd011e270dff28ea09c77611eb
   "DART_OBFUSCATION=false"
   "TRACK_WIDGET_CREATION=true"
   "TREE_SHAKE_ICONS=false"
