@@ -60,7 +60,7 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
         ),
         body: StreamBuilder(
             stream: _marketplace
-                .where('category', isEqualTo: 'Fertilizers')
+                .where('category', isEqualTo: 'Fertilizer')
                 .snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
               if (streamSnapshot.hasError) {
@@ -94,7 +94,7 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                       Padding(
                         padding: EdgeInsets.all(10.0),
                         child: Text(
-                          'Fruits',
+                          'Fertilizers',
                           style: TextStyle(
                             fontSize: 20,
                             fontFamily: 'Poppins-Regular',
@@ -189,7 +189,7 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                                             ),
                                           ),
                                           Text(
-                                            '${thisItem['farmer']}',
+                                            '${thisItem['fullname']}',
                                             style: TextStyle(
                                               fontSize: 13,
                                               fontFamily: 'Poppins-Regular',

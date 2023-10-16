@@ -187,7 +187,7 @@ class _BuyerFruitsScreenState extends State<BuyerFruitsScreen> {
                                           ),
                                         ),
                                         Text(
-                                          '${thisItem['farmer']}',
+                                          '${thisItem['fullname']}',
                                           style: TextStyle(
                                             fontSize: 13,
                                             fontFamily: 'Poppins-Regular',

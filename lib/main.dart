@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'helper.dart';
@@ -16,6 +17,9 @@ main() async {
 class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    FirebaseMessaging.instance.getToken().then((token) {
+      print('FCM Token: $token');
+    });
     return Scaffold(
       body: Stack(
         children: [
@@ -141,7 +145,7 @@ class Login extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 8,
+                        letterSpacing: 6,
                         color: Color.fromARGB(255, 85, 113, 83),
                       ),
                     ),
@@ -247,7 +251,22 @@ class Login extends StatelessWidget {
                   backgroundColor: Color(0xFF27AE60),
                 ),
               ),
-              SizedBox(height: 10),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ForgotPassword()),
+                  );
+                },
+                child: Text(
+                  'Forgot Password?',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Color(0xFF9DC08B),
+                  ),
+                ),
+              ),
+              SizedBox(height: 1),
               TextButton(
                 onPressed: () {
                   Navigator.push(
@@ -266,6 +285,131 @@ class Login extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class ForgotPassword extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email.';
+    }
+    if (!value.contains('@')) {
+      return 'Please enter a valid email address.';
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned(
+            left: 0,
+            top: 0,
+            child: PreferredSize(
+              preferredSize: Size.fromHeight(kToolbarHeight),
+              child: Container(
+                color: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                  ),
+                  child: Row(
+                    children: [
+                      SizedBox(height: 150.0),
+                      IconButton(
+                        icon: Icon(Icons.arrow_back),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Forgot your password?',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontFamily: 'Poppins',
+                    color: Color.fromARGB(255, 85, 113, 83),
+                  ),
+                ),
+                SizedBox(height: 30),
+                Text(
+                  '   Enter your registered email below \n to receive password reset instruction ',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins-Medium',
+                    color: Colors.black54,
+                  ),
+                ),
+                SizedBox(height: 80),
+                Image.asset(
+                  'assets/email.png',
+                  width: 700,
+                  height: 150,
+                ),
+                SizedBox(height: 40),
+                Container(
+                  width: 350,
+                  child: TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.email,
+                        color: Color(0xFF9DC08B),
+                      ),
+                      labelText: "E-mail",
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 13,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(255, 208, 216, 144),
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    validator: _validateEmail,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  width: 200,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Send Code',
+                      style: TextStyle(fontFamily: 'Poppins'),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      primary: Color(0xFF27AE60),
+                      minimumSize: Size(5, 50),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -805,7 +949,7 @@ class _RegisterState extends State<Register> {
                             113,
                             83,
                           ))),
-                    )
+                    ),
                   ],
                 ),
               ),

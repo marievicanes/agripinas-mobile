@@ -1,19 +1,14 @@
+import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(Message());
-}
-
-class Message extends StatelessWidget {
+class AgriMessage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: AgriMessage(),
-    );
-  }
+  _AgriMessageState createState() => _AgriMessageState();
 }
 
-class AgriMessage extends StatelessWidget {
+class _AgriMessageState extends State<AgriMessage> {
+  late FirebaseInAppMessaging inAppMessaging;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,13 +49,12 @@ class AgriMessage extends StatelessWidget {
                   trailing: Text(user.time),
                   onTap: () {
                     Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChatAgriScreen(
-                          userName: user.name,
-                        ),
-                      ),
-                    );
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatAgriScreen(
+                            userName: user.name,
+                          ),
+                        ));
                   },
                 );
               },

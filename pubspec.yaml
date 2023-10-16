@@ -50,6 +50,11 @@ dependencies:
   firebase_admin: ^0.2.0-dev.7
   localization: ^2.1.0
   intl_translation: ^0.18.2
+  rxdart: ^0.27.7
+  uuid: ^3.0.7
+  firebase_in_app_messaging: ^0.7.3+7
+  firebase_app_installations: ^0.2.3+7
+  firebase_messaging: ^14.6.9
 
 
 dev_dependencies:
@@ -80,6 +85,7 @@ flutter:
     - assets/welcomegrass.png
     - assets/contact.png
     - assets/about.png
+    - assets/email.png
     - assets/rice.png
     - assets/onion.png
     - assets/ellipse3.png

@@ -177,7 +177,7 @@ class _ProfileWallState extends State<ProfileWall> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Message(),
+                              builder: (context) => AgriMessage(),
                             ),
                           );
                         },
@@ -315,7 +315,7 @@ class _ProfileWallState extends State<ProfileWall> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Message()),
+                                  builder: (context) => AgriMessage()),
                             );
                           }
                         },

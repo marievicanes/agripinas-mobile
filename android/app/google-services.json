@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1073034058383",
+    "firebase_url": "https://agripinas-1883d-default-rtdb.firebaseio.com",
     "project_id": "agripinas-1883d",
     "storage_bucket": "agripinas-1883d.appspot.com"
   },
@@ -14,7 +15,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "1073034058383-60aufcg1og969q1m9hsf2vmpvdqquni5.apps.googleusercontent.com",
+          "client_id": "1073034058383-pd4d91kdelabc8onigifbq8c0j7dsm2j.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

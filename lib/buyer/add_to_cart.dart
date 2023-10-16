@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -7,26 +9,6 @@ void main() {
       home: AddToCart(),
     ),
   );
-}
-
-class ShoppingCartItem {
-  final String pendingitemname;
-  final String rcategory;
-  final String dateordered;
-  final String unitprice;
-  int quantity;
-  final String farmername;
-  final String imageUrl;
-
-  ShoppingCartItem({
-    required this.pendingitemname,
-    required this.rcategory,
-    required this.dateordered,
-    required this.unitprice,
-    required this.quantity,
-    required this.farmername,
-    required this.imageUrl,
-  });
 }
 
 class AddToCart extends StatefulWidget {
@@ -39,46 +21,17 @@ class _AddToCartState extends State<AddToCart>
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
   String? selectedStatus;
-  bool _isButtonVisible = true;
   late TabController _tabController;
-  final _postController = TextEditingController();
 
-  final List<ShoppingCartItem> items = [
-    ShoppingCartItem(
-      pendingitemname: 'Onion',
-      rcategory: 'Vegetable',
-      dateordered: '02 / 01 / 2023',
-      unitprice: '₱400',
-      quantity: 5,
-      farmername: 'Ryan Amador',
-      imageUrl: 'assets/onion.png',
-    ),
-    ShoppingCartItem(
-      pendingitemname: 'Tomato',
-      rcategory: 'Vegetable',
-      dateordered: '07 / 07 / 2023',
-      unitprice: '₱400',
-      quantity: 2,
-      farmername: 'Arriane Gatpo',
-      imageUrl: 'assets/tomato.png',
-    ),
-    ShoppingCartItem(
-      pendingitemname: 'Tomato',
-      rcategory: 'Vegetable',
-      dateordered: '07 / 07 / 2023',
-      unitprice: '₱500',
-      quantity: 2,
-      farmername: 'Marievic Anes',
-      imageUrl: 'assets/tomato.png',
-    ),
-  ];
+  final CollectionReference _userCarts =
+      FirebaseFirestore.instance.collection('UserCarts');
+  final currentUser = FirebaseAuth.instance.currentUser;
 
-  List<bool> isCheckedList = List.generate(3, (index) => false);
+  List<bool> isCheckedList = [];
 
   @override
   void initState() {
     super.initState();
-
     _tabController = TabController(length: 3, vsync: this);
   }
 
@@ -139,327 +92,358 @@ class _AddToCartState extends State<AddToCart>
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '     Shopping Cart',
-                  style: TextStyle(fontSize: 20.0, fontFamily: 'Poppins-Bold'),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.all(10),
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                final item = items[index];
-                bool isChecked = isCheckedList[index];
-                double totalCostForItem = item.quantity *
-                    double.parse(item.unitprice
-                        .replaceAll('₱', '')
-                        .replaceAll('Php', '')
-                        .replaceAll(',', ''));
+      body: StreamBuilder(
+        stream:
+            _userCarts.where('uid', isEqualTo: currentUser?.uid).snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+          if (streamSnapshot.hasError) {
+            return Center(
+              child: Text('Some error occurred ${streamSnapshot.error}'),
+            );
+          }
+          if (streamSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (!streamSnapshot.hasData || streamSnapshot.data!.docs.isEmpty) {
+            return Center(
+              child: Text('No data available'),
+            );
+          }
 
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+          QuerySnapshot<Object?>? querySnapshot = streamSnapshot.data;
+          List<QueryDocumentSnapshot<Object?>>? documents = querySnapshot?.docs;
+          List<Map>? items = documents?.map((e) => e.data() as Map).toList();
+
+          isCheckedList = List.generate(items!.length, (index) => false);
+
+          return Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '',
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '     Shopping Cart',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontFamily: 'Poppins-Bold',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '',
+                      style: TextStyle(
+                        fontSize: 5.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Expanded(
+                child: ListView.builder(
+                  padding: EdgeInsets.all(10),
+                  itemCount: items.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final Map thisItem = items[index];
+                    bool isChecked = isCheckedList[index];
+
+                    return Card(
+                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      elevation: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
                           children: [
-                            Text(
-                              item.farmername,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Container(
-                              width: 100,
-                              height: 95,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.asset(
-                                  item.imageUrl,
-                                  fit: BoxFit.cover,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${thisItem['farmer']}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'Poppins',
+                                  ),
                                 ),
-                              ),
+                                SizedBox(height: 8),
+                                Container(
+                                  width: 100,
+                                  height: 95,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.network(
+                                      '${thisItem['image']}',
+                                      width: double.infinity,
+                                      height: 250,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        SizedBox(width: 0),
-                        Flexible(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: 45),
-                              Row(
+                            SizedBox(width: 0),
+                            Flexible(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Item Name: ',
-                                    style: TextStyle(
-                                        fontSize: 13, fontFamily: 'Poppins'),
-                                  ),
-                                  Text(
-                                    '${item.pendingitemname}',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontFamily: 'Poppins',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Price: ',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontFamily: 'Poppins',
-                                    ),
-                                  ),
-                                  Text(
-                                    '${item.unitprice}',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
+                                  SizedBox(height: 45),
                                   Row(
                                     children: [
-                                      IconButton(
-                                        icon: Icon(
-                                          Icons.remove,
-                                          size: 16,
-                                        ),
-                                        onPressed: () {
-                                          if (item.quantity > 1) {
-                                            setState(() {
-                                              item.quantity--;
-                                            });
-                                          } else {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  title: Text(
-                                                    'Delete Item?',
-                                                    style: TextStyle(
-                                                        fontFamily: 'Poppins',
-                                                        fontSize: 19),
-                                                  ),
-                                                  content: Text(
-                                                    'Do you want to delete this item?',
-                                                    style: TextStyle(
-                                                        fontFamily:
-                                                            'Poppins-Regular',
-                                                        fontSize: 15),
-                                                  ),
-                                                  actions: <Widget>[
-                                                    TextButton(
-                                                      child: Text(
-                                                        'No',
-                                                        style: TextStyle(
-                                                            fontFamily:
-                                                                'Poppins-Regular',
-                                                            fontSize: 15,
-                                                            color:
-                                                                Colors.black),
-                                                      ),
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    ),
-                                                    TextButton(
-                                                      child: Text(
-                                                        'Yes',
-                                                        style: TextStyle(
-                                                            fontFamily:
-                                                                'Poppins-Regular',
-                                                            color: Color(
-                                                                0xFF9DC08B),
-                                                            fontSize: 15),
-                                                      ),
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          _deleteItem(index);
-                                                        });
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          }
-                                        },
+                                      Text(
+                                        'Item Name: ',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontFamily: 'Poppins'),
                                       ),
                                       Text(
-                                        '${item.quantity}',
+                                        '${thisItem['cropName']}',
                                         style: TextStyle(
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           fontFamily: 'Poppins',
                                         ),
                                       ),
-                                      IconButton(
-                                        icon: Icon(
-                                          Icons.add,
-                                          size: 16,
+                                    ],
+                                  ),
+                                  SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Price: ',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontFamily: 'Poppins',
                                         ),
-                                        onPressed: () {
-                                          setState(() {
-                                            item.quantity++;
-                                          });
-                                        },
+                                      ),
+                                      Text(
+                                        '${thisItem['price']}',
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(
+                                              Icons.remove,
+                                              size: 16,
+                                            ),
+                                            onPressed: () {
+                                              int quantity =
+                                                  thisItem['quantity'];
+                                              if (quantity > 1) {
+                                                setState(() {
+                                                  quantity--;
+                                                  thisItem['quantity'] =
+                                                      quantity;
+                                                });
+                                              } else {
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: Text(
+                                                        'Delete Item?',
+                                                        style: TextStyle(
+                                                          fontFamily: 'Poppins',
+                                                          fontSize: 19,
+                                                        ),
+                                                      ),
+                                                      content: Text(
+                                                        'Do you want to delete this item?',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Poppins-Regular',
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          child: Text(
+                                                            'No',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Poppins-Regular',
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                          ),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                        TextButton(
+                                                          child: Text(
+                                                            'Yes',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Poppins-Regular',
+                                                              color: Color(
+                                                                  0xFF9DC08B),
+                                                              fontSize: 15,
+                                                            ),
+                                                          ),
+                                                          onPressed: () {
+                                                            _deleteItem(
+                                                                '${thisItem['cropName']}');
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              }
+                                            },
+                                          ),
+                                          Text(
+                                            thisItem['quantity'].toString(),
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: 'Poppins',
+                                            ),
+                                          ),
+                                          IconButton(
+                                            icon: Icon(
+                                              Icons.add,
+                                              size: 16,
+                                            ),
+                                            onPressed: () {
+                                              int quantity =
+                                                  thisItem['quantity'];
+                                              setState(() {
+                                                quantity++;
+                                                thisItem['quantity'] = quantity;
+                                              });
+                                            },
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
                                 ],
                               ),
-                            ],
+                            ),
+                            Checkbox(
+                              value: isChecked,
+                              onChanged: (value) {
+                                setState(() {
+                                  isCheckedList[index] = value!;
+                                });
+                              },
+                              activeColor: Color(0xFF9DC08B),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                _deleteItem('${thisItem['cropName']}');
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(width: 1.0, color: Colors.grey),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Total Items: ${items.length}',
+                      style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
+                    ),
+                    SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Text(
+                          'Total Amount: ',
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontFamily: 'Poppins',
+                            color: Colors.black,
                           ),
                         ),
-                        Checkbox(
-                          value: isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              isCheckedList[index] = value!;
-                            });
-                          },
-                          activeColor: Color(0xFF9DC08B),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () {
-                            _deleteItem(index);
-                          },
+                        Text(
+                          '₱${calculateTotalCost(items)}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF27AE60),
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(width: 1.0, color: Colors.grey),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Total Items: ${items.length}',
-                  style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
-                ),
-                SizedBox(height: 8),
-                Row(
-                  children: [
-                    Text(
-                      'Total Amount: ',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontFamily: 'Poppins',
-                        color: Colors.black,
-                      ),
-                    ),
-                    Text(
-                      '₱${calculateTotalCost()}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF27AE60),
-                      ),
-                    ),
                   ],
                 ),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    primary: Color(0xFFC0D090),
-                  ),
-                  child: Text(
-                    'Checkout',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: 'Poppins',
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
-  String calculateTotalCost() {
+  double calculateTotalCost(List<Map>? items) {
     double totalCost = 0;
-    for (int i = 0; i < items.length; i++) {
+
+    for (int i = 0; i < items!.length; i++) {
       if (isCheckedList[i]) {
-        int quantity = items[i].quantity;
-        double unitPrice = double.parse(items[i]
-            .unitprice
+        int quantity = items[i]['quantity'];
+        double unitPrice = double.parse(items[i]['price']
+            .toString()
             .replaceAll('₱', '')
             .replaceAll('Php', '')
             .replaceAll(',', ''));
         totalCost += quantity * unitPrice;
       }
     }
-    return '${totalCost.toStringAsFixed(2)}';
+    return totalCost;
   }
 
-  void _deleteItem(int index) {
+  void _deleteItem(String cropName) {
     setState(() {
-      items.removeAt(index);
-      isCheckedList.removeAt(index);
+      // Remove the item from the database
+      _userCarts
+          .doc(currentUser!.uid)
+          .collection('items')
+          .doc(cropName)
+          .delete();
     });
   }
 }

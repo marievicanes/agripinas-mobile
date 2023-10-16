@@ -189,7 +189,7 @@ class _OFProductsScreenState extends State<OFProductScreen> {
                                             ),
                                           ),
                                           Text(
-                                            '${thisItem['farmer']}',
+                                            '${thisItem['fullname']}',
                                             style: TextStyle(
                                               fontSize: 13,
                                               fontFamily: 'Poppins-Regular',
