@@ -129,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 TextField(
                   controller: _fullnameController,
-                  decoration: const InputDecoration(labelText: 'Name'),
+                  decoration: const InputDecoration(labelText: 'Fullname'),
                 ),
                 const SizedBox(
                   height: 20,

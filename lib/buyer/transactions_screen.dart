@@ -496,53 +496,13 @@ class _TransactionBuyerState extends State<TransactionBuyer>
             Row(
               children: [
                 Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Show:',
-                        style: TextStyle(
-                            fontSize: 15.0, fontFamily: 'Poppins-Regular'),
-                      ),
-                      SizedBox(width: 8.0),
-                      DropdownButton<int>(
-                        value: 15,
-                        items: [
-                          DropdownMenuItem<int>(
-                            value: 15,
-                            child: Text('15'),
-                          ),
-                          DropdownMenuItem<int>(
-                            value: 25,
-                            child: Text('25'),
-                          ),
-                          DropdownMenuItem<int>(
-                            value: 50,
-                            child: Text('50'),
-                          ),
-                        ],
-                        onChanged: (value) {},
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
                   child: Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(0.0),
                     child: Container(
                       width: 200.0,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(25.0),
-                      ),
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          hintText: 'Search',
-                          prefixIcon: Icon(Icons.search),
-                          border: InputBorder.none,
-                        ),
-                        onChanged: searchItem,
                       ),
                     ),
                   ),
