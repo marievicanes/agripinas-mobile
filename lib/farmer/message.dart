@@ -1,28 +1,29 @@
-import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 import 'package:flutter/material.dart';
 
-class AgriMessage extends StatefulWidget {
+class Message extends StatefulWidget {
   @override
-  _AgriMessageState createState() => _AgriMessageState();
+  _MessageState createState() => _MessageState();
 }
 
-class _AgriMessageState extends State<AgriMessage> {
-  late FirebaseInAppMessaging inAppMessaging;
-
+class _MessageState extends State<Message> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
         backgroundColor: Color(0xFFA9AF7E),
-        title: Text(
-          'Messages',
-          style: TextStyle(fontFamily: 'Poppins'),
+        centerTitle: false,
+        title: Row(
+          children: [
+            SizedBox(width: 8.0),
+            Text(
+              'Messages',
+              style: TextStyle(
+                fontSize: 17.0,
+                fontFamily: 'Poppins',
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
       ),
       body: Column(
@@ -49,12 +50,13 @@ class _AgriMessageState extends State<AgriMessage> {
                   trailing: Text(user.time),
                   onTap: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatAgriScreen(
-                            userName: user.name,
-                          ),
-                        ));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatAgriScreen(
+                          userName: user.name,
+                        ),
+                      ),
+                    );
                   },
                 );
               },
@@ -147,27 +149,30 @@ class User {
 
 List<User> users = [
   User(
-    name: 'Arriane Gatpo',
+    name: 'Marievic Anes',
     message:
-        'Musta? Sample sample qui dolorem ipsum, quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem',
+        'Lorem ipsum dolorem ipsum, quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem',
     time: '5:34 PM',
     profile: 'assets/user.png',
   ),
   User(
-    name: 'Daniella Marie Tungol',
-    message: 'Nice one! Sample oks',
+    name: 'Arriane Gatpo',
+    message:
+        'Lorem ipsum dolorem ipsum, quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem',
     time: '7:23 PM',
     profile: 'assets/user2.png',
   ),
   User(
-    name: 'Marievic Anes',
-    message: 'Kamusta? Uy!',
+    name: 'Daniella Marie Tungol',
+    message:
+        'Lorem ipsum dolorem ipsum, quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem',
     time: '8:45 PM',
     profile: 'assets/user3.png',
   ),
   User(
     name: 'Jenkins Mesina',
-    message: 'Pre',
+    message:
+        'Lorem ipsum dolorem ipsum, quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem',
     time: '9:12 PM',
     profile: 'assets/user4.png',
   ),

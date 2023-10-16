@@ -16,7 +16,7 @@ class _BuyerNavBarState extends State<BuyerNavBar> {
   final List<Widget> _children = [
     BuyerCategoriesScreen(),
     AddToCart(),
-    CommunityForumScreen(),
+    BuyerCommunityForumScreen(),
     TransactionBuyer(),
   ];
 

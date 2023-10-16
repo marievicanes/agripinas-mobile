@@ -83,8 +83,6 @@ class TransactionBuyer extends StatefulWidget {
 
 class _TransactionBuyerState extends State<TransactionBuyer>
     with SingleTickerProviderStateMixin {
-  final TextEditingController _searchController = TextEditingController();
-  String _searchText = '';
   String? selectedStatus;
   bool _isButtonVisible = true;
   late TabController _tabController;
@@ -290,12 +288,6 @@ class _TransactionBuyerState extends State<TransactionBuyer>
     super.dispose();
   }
 
-  void searchItem(String text) {
-    setState(() {
-      _searchText = text;
-    });
-  }
-
   final currentUser = FirebaseAuth.instance;
   AuthService authService = AuthService();
   @override
@@ -494,60 +486,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
               ],
             ),
             Row(
-              children: [
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Show:',
-                        style: TextStyle(
-                            fontSize: 15.0, fontFamily: 'Poppins-Regular'),
-                      ),
-                      SizedBox(width: 8.0),
-                      DropdownButton<int>(
-                        value: 15,
-                        items: [
-                          DropdownMenuItem<int>(
-                            value: 15,
-                            child: Text('15'),
-                          ),
-                          DropdownMenuItem<int>(
-                            value: 25,
-                            child: Text('25'),
-                          ),
-                          DropdownMenuItem<int>(
-                            value: 50,
-                            child: Text('50'),
-                          ),
-                        ],
-                        onChanged: (value) {},
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Container(
-                      width: 200.0,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25.0),
-                      ),
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          hintText: 'Search',
-                          prefixIcon: Icon(Icons.search),
-                          border: InputBorder.none,
-                        ),
-                        onChanged: searchItem,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              children: [],
             ),
             Expanded(
               child: TabBarView(

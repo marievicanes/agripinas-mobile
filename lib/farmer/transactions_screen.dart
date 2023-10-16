@@ -75,10 +75,14 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
+  int selectedValue = 15;
   String? selectedStatus;
   bool _isButtonVisible = true;
   late TabController _tabController;
   final _postController = TextEditingController();
+  List<MarketplaceItem> filteredMarketplaceItems = [];
+  List<CancelledMarketplaceItem> filteredCancelledItems = [];
+  List<CompleteMarketplaceItem> filteredCompleteItems = [];
 
   final List<MarketplaceItem> items = [
     MarketplaceItem(
@@ -283,11 +287,37 @@ class _TransactionsScreenState extends State<TransactionsScreen>
   void searchItem(String text) {
     setState(() {
       _searchText = text;
+      filteredMarketplaceItems = items
+          .where((item) =>
+              item.pendingitemname.toLowerCase().contains(text.toLowerCase()) ||
+              item.userid.toLowerCase().contains(text.toLowerCase()) ||
+              item.buyername.toLowerCase().contains(text.toLowerCase()))
+          .toList();
+      filteredCancelledItems = cancelitems
+          .where((item) =>
+              item.cancelitemname.toLowerCase().contains(text.toLowerCase()) ||
+              item.userid.toLowerCase().contains(text.toLowerCase()) ||
+              item.buyername.toLowerCase().contains(text.toLowerCase()))
+          .toList();
+      filteredCompleteItems = completeitems
+          .where((item) =>
+              item.completeitemname
+                  .toLowerCase()
+                  .contains(text.toLowerCase()) ||
+              item.userid.toLowerCase().contains(text.toLowerCase()) ||
+              item.buyername.toLowerCase().contains(text.toLowerCase()))
+          .toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    List<MarketplaceItem> displayItems =
+        _searchText.isEmpty ? items : filteredMarketplaceItems;
+    List<CancelledMarketplaceItem> displayItemsCancelled =
+        _searchText.isEmpty ? cancelitems : filteredCancelledItems;
+    List<CompleteMarketplaceItem> displayItemsCompelete =
+        _searchText.isEmpty ? completeitems : filteredCompleteItems;
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -389,41 +419,10 @@ class _TransactionsScreenState extends State<TransactionsScreen>
             Row(
               children: [
                 Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Show:',
-                        style: TextStyle(
-                            fontSize: 15.0, fontFamily: 'Poppins-Regular'),
-                      ),
-                      SizedBox(width: 8.0),
-                      DropdownButton<int>(
-                        value: 15,
-                        items: [
-                          DropdownMenuItem<int>(
-                            value: 15,
-                            child: Text('15'),
-                          ),
-                          DropdownMenuItem<int>(
-                            value: 25,
-                            child: Text('25'),
-                          ),
-                          DropdownMenuItem<int>(
-                            value: 50,
-                            child: Text('50'),
-                          ),
-                        ],
-                        onChanged: (value) {},
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Container(
-                      width: 200.0,
+                      width: 400.0,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(25.0),
@@ -447,9 +446,9 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                 children: [
                   ListView.builder(
                     padding: EdgeInsets.all(10),
-                    itemCount: items.length,
+                    itemCount: displayItems.length,
                     itemBuilder: (context, index) {
-                      final item = items[index];
+                      final item = displayItems[index];
                       return GestureDetector(
                         onTap: () {},
                         child: Card(
@@ -847,9 +846,9 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                   ),
                   ListView.builder(
                     padding: EdgeInsets.all(10),
-                    itemCount: cancelitems.length,
+                    itemCount: displayItemsCancelled.length,
                     itemBuilder: (context, index) {
-                      final item = cancelitems[index];
+                      final item = displayItemsCancelled[index];
                       return GestureDetector(
                         onTap: () {},
                         child: Card(
@@ -1246,9 +1245,9 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                   ),
                   ListView.builder(
                     padding: EdgeInsets.all(10),
-                    itemCount: completeitems.length,
+                    itemCount: displayItemsCompelete.length,
                     itemBuilder: (context, index) {
-                      final item = completeitems[index];
+                      final item = displayItemsCompelete[index];
                       return GestureDetector(
                         onTap: () {},
                         child: Card(
