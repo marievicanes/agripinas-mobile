@@ -22,7 +22,7 @@ class BuyerCategoriesScreen extends StatefulWidget {
 class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
-  List<MarketplaceItem> filteredItems = []; //binago ko to
+  List<MarketplaceItem> filteredItems = [];
 
   final List<BuyerCategoryItem> items = [
     BuyerCategoryItem(
@@ -52,11 +52,10 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
   @override
   void initState() {
     super.initState();
-    filteredItems = listViewitems; //binago ko to arr
+    filteredItems = listViewitems;
   }
 
   void _searchItems() {
-    // pati ito
     setState(() {
       _searchText = _searchController.text;
       filteredItems = listViewitems

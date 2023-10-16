@@ -1,11 +1,15 @@
 import 'dart:io';
 
+import 'package:capstone/farmer/email_verification.dart';
+import 'package:capstone/farmer/password_verification.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -17,6 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       firebase_storage.FirebaseStorage.instance;
   String imageUrl = '';
   String? _imageUrl;
+  String? _contactNumber;
 
   final TextEditingController _fullnameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -129,16 +134,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 TextField(
                   controller: _fullnameController,
-                  decoration: const InputDecoration(labelText: 'Fullname'),
+                  decoration: const InputDecoration(labelText: 'Full name'),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Color.fromRGBO(157, 192, 139, 1), // Background color
-                    foregroundColor: Colors.white, // Text color
+                    backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                    foregroundColor: Colors.white,
                   ),
                   child: const Text('Update'),
                   onPressed: () async {
@@ -177,18 +181,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextField(
+                TextFormField(
                   controller: _birthdateController,
-                  decoration: const InputDecoration(labelText: 'Birthdate'),
+                  readOnly: true,
+                  onTap: () async {
+                    DateTime? selectedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    );
+
+                    if (selectedDate != null) {
+                      _birthdateController.text =
+                          DateFormat('MM-dd-yyyy').format(selectedDate);
+                    }
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Birth Date',
+                    suffixIcon: Icon(Icons.calendar_today),
+                  ),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Color.fromRGBO(157, 192, 139, 1), // Background color
-                    foregroundColor: Colors.white, // Text color
+                    backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                    foregroundColor: Colors.white,
                   ),
                   child: const Text('Update'),
                   onPressed: () async {
@@ -236,9 +256,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Color.fromRGBO(157, 192, 139, 1), // Background color
-                    foregroundColor: Colors.white, // Text color
+                    backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                    foregroundColor: Colors.white,
                   ),
                   child: const Text('Update'),
                   onPressed: () async {
@@ -281,15 +300,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller: _contactController,
                   decoration:
                       const InputDecoration(labelText: 'Contact Number'),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(11),
+                  ],
+                  keyboardType: TextInputType.phone,
+                  onChanged: (value) {
+                    _contactNumber = value;
+                  },
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Color.fromRGBO(157, 192, 139, 1), // Background color
-                    foregroundColor: Colors.white, // Text color
+                    backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                    foregroundColor: Colors.white,
                   ),
                   child: const Text('Update'),
                   onPressed: () async {
@@ -330,11 +356,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // Show loading indicator while fetching data.
+            return CircularProgressIndicator();
           }
 
           if (!snapshot.hasData) {
-            return Text("No data available."); // Handle when there's no data.
+            return Text("No data available.");
           }
 
           var data = snapshot.data!.docs[0];
@@ -365,7 +391,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     labelText: 'Name',
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
-                        iconSize: 18, // You can use any icon you prefer
+                        iconSize: 18,
                         onPressed: () => _updateName(documentSnapshot)),
                   ),
                 ),
@@ -377,7 +403,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     labelText: 'Birth Date',
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
-                        iconSize: 18, // You can use any icon you prefer
+                        iconSize: 18,
                         onPressed: () => _updateBirthdate(documentSnapshot)),
                   ),
                 ),
@@ -389,7 +415,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     labelText: 'Address',
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
-                        iconSize: 18, // You can use any icon you prefer
+                        iconSize: 18,
                         onPressed: () => _updateAddress(documentSnapshot)),
                   ),
                 ),
@@ -400,10 +426,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: InputDecoration(
                     labelText: 'Contact Number',
                     suffixIcon: IconButton(
-                        icon: Icon(Icons.arrow_forward_ios),
-                        iconSize: 18, // You can use any icon you prefer
-                        onPressed: () => _updateContact(documentSnapshot)),
+                      icon: Icon(Icons.arrow_forward_ios),
+                      iconSize: 18,
+                      onPressed: () => _updateContact(documentSnapshot),
+                    ),
                   ),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  keyboardType: TextInputType.phone,
+                  onChanged: (value) {
+                    _contactNumber = value;
+                  },
                 ),
                 SizedBox(height: 16.0),
                 TextField(
@@ -412,10 +444,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: InputDecoration(
                     labelText: 'Email',
                     suffixIcon: IconButton(
-                      icon: Icon(Icons
-                          .arrow_forward_ios), // You can use any icon you prefer
+                      icon: Icon(Icons.arrow_forward_ios),
                       onPressed: () {
-                        // Handle the button press event here
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EmailSecurityVerification(),
+                          ),
+                        );
                       },
                       iconSize: 18,
                     ),
@@ -429,10 +465,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: InputDecoration(
                     labelText: 'Password',
                     suffixIcon: IconButton(
-                      icon: Icon(Icons
-                          .arrow_forward_ios), // You can use any icon you prefer
+                      icon: Icon(Icons.arrow_forward_ios),
                       onPressed: () {
-                        // Handle the button press event here
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SecurityVerification(),
+                          ),
+                        );
                       },
                       iconSize: 18,
                     ),

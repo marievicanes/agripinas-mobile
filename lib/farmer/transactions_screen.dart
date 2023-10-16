@@ -75,7 +75,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
-  int selectedValue = 15;
   String? selectedStatus;
   bool _isButtonVisible = true;
   late TabController _tabController;
