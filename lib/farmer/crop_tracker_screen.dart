@@ -1477,7 +1477,6 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                         ),
                                         itemBuilder:
                                             (BuildContext context, int index) {
-                                          // Get the item at this index from streamSnapshot
                                           final DocumentSnapshot
                                               documentSnapshot =
                                               streamSnapshot.data!.docs[index];
@@ -1583,8 +1582,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                               ),
                                                             ),
                                                             Visibility(
-                                                              visible:
-                                                                  false, // Set this to true or false based on your condition
+                                                              visible: false,
                                                               child: Padding(
                                                                 padding:
                                                                     const EdgeInsets
@@ -1626,7 +1624,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                                   sellProduct(
                                                                       documentSnapshot),
                                                               child: Text(
-                                                                'Add Product in Marketplace',
+                                                                'Sell Product to Marketplace',
                                                                 style:
                                                                     TextStyle(
                                                                   fontFamily:
@@ -1800,6 +1798,17 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                             ),
                                           );
                                         },
+                                      ),
+                                      SizedBox(height: 16),
+                                      Positioned(
+                                        bottom: 16.0,
+                                        right: 16.0,
+                                        child: FloatingActionButton(
+                                          onPressed: () => sellProduct(),
+                                          child: Icon(Icons.add),
+                                          backgroundColor:
+                                              Color.fromRGBO(157, 192, 139, 1),
+                                        ),
                                       ),
                                     ],
                                   );

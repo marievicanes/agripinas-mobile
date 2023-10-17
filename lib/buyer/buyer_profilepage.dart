@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:capstone/buyer/buyer_emailverification.dart';
+import 'package:capstone/buyer/buyer_passwordverification.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -17,6 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       firebase_storage.FirebaseStorage.instance;
   String imageUrl = '';
   String? _imageUrl;
+  String? _contactNumber;
 
   final TextEditingController _fullnameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -125,22 +129,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Text(
+                  'Full name',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
                 TextField(
                   controller: _fullnameController,
-                  decoration: const InputDecoration(labelText: 'Fullname'),
+                  decoration: const InputDecoration(labelText: ''),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Color.fromRGBO(157, 192, 139, 1), // Background color
-                    foregroundColor: Colors.white, // Text color
+                    backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                    foregroundColor: Colors.white,
                   ),
-                  child: const Text('Update'),
+                  child: const Text(
+                    'Update',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins-Regular',
+                    ),
+                  ),
                   onPressed: () async {
                     final String fullname = _fullnameController.text;
                     if (fullname != null) {
@@ -175,22 +192,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Text(
+                  'Birth Date',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
                 TextField(
                   controller: _birthdateController,
-                  decoration: const InputDecoration(labelText: 'Birthdate'),
+                  decoration: const InputDecoration(labelText: ''),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Color.fromRGBO(157, 192, 139, 1), // Background color
-                    foregroundColor: Colors.white, // Text color
+                    backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                    foregroundColor: Colors.white,
                   ),
-                  child: const Text('Update'),
+                  child: const Text(
+                    'Update',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins-Regular',
+                    ),
+                  ),
                   onPressed: () async {
                     final String birthdate = _birthdateController.text;
                     if (birthdate != null) {
@@ -225,22 +255,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Text(
+                  'Address',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
                 TextField(
                   controller: _addressController,
-                  decoration: const InputDecoration(labelText: 'Address'),
+                  decoration: const InputDecoration(labelText: ''),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Color.fromRGBO(157, 192, 139, 1), // Background color
-                    foregroundColor: Colors.white, // Text color
+                    backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                    foregroundColor: Colors.white,
                   ),
-                  child: const Text('Update'),
+                  child: const Text(
+                    'Update',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins-Regular',
+                    ),
+                  ),
                   onPressed: () async {
                     final String address = _addressController.text;
                     if (address != null) {
@@ -275,23 +318,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Text(
+                  'Contact Number',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
                 TextField(
                   controller: _contactController,
-                  decoration:
-                      const InputDecoration(labelText: 'Contact Number'),
+                  decoration: const InputDecoration(labelText: ''),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(11),
+                  ],
+                  keyboardType: TextInputType.phone,
+                  onChanged: (value) {
+                    _contactNumber = value;
+                  },
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Color.fromRGBO(157, 192, 139, 1), // Background color
-                    foregroundColor: Colors.white, // Text color
+                    backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                    foregroundColor: Colors.white,
                   ),
-                  child: const Text('Update'),
+                  child: const Text(
+                    'Update',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins-Regular',
+                    ),
+                  ),
                   onPressed: () async {
                     final String contact = _contactController.text;
                     if (contact != null) {
@@ -365,8 +428,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     labelText: 'Name',
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
-                        iconSize: 18, // You can use any icon you prefer
+                        iconSize: 18,
                         onPressed: () => _updateName(documentSnapshot)),
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                    ),
                   ),
                 ),
                 SizedBox(height: 16.0),
@@ -377,8 +443,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     labelText: 'Birth Date',
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
-                        iconSize: 18, // You can use any icon you prefer
+                        iconSize: 18,
                         onPressed: () => _updateBirthdate(documentSnapshot)),
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                    ),
                   ),
                 ),
                 SizedBox(height: 16.0),
@@ -389,8 +458,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     labelText: 'Address',
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
-                        iconSize: 18, // You can use any icon you prefer
+                        iconSize: 18,
                         onPressed: () => _updateAddress(documentSnapshot)),
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                    ),
                   ),
                 ),
                 SizedBox(height: 16.0),
@@ -401,9 +473,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     labelText: 'Contact Number',
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
-                        iconSize: 18, // You can use any icon you prefer
+                        iconSize: 18,
                         onPressed: () => _updateContact(documentSnapshot)),
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                    ),
                   ),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  keyboardType: TextInputType.phone,
+                  onChanged: (value) {
+                    _contactNumber = value;
+                  },
                 ),
                 SizedBox(height: 16.0),
                 TextField(
@@ -412,12 +492,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: InputDecoration(
                     labelText: 'Email',
                     suffixIcon: IconButton(
-                      icon: Icon(Icons
-                          .arrow_forward_ios), // You can use any icon you prefer
+                      icon: Icon(Icons.arrow_forward_ios),
                       onPressed: () {
-                        // Handle the button press event here
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                BuyerEmailSecurityVerification(),
+                          ),
+                        );
                       },
                       iconSize: 18,
+                    ),
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
                     ),
                   ),
                 ),
@@ -429,12 +517,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: InputDecoration(
                     labelText: 'Password',
                     suffixIcon: IconButton(
-                      icon: Icon(Icons
-                          .arrow_forward_ios), // You can use any icon you prefer
+                      icon: Icon(Icons.arrow_forward_ios),
                       onPressed: () {
-                        // Handle the button press event here
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                BuyerPasswordSecurityVerification(),
+                          ),
+                        );
                       },
                       iconSize: 18,
+                    ),
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
                     ),
                   ),
                 ),
