@@ -6,6 +6,28 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+class Cart {
+  final String cropID;
+  final String cropName;
+  final String dateBought;
+  final String location;
+  final String price;
+  final String unit;
+  final String quantity;
+  final String imageUrl;
+
+  Cart({
+    required this.cropID,
+    required this.cropName,
+    required this.dateBought,
+    required this.location,
+    required this.price,
+    required this.quantity,
+    required this.unit,
+    required this.imageUrl,
+  });
+}
+
 class ProductDetails extends StatelessWidget {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
@@ -22,8 +44,11 @@ class ProductDetails extends StatelessWidget {
   final currentUser = FirebaseAuth.instance.currentUser;
   AuthService authService = AuthService();
 
-  Future<void> transferData(
-      String documentId, Map<String, dynamic> productData) async {
+  Future<void> transferData(DocumentSnapshot documentSnapshot) async {
+    Map<String, dynamic> productData =
+        documentSnapshot.data() as Map<String, dynamic>;
+
+    String cropID = productData['cropID'] ?? '';
     String cropName = productData['cropName'] ?? '';
     String location = productData['location'] ?? '';
     String unit = productData['unit'] ?? '';
@@ -36,6 +61,7 @@ class ProductDetails extends StatelessWidget {
 
     // Create a copy of the data from 'Marketplace' and add it to 'UserCarts'
     await _userCarts.add({
+      'cropID': cropID,
       'cropName': cropName,
       'location': location,
       'unit': unit,
@@ -120,6 +146,16 @@ class ProductDetails extends StatelessWidget {
                             '${productData['price']}',
                             style: TextStyle(
                               fontSize: 17,
+                            ),
+                          ),
+                          Visibility(
+                            visible:
+                                false, // Replace someCondition with your actual condition
+                            child: Text(
+                              '${productData['cropID']}',
+                              style: TextStyle(
+                                fontSize: 17,
+                              ),
                             ),
                           ),
                         ],
@@ -243,28 +279,8 @@ class ProductDetails extends StatelessWidget {
                                 ),
                                 OutlinedButton(
                                   onPressed: () async {
-                                    // Assuming there's a field in productData that contains the document ID
-                                    dynamic documentIdDynamic =
-                                        productData['documentId'];
-
-                                    // Check if documentIdDynamic is not null and is of type String
-                                    if (documentIdDynamic != null &&
-                                        documentIdDynamic is String) {
-                                      String documentId = documentIdDynamic;
-
-                                      // Assuming productData is a Map<dynamic, dynamic>
-                                      Map<String, dynamic> productDataMap =
-                                          Map<String, dynamic>.from(
-                                              productData);
-
-                                      // Call the transferData function with the document ID and product data
-                                      await transferData(
-                                          documentId, productDataMap);
-                                      Navigator.of(context).pop();
-                                    } else {
-                                      // Handle the case where documentId is null or not a String
-                                      print('Invalid document ID');
-                                    }
+                                    await transferData;
+                                    Navigator.of(context).pop();
 
                                     Navigator.of(context).push(
                                       MaterialPageRoute(

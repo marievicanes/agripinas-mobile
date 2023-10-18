@@ -1,5 +1,7 @@
 import 'package:capstone/farmer/product_details.dart';
+import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class VegetablesScreen extends StatefulWidget {
@@ -13,6 +15,8 @@ class _VegetablesScreenState extends State<VegetablesScreen> {
 
   final CollectionReference _marketplace =
       FirebaseFirestore.instance.collection('Marketplace');
+  final currentUser = FirebaseAuth.instance.currentUser;
+  AuthService authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +34,7 @@ class _VegetablesScreenState extends State<VegetablesScreen> {
               Text(
                 'AgriPinas',
                 style: TextStyle(
-                  fontSize: 17.0,
+                  fontSize: 15.0,
                   fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
@@ -59,7 +63,9 @@ class _VegetablesScreenState extends State<VegetablesScreen> {
           ],
         ),
         body: StreamBuilder(
-            stream: _marketplace
+            stream: FirebaseFirestore.instance
+                .collection('Marketplace')
+                .where('uid', isEqualTo: currentUser?.uid)
                 .where('category', isEqualTo: 'Vegetables')
                 .snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
@@ -107,11 +113,12 @@ class _VegetablesScreenState extends State<VegetablesScreen> {
                   Expanded(
                     child: GridView.builder(
                       itemCount: items?.length ?? 0,
+                      padding: EdgeInsets.all(3),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        crossAxisSpacing: 12,
+                        crossAxisSpacing: 15,
                         mainAxisSpacing: 10,
-                        childAspectRatio: 3 / 2.7,
+                        childAspectRatio: 2 / 4,
                       ),
                       itemBuilder: (BuildContext context, int index) {
                         final Map thisItem = items![index];

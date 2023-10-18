@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -15,8 +12,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
-  String imageUrl = '';
-  String? _imageUrl;
+  final currentUser = FirebaseAuth.instance;
+  AuthService authService = AuthService();
 
   final TextEditingController _fullnameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -27,86 +24,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   final CollectionReference _users =
       FirebaseFirestore.instance.collection('Users');
+  final CollectionReference _marketplace =
+      FirebaseFirestore.instance.collection('Marketplace');
 
   bool _isEditing = false;
   DateTime? _selectedDate;
-
-  XFile? file;
-  final ImagePicker _picker = ImagePicker();
-
-  Future imgFromGallery() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      if (pickedFile != null) {
-        file = XFile(pickedFile.path);
-
-        uploadFile();
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
-
-  Future UimgFromGallery() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      if (pickedFile != null) {
-        file = XFile(pickedFile.path);
-
-        uploadFile();
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
-
-  Future UimgFromCamera() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
-
-    setState(() {
-      if (pickedFile != null) {
-        file = XFile(pickedFile.path);
-
-        uploadFile();
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
-
-  Future imgFromCamera() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
-
-    setState(() {
-      if (pickedFile != null) {
-        file = XFile(pickedFile.path);
-
-        uploadFile();
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
-
-  Future uploadFile() async {
-    if (file == null) return;
-    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
-
-    firebase_storage.Reference referenceRoot =
-        firebase_storage.FirebaseStorage.instance.ref();
-    firebase_storage.Reference referenceDirImages =
-        referenceRoot.child('images');
-
-    firebase_storage.Reference referenceImageToUpload =
-        referenceDirImages.child(uniqueFileName);
-
-    try {
-      await referenceImageToUpload.putFile(File(file!.path));
-      imageUrl = await referenceImageToUpload.getDownloadURL();
-    } catch (error) {}
-  }
 
   Future<void> _updateName([DocumentSnapshot? documentSnapshot]) async {
     if (documentSnapshot != null) {
@@ -309,8 +231,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
   }
 
-  final currentUser = FirebaseAuth.instance;
-  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -444,70 +364,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         },
       ),
-    );
-  }
-
-  void _saveInformation() {}
-
-  void _UshowPicker(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Container(
-              child: new Wrap(
-                children: <Widget>[
-                  new ListTile(
-                      leading: new Icon(Icons.photo_library),
-                      title: new Text('Gallery'),
-                      onTap: () {
-                        UimgFromGallery();
-                        Navigator.of(context).pop();
-                      }),
-                  new ListTile(
-                    leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
-                    onTap: () {
-                      UimgFromCamera();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
-  void _showPicker(context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext bc) {
-        return SafeArea(
-          child: Container(
-            child: new Wrap(
-              children: <Widget>[
-                new ListTile(
-                  leading: new Icon(Icons.photo_library),
-                  title: new Text('Gallery'),
-                  onTap: () {
-                    imgFromGallery();
-                    Navigator.of(context).pop();
-                  },
-                ),
-                new ListTile(
-                  leading: new Icon(Icons.photo_camera),
-                  title: new Text('Camera'),
-                  onTap: () {
-                    imgFromCamera();
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }

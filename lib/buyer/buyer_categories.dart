@@ -3,7 +3,9 @@ import 'package:capstone/buyer/buyer_category_fruits.dart';
 import 'package:capstone/buyer/buyer_category_ofproducts.dart';
 import 'package:capstone/buyer/buyer_category_veggies.dart';
 import 'package:capstone/buyer/buyer_productdetails.dart';
+import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class BuyerCategoryItem {
@@ -210,6 +212,9 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
     );
   }
 
+  final currentUser = FirebaseAuth.instance.currentUser;
+  AuthService authService = AuthService();
+
   Widget buildMarketplaceSection() {
     return StreamBuilder(
       stream: _marketplace.snapshots(),
@@ -239,121 +244,155 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemCount: items?.length ?? 0,
+            padding: EdgeInsets.all(3),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              crossAxisSpacing: 12,
+              crossAxisSpacing: 15,
               mainAxisSpacing: 10,
-              childAspectRatio: 3 / 2.7,
+              childAspectRatio: 2 / 4,
             ),
             itemBuilder: (BuildContext context, int index) {
               final Map thisItem = items![index];
 
               return InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProductDetails(thisItem),
-                    ),
-                  );
-                },
-                child: Card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Center(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              '${thisItem['image']}',
-                              width: double.infinity,
-                              height: 250,
-                            ),
-                          ),
-                        ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProductDetails(thisItem),
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Center(
-                              child: Text(
-                                '${thisItem['cropName']}',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontFamily: 'Poppins',
+                    );
+                  },
+                  child: Card(
+                    child: Stack(children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Center(
+                              child: Align(
+                                alignment: Alignment.bottomCenter,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    '${thisItem['image']}',
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: 250,
+                                  ),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 4),
-                            Row(
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Price: ',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: 'Poppins',
-                                  ),
-                                ),
-                                Text(
-                                  '${thisItem['price']}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 4),
-                            Row(
-                              children: [
-                                Text(
-                                  'Farmer: ',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: 'Poppins',
-                                  ),
-                                ),
-                                Text(
-                                  '${thisItem['farmer']}',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontFamily: 'Poppins-Regular',
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(1.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Location:',
+                                Center(
+                                  child: Text(
+                                    '${thisItem['cropName']}',
                                     style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize: 15,
                                       fontFamily: 'Poppins',
                                     ),
                                   ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    '${thisItem['location']}',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontFamily: 'Poppins-Regular',
+                                ),
+                                SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Price: ',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'Poppins',
+                                      ),
                                     ),
+                                    Text(
+                                      '${thisItem['price']}',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    StreamBuilder<QuerySnapshot>(
+                                      stream: FirebaseFirestore.instance
+                                          .collection('Users')
+                                          .where('uid',
+                                              isEqualTo: currentUser?.uid)
+                                          .snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData &&
+                                            snapshot.data!.docs.isNotEmpty) {
+                                          QueryDocumentSnapshot userData =
+                                              snapshot.data!.docs.first;
+                                          String fullName = userData
+                                              .get('fullname')
+                                              .toString();
+
+                                          return Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Farmer: ',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'Poppins',
+                                                ),
+                                              ),
+                                              Text(
+                                                fullName,
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontFamily: 'Poppins-Regular',
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        } else {
+                                          // Handle the case when there is no data or the document is empty
+                                          return Text("No data available");
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(1.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Location:',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        '${thisItem['location']}',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontFamily: 'Poppins-Regular',
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              );
+                    ]),
+                  ));
             },
           ),
         );

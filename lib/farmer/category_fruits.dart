@@ -30,7 +30,7 @@ class _FruitsScreenState extends State<FruitsScreen> {
               Text(
                 'AgriPinas',
                 style: TextStyle(
-                  fontSize: 17.0,
+                  fontSize: 15.0,
                   fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
@@ -106,11 +106,12 @@ class _FruitsScreenState extends State<FruitsScreen> {
                   Expanded(
                     child: GridView.builder(
                       itemCount: items?.length ?? 0,
+                      padding: EdgeInsets.all(3),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        crossAxisSpacing: 12,
+                        crossAxisSpacing: 15,
                         mainAxisSpacing: 10,
-                        childAspectRatio: 3 / 2.7,
+                        childAspectRatio: 2 / 4,
                       ),
                       itemBuilder: (BuildContext context, int index) {
                         final Map thisItem = items![index];

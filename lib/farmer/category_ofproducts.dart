@@ -30,7 +30,7 @@ class _OFProductsScreenState extends State<OFProductScreen> {
               Text(
                 'AgriPinas',
                 style: TextStyle(
-                  fontSize: 17.0,
+                  fontSize: 15.0,
                   fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
@@ -106,128 +106,132 @@ class _OFProductsScreenState extends State<OFProductScreen> {
                   Expanded(
                     child: GridView.builder(
                       itemCount: items?.length ?? 0,
+                      padding: EdgeInsets.all(3),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        crossAxisSpacing: 12,
+                        crossAxisSpacing: 15,
                         mainAxisSpacing: 10,
-                        childAspectRatio: 3 / 2.7,
+                        childAspectRatio: 2 / 4,
                       ),
                       itemBuilder: (BuildContext context, int index) {
                         final Map thisItem = items![index];
 
                         return InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProductDetails(thisItem),
-                              ),
-                            );
-                          },
-                          child: Card(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Center(
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: AspectRatio(
-                                        aspectRatio: 68 /
-                                            20, // You can adjust the aspect ratio as needed
-                                        child: Image.network(
-                                          '${thisItem['image']}',
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                          height: 500,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ProductDetails(thisItem),
+                                ),
+                              );
+                            },
+                            child: Card(
+                              child: Stack(children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Center(
+                                        child: Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            child: Image.network(
+                                              '${thisItem['image']}',
+                                              fit: BoxFit.cover,
+                                              width: double.infinity,
+                                              height: 250,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Center(
-                                        child: Text(
-                                          '${thisItem['cropName']}',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontFamily: 'Poppins',
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Row(
+                                    Padding(
+                                      padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            'Price: ',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontFamily: 'Poppins',
-                                            ),
-                                          ),
-                                          Text(
-                                            '${thisItem['price']}',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 4),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'Farmer: ',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontFamily: 'Poppins',
-                                            ),
-                                          ),
-                                          Text(
-                                            '${thisItem['fullname']}',
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontFamily: 'Poppins-Regular',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(1.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Location:',
+                                          Center(
+                                            child: Text(
+                                              '${thisItem['cropName']}',
                                               style: TextStyle(
-                                                fontSize: 14,
+                                                fontSize: 15,
                                                 fontFamily: 'Poppins',
                                               ),
                                             ),
-                                            SizedBox(height: 4),
-                                            Text(
-                                              '${thisItem['location']}',
-                                              style: TextStyle(
-                                                fontSize: 13,
-                                                fontFamily: 'Poppins-Regular',
+                                          ),
+                                          SizedBox(height: 4),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Price: ',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'Poppins',
+                                                ),
                                               ),
+                                              Text(
+                                                '${thisItem['price']}',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 4),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Farmer: ',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'Poppins',
+                                                ),
+                                              ),
+                                              Text(
+                                                '${thisItem['fullname']}',
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontFamily: 'Poppins-Regular',
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(1.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Location:',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontFamily: 'Poppins',
+                                                  ),
+                                                ),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                  '${thisItem['location']}',
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        );
+                              ]),
+                            ));
                       },
                     ),
                   ),

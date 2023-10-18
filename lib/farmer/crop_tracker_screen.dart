@@ -1877,6 +1877,4 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
           );
         });
   }
-
-  void _saveInformation() {}
 }

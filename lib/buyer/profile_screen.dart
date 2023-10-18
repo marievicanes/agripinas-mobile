@@ -20,15 +20,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   DateTime? _selectedDate;
 
   @override
-  void initState() {
-    super.initState();
-    _nameController.text = "Arriane Gatpo";
-    _emailController.text = "ag@gatpo.com";
-    _addressController.text = "Quezon City";
-    _phoneController.text = "+639675046713";
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -200,9 +191,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         OutlinedButton(
                           onPressed: () {
-                            setState(() {
-                              _isEditing = false;
-                            });
+                            _isEditing = false;
                           },
                           child: Text('Cancel'),
                           style: ButtonStyle(
@@ -217,9 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            setState(() {
-                              _isEditing = false;
-                            });
+                            _isEditing = false;
                             _saveInformation();
                           },
                           child: Text('Save'),
@@ -232,9 +219,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     )
                   : MaterialButton(
                       onPressed: () {
-                        setState(() {
-                          _isEditing = true;
-                        });
+                        _isEditing = true;
                       },
                       child: Text('Edit Information'),
                       color: Color.fromRGBO(157, 192, 139, 1),
