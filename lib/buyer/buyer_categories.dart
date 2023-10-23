@@ -191,7 +191,7 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
                                 child: Text(
                                   item.title,
                                   style: TextStyle(
-                                    fontSize: 12.2,
+                                    fontSize: 11,
                                     fontFamily: 'Poppins',
                                   ),
                                 ),
@@ -249,7 +249,7 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
               crossAxisCount: 2,
               crossAxisSpacing: 15,
               mainAxisSpacing: 10,
-              childAspectRatio: 2 / 4,
+              childAspectRatio: 2.3 / 4,
             ),
             itemBuilder: (BuildContext context, int index) {
               final Map thisItem = items![index];
@@ -319,46 +319,19 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
                                 SizedBox(height: 4),
                                 Row(
                                   children: [
-                                    StreamBuilder<QuerySnapshot>(
-                                      stream: FirebaseFirestore.instance
-                                          .collection('Users')
-                                          .where('uid',
-                                              isEqualTo: currentUser?.uid)
-                                          .snapshots(),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData &&
-                                            snapshot.data!.docs.isNotEmpty) {
-                                          QueryDocumentSnapshot userData =
-                                              snapshot.data!.docs.first;
-                                          String fullName = userData
-                                              .get('fullname')
-                                              .toString();
-
-                                          return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Farmer: ',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontFamily: 'Poppins',
-                                                ),
-                                              ),
-                                              Text(
-                                                fullName,
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontFamily: 'Poppins-Regular',
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        } else {
-                                          // Handle the case when there is no data or the document is empty
-                                          return Text("No data available");
-                                        }
-                                      },
+                                    Text(
+                                      'Farmer: ',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'Poppins',
+                                      ),
+                                    ),
+                                    Text(
+                                      '${thisItem['fullname']}',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'Poppins-Regular',
+                                      ),
                                     ),
                                   ],
                                 ),

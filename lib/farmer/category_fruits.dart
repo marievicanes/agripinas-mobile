@@ -30,7 +30,7 @@ class _FruitsScreenState extends State<FruitsScreen> {
               Text(
                 'AgriPinas',
                 style: TextStyle(
-                  fontSize: 15.0,
+                  fontSize: 10.0,
                   fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
@@ -106,12 +106,14 @@ class _FruitsScreenState extends State<FruitsScreen> {
                   Expanded(
                     child: GridView.builder(
                       itemCount: items?.length ?? 0,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
                       padding: EdgeInsets.all(3),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 15,
                         mainAxisSpacing: 10,
-                        childAspectRatio: 2 / 4,
+                        childAspectRatio: 2.3 / 4,
                       ),
                       itemBuilder: (BuildContext context, int index) {
                         final Map thisItem = items![index];
@@ -127,23 +129,29 @@ class _FruitsScreenState extends State<FruitsScreen> {
                               );
                             },
                             child: Card(
-                              child: Column(
+                                child: Stack(children: [
+                              Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Expanded(
                                     child: Center(
-                                      child: Container(
-                                        width: 200,
-                                        height: 250,
-                                        child: thisItem.containsKey('image')
-                                            ? Image.network(
-                                                '${thisItem['image']}')
-                                            : Container(),
+                                      child: Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: Image.network(
+                                            '${thisItem['image']}',
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            height: 250,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.all(8),
+                                    padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -223,7 +231,7 @@ class _FruitsScreenState extends State<FruitsScreen> {
                                   ),
                                 ],
                               ),
-                            ));
+                            ])));
                       },
                     ),
                   )

@@ -47,6 +47,25 @@ class _AddToCartState extends State<AddToCart>
     });
   }
 
+  Future<void> _updateBoughtQuantity(String cropID, int newQuantity) async {
+    try {
+      await _userCarts.doc(cropID).update({
+        'boughtQuantity': newQuantity.toString(),
+      });
+    } catch (e) {
+      // Handle the error, e.g., show a snackbar or log the error
+      print('Error updating boughtQuantity: $e');
+    }
+  }
+
+  Future<void> _delete(
+    String cropID,
+  ) async {
+    await _userCarts.doc(cropID).delete();
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('You have successfully deleted an item in your cart')));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,9 +117,10 @@ class _AddToCartState extends State<AddToCart>
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
           if (streamSnapshot.hasError) {
             return Center(
-              child: Text('Some error occurred ${streamSnapshot.error}'),
+              child: Text('Error: ${streamSnapshot.error}'),
             );
           }
+
           if (streamSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(),
@@ -165,6 +185,8 @@ class _AddToCartState extends State<AddToCart>
                   itemCount: items.length,
                   itemBuilder: (BuildContext context, int index) {
                     final Map thisItem = items[index];
+                    final DocumentSnapshot documentSnapshot =
+                        streamSnapshot.data!.docs[index];
                     bool isChecked = isCheckedList[index];
 
                     return Card(
@@ -177,14 +199,6 @@ class _AddToCartState extends State<AddToCart>
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  '${thisItem['farmer']}',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontFamily: 'Poppins',
-                                  ),
-                                ),
-                                SizedBox(height: 8),
                                 Container(
                                   width: 100,
                                   height: 95,
@@ -208,7 +222,7 @@ class _AddToCartState extends State<AddToCart>
                                   Row(
                                     children: [
                                       Text(
-                                        'Item Name: ',
+                                        'Item: ',
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontFamily: 'Poppins'),
@@ -251,13 +265,13 @@ class _AddToCartState extends State<AddToCart>
                                               size: 16,
                                             ),
                                             onPressed: () {
-                                              int quantity =
-                                                  thisItem['quantity'];
-                                              if (quantity > 1) {
+                                              int boughtQuantity = int.parse(
+                                                  thisItem['boughtQuantity']);
+                                              if (boughtQuantity > 1) {
                                                 setState(() {
-                                                  quantity--;
-                                                  thisItem['quantity'] =
-                                                      quantity;
+                                                  boughtQuantity--;
+                                                  thisItem['boughtQuantity'] =
+                                                      boughtQuantity.toString();
                                                 });
                                               } else {
                                                 showDialog(
@@ -310,8 +324,9 @@ class _AddToCartState extends State<AddToCart>
                                                             ),
                                                           ),
                                                           onPressed: () {
-                                                            _deleteItem(
-                                                                '${thisItem['cropName']}');
+                                                            _delete(
+                                                                documentSnapshot
+                                                                    .id);
                                                             Navigator.of(
                                                                     context)
                                                                 .pop();
@@ -325,26 +340,41 @@ class _AddToCartState extends State<AddToCart>
                                             },
                                           ),
                                           Text(
-                                            thisItem['quantity'].toString(),
+                                            thisItem['boughtQuantity'],
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
                                             ),
                                           ),
                                           IconButton(
-                                            icon: Icon(
-                                              Icons.add,
-                                              size: 16,
-                                            ),
-                                            onPressed: () {
-                                              int quantity =
-                                                  thisItem['quantity'];
-                                              setState(() {
-                                                quantity++;
-                                                thisItem['quantity'] = quantity;
-                                              });
-                                            },
-                                          ),
+                                              icon: Icon(
+                                                Icons.add,
+                                                size: 16,
+                                              ),
+                                              onPressed: () {
+                                                int boughtQuantity = int.parse(
+                                                    thisItem['boughtQuantity']);
+                                                int quantity = int.parse(
+                                                    thisItem['quantity']);
+                                                if (boughtQuantity < quantity) {
+                                                  setState(() {
+                                                    boughtQuantity++;
+                                                  });
+                                                  // Update the boughtQuantity in Firestore
+                                                  _updateBoughtQuantity(
+                                                      thisItem['cropID'],
+                                                      boughtQuantity);
+                                                } else {
+                                                  final snackBar = SnackBar(
+                                                    content: Text(
+                                                        'Cannot add more items. Limited to $quantity'),
+                                                    duration:
+                                                        Duration(seconds: 2),
+                                                  );
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(snackBar);
+                                                }
+                                              }),
                                         ],
                                       ),
                                     ],
@@ -353,7 +383,7 @@ class _AddToCartState extends State<AddToCart>
                               ),
                             ),
                             Checkbox(
-                              value: isChecked,
+                              value: isCheckedList[index],
                               onChanged: (value) {
                                 setState(() {
                                   isCheckedList[index] = value!;
@@ -364,7 +394,56 @@ class _AddToCartState extends State<AddToCart>
                             IconButton(
                               icon: Icon(Icons.delete),
                               onPressed: () {
-                                _deleteItem('${thisItem['cropName']}');
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        'Delete Item?',
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontSize: 19,
+                                        ),
+                                      ),
+                                      content: Text(
+                                        'Do you want to delete this item?',
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins-Regular',
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text(
+                                            'No',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins-Regular',
+                                              fontSize: 15,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: Text(
+                                            'Yes',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins-Regular',
+                                              color: Color(0xFF9DC08B),
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            _delete(documentSnapshot.id);
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
                               },
                             ),
                           ],
@@ -409,6 +488,20 @@ class _AddToCartState extends State<AddToCart>
                         ),
                       ],
                     ),
+                    SizedBox(height: 16),
+                    ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFC0D090),
+                        ),
+                        child: Text(
+                          'Checkout',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Poppins',
+                            color: Colors.white,
+                          ),
+                        ))
                   ],
                 ),
               ),
@@ -434,16 +527,5 @@ class _AddToCartState extends State<AddToCart>
       }
     }
     return totalCost;
-  }
-
-  void _deleteItem(String cropName) {
-    setState(() {
-      // Remove the item from the database
-      _userCarts
-          .doc(currentUser!.uid)
-          .collection('items')
-          .doc(cropName)
-          .delete();
-    });
   }
 }

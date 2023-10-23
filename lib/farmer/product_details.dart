@@ -1,3 +1,6 @@
+import 'package:capstone/helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ProductDetails extends StatelessWidget {
@@ -6,6 +9,9 @@ class ProductDetails extends StatelessWidget {
   final Map productData;
 
   ProductDetails(this.productData);
+
+  final currentUser = FirebaseAuth.instance.currentUser;
+  AuthService authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -122,18 +128,42 @@ class ProductDetails extends StatelessWidget {
                       SizedBox(height: 6),
                       Row(
                         children: [
-                          Text(
-                            'Farmer: ',
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            '${productData['fullname']}',
-                            style: TextStyle(
-                              fontSize: 17,
-                            ),
+                          StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('Users')
+                                .where('uid', isEqualTo: currentUser?.uid)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData &&
+                                  snapshot.data!.docs.isNotEmpty) {
+                                QueryDocumentSnapshot userData =
+                                    snapshot.data!.docs.first;
+                                String fullName =
+                                    userData.get('fullname').toString();
+
+                                return Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Farmer: ',
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      fullName,
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                // Handle the case when there is no data or the document is empty
+                                return Text("No data available");
+                              }
+                            },
                           ),
                         ],
                       ),

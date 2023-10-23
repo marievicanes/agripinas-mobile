@@ -30,7 +30,7 @@ class _BuyerFruitsScreenState extends State<BuyerFruitsScreen> {
               Text(
                 'AgriPinas',
                 style: TextStyle(
-                  fontSize: 15.0,
+                  fontSize: 10.0,
                   fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
@@ -105,12 +105,14 @@ class _BuyerFruitsScreenState extends State<BuyerFruitsScreen> {
                 Expanded(
                   child: GridView.builder(
                     itemCount: items?.length ?? 0,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
                     padding: EdgeInsets.all(3),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 15,
                       mainAxisSpacing: 10,
-                      childAspectRatio: 2 / 4,
+                      childAspectRatio: 2.3 / 4,
                     ),
                     itemBuilder: (BuildContext context, int index) {
                       final Map thisItem = items![index];
@@ -212,7 +214,7 @@ class _BuyerFruitsScreenState extends State<BuyerFruitsScreen> {
                                             ),
                                             SizedBox(height: 4),
                                             Text(
-                                              '${thisItem['farmer']}',
+                                              '${thisItem['location']}',
                                               style: TextStyle(
                                                 fontSize: 13,
                                                 fontFamily: 'Poppins-Regular',

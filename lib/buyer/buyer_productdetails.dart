@@ -6,28 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class Cart {
-  final String cropID;
-  final String cropName;
-  final String dateBought;
-  final String location;
-  final String price;
-  final String unit;
-  final String quantity;
-  final String imageUrl;
-
-  Cart({
-    required this.cropID,
-    required this.cropName,
-    required this.dateBought,
-    required this.location,
-    required this.price,
-    required this.quantity,
-    required this.unit,
-    required this.imageUrl,
-  });
-}
-
 class ProductDetails extends StatelessWidget {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
@@ -45,29 +23,34 @@ class ProductDetails extends StatelessWidget {
   AuthService authService = AuthService();
 
   Future<void> transferData(DocumentSnapshot documentSnapshot) async {
-    Map<String, dynamic> productData =
-        documentSnapshot.data() as Map<String, dynamic>;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
+    String? uid = user?.uid;
 
     String cropID = productData['cropID'] ?? '';
     String cropName = productData['cropName'] ?? '';
     String location = productData['location'] ?? '';
+    String category = productData['category'] ?? '';
     String unit = productData['unit'] ?? '';
     String price = productData['price'] ?? '';
     String quantity = productData['quantity'] ?? '';
-    String image = productData['image'] ?? '';
+    String boughtQuantity = productData['boughtQuantity'] ?? '';
+    String imageUrl = productData['image'] ?? '';
 
     DateTime currentDate = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(currentDate);
 
-    // Create a copy of the data from 'Marketplace' and add it to 'UserCarts'
     await _userCarts.add({
+      "uid": uid,
       'cropID': cropID,
       'cropName': cropName,
       'location': location,
+      'category': category,
       'unit': unit,
       'price': price,
+      'boughtQuantity': boughtQuantity + 1.toString(),
       'quantity': quantity,
-      'image': image,
+      'image': imageUrl,
       'dateBought': formattedDate,
     });
   }
@@ -148,16 +131,6 @@ class ProductDetails extends StatelessWidget {
                               fontSize: 17,
                             ),
                           ),
-                          Visibility(
-                            visible:
-                                false, // Replace someCondition with your actual condition
-                            child: Text(
-                              '${productData['cropID']}',
-                              style: TextStyle(
-                                fontSize: 17,
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                       SizedBox(height: 6),
@@ -215,24 +188,6 @@ class ProductDetails extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 6),
-                      Row(
-                        children: [
-                          Text(
-                            'Location: ',
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            '${productData['location']}',
-                            style: TextStyle(
-                              fontSize: 17,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 6),
                       Padding(
                         padding: const EdgeInsets.all(1.0),
                         child: Column(
@@ -250,6 +205,15 @@ class ProductDetails extends StatelessWidget {
                               '${productData['description']}',
                               style: TextStyle(
                                 fontSize: 17,
+                              ),
+                            ),
+                            Visibility(
+                              visible: false,
+                              child: Text(
+                                '${productData['cropID']}',
+                                style: TextStyle(
+                                  fontSize: 17,
+                                ),
                               ),
                             ),
                             SizedBox(height: 10),
@@ -279,9 +243,24 @@ class ProductDetails extends StatelessWidget {
                                 ),
                                 OutlinedButton(
                                   onPressed: () async {
-                                    await transferData;
-                                    Navigator.of(context).pop();
+                                    String cropID = productData['cropID'];
 
+                                    // Reference to your UserCarts collection
+                                    CollectionReference<Map<String, dynamic>>
+                                        userCartsRef = FirebaseFirestore
+                                            .instance
+                                            .collection('UserCarts');
+
+                                    // Get the document reference for the current product
+                                    DocumentReference<Map<String, dynamic>>
+                                        currentProductRef =
+                                        userCartsRef.doc(cropID);
+
+                                    // Fetch the current product's data
+                                    DocumentSnapshot<Map<String, dynamic>>
+                                        currentProductSnapshot =
+                                        await currentProductRef.get();
+                                    await transferData(currentProductSnapshot);
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
                                         builder: (context) => AddToCart(),

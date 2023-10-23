@@ -30,7 +30,7 @@ class _OFProductsScreenState extends State<OFProductScreen> {
               Text(
                 'AgriPinas',
                 style: TextStyle(
-                  fontSize: 15.0,
+                  fontSize: 10.0,
                   fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
@@ -93,10 +93,10 @@ class _OFProductsScreenState extends State<OFProductScreen> {
                       Padding(
                         padding: EdgeInsets.all(10.0),
                         child: Text(
-                          'Crops',
+                          'Other Farm Products',
                           style: TextStyle(
                             fontSize: 20,
-                            fontFamily: 'Poppins',
+                            fontFamily: 'Poppins-Regular',
                           ),
                         ),
                       ),
@@ -106,12 +106,14 @@ class _OFProductsScreenState extends State<OFProductScreen> {
                   Expanded(
                     child: GridView.builder(
                       itemCount: items?.length ?? 0,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
                       padding: EdgeInsets.all(3),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 15,
                         mainAxisSpacing: 10,
-                        childAspectRatio: 2 / 4,
+                        childAspectRatio: 2.3 / 4,
                       ),
                       itemBuilder: (BuildContext context, int index) {
                         final Map thisItem = items![index];

@@ -30,7 +30,7 @@ class _BuyerOFProductsScreenState extends State<BuyerOFProductScreen> {
               Text(
                 'AgriPinas',
                 style: TextStyle(
-                  fontSize: 15.0,
+                  fontSize: 10.0,
                   fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
@@ -105,12 +105,14 @@ class _BuyerOFProductsScreenState extends State<BuyerOFProductScreen> {
                 Expanded(
                   child: GridView.builder(
                     itemCount: items?.length ?? 0,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
                     padding: EdgeInsets.all(3),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 15,
                       mainAxisSpacing: 10,
-                      childAspectRatio: 2 / 4,
+                      childAspectRatio: 2.3 / 4,
                     ),
                     itemBuilder: (BuildContext context, int index) {
                       final Map thisItem = items![index];

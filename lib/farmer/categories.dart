@@ -250,7 +250,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               crossAxisCount: 2,
               crossAxisSpacing: 15,
               mainAxisSpacing: 10,
-              childAspectRatio: 2 / 4,
+              childAspectRatio: 2.3 / 4,
             ),
             itemBuilder: (BuildContext context, int index) {
               final Map thisItem = items![index];

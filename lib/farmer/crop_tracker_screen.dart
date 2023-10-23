@@ -18,6 +18,7 @@ class CropTrackerScreen extends StatefulWidget {
 class _CropTrackerScreenState extends State<CropTrackerScreen>
     with SingleTickerProviderStateMixin {
   String? selectedStatus;
+  String? selectedLocation;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _searchController = TextEditingController();
   TextEditingController _cropNameController = TextEditingController();
@@ -31,7 +32,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
   TextEditingController _unitController = TextEditingController();
   TextEditingController _priceController = TextEditingController();
   TextEditingController _quantityController = TextEditingController();
-
+  DateTime _selectedDate = DateTime.now();
   String imageUrl = '';
 
   String _searchText = '';
@@ -40,8 +41,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
   final _postController = TextEditingController();
   DateTime? selectedDate;
   bool _isImageSelected = false;
-  String selectedCategory = "Fruits";
-  String selectedUnit = "Sacks";
+  String selectedCategory = "Select Category";
+  String selectedUnit = "Select Unit";
 
   Future<void> _selectDatePlanted(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -412,60 +413,200 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
         context: context,
         builder: (BuildContext ctx) {
           return Padding(
-            padding: EdgeInsets.only(
-                top: 20,
-                left: 20,
-                right: 20,
-                bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextField(
-                  controller: _cropNameController,
-                  decoration: const InputDecoration(labelText: 'Crop Name'),
-                ),
-                TextField(
-                  controller: _plantedController,
-                  decoration: const InputDecoration(labelText: 'Date Planted'),
-                ),
-                TextField(
-                  controller: _harvestController,
-                  decoration: const InputDecoration(
-                      labelText: 'Estimated Date of Harvest'),
-                ),
-                TextField(
-                  controller: _statusController,
-                  decoration: const InputDecoration(labelText: 'Status'),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                  child: const Text('Update'),
-                  onPressed: () async {
-                    final String cropName = _cropNameController.text;
-                    final String planted = _plantedController.text;
-                    final String harvest = _harvestController.text;
-                    final String status = _statusController.text;
-                    if (cropName != null) {
-                      await _cropTracker.doc(documentSnapshot!.id).update({
-                        "cropName": cropName,
-                        "planted": planted,
-                        "harvest": harvest,
-                        "status": status,
-                      });
-                      _cropNameController.text = '';
-                      _plantedController.text = '';
-                      _harvestController.text = '';
-                      _statusController.text = '';
-                      Navigator.of(context).pop();
-                    }
-                  },
-                )
-              ],
-            ),
-          );
+              padding: EdgeInsets.only(
+                  top: 20,
+                  left: 20,
+                  right: 20,
+                  bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 16.0),
+                    Center(
+                      child: Text(
+                        'Edit Crop',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 20.0,
+                        ),
+                      ),
+                    ),
+                    TextFormField(
+                      controller: _cropNameController,
+                      decoration: InputDecoration(
+                        labelText: "Crop's Name",
+                        labelStyle: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 15.5,
+                          color: Colors.black,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0xFFA9AF7E),
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Crop's name is required";
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      readOnly: true,
+                      controller: _plantedController,
+                      decoration: InputDecoration(
+                        labelText: "Date Planted",
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 13,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 208, 216, 144),
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: _selectedDate,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                        );
+
+                        if (pickedDate != null && pickedDate != _selectedDate) {
+                          setState(() {
+                            _selectedDate = pickedDate;
+                            _plantedController.text =
+                                "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
+                          });
+                        }
+                      },
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Date Planted is required";
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      readOnly: true,
+                      controller: _harvestController,
+                      decoration: InputDecoration(
+                        labelText: "Date Planted",
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 13,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 208, 216, 144),
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: _selectedDate,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                        );
+
+                        if (pickedDate != null && pickedDate != _selectedDate) {
+                          setState(() {
+                            _selectedDate = pickedDate;
+                            _plantedController.text =
+                                "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
+                          });
+                        }
+                      },
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Date Planted is required";
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _statusController,
+                      decoration: InputDecoration(
+                        labelText: "Crop's Name",
+                        labelStyle: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 15.5,
+                          color: Colors.black,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0xFFA9AF7E),
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Status is required";
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'Poppins-Regular',
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          child: const Text(
+                            'Save',
+                          ),
+                          style: TextButton.styleFrom(
+                            backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                            primary: Colors.white,
+                          ),
+                          onPressed: () async {
+                            final String cropName = _cropNameController.text;
+                            final String planted = _plantedController.text;
+                            final String harvest = _harvestController.text;
+                            final String status = _statusController.text;
+                            if (cropName != null) {
+                              await _cropTracker
+                                  .doc(documentSnapshot!.id)
+                                  .update({
+                                "cropName": cropName,
+                                "planted": planted,
+                                "harvest": harvest,
+                                "status": status,
+                              });
+                              _cropNameController.text = '';
+                              _plantedController.text = '';
+                              _harvestController.text = '';
+                              _statusController.text = '';
+                              Navigator.of(context).pop();
+                            }
+                          },
+                        )
+                      ],
+                    ),
+                  ]));
         });
   }
 
@@ -565,12 +706,69 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                             ],
                           ),
                         ),
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('Users')
+                            .where('uid', isEqualTo: currentUser?.uid)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData &&
+                              snapshot.data!.docs.isNotEmpty) {
+                            QueryDocumentSnapshot userData =
+                                snapshot.data!.docs.first;
+                            String fullName =
+                                userData.get('fullname').toString();
+                            _fullnameController.text = fullName;
+                            return TextFormField(
+                              maxLines: 1,
+                              enabled: false,
+                              controller: _fullnameController,
+                              decoration: InputDecoration(
+                                labelText: "Farmer",
+                                labelStyle: TextStyle(
+                                  fontFamily: 'Poppins-Regular',
+                                  fontSize: 15.5,
+                                  color: Colors.black,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Color(0xFFA9AF7E)),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Text("No data available");
+                          }
+                        },
+                      ),
                       DropdownButtonFormField<String>(
                         value: selectedCategory,
                         onChanged: (String? newValue) {
                           setState(() {
-                            selectedCategory = newValue!;
-                            _categoryController.text = newValue;
+                            if (newValue != "Select Category") {
+                              selectedCategory = newValue!;
+                              _categoryController.text = newValue;
+                            } else {
+                              // Optional: You can show a message or handle it in a way that makes sense for your application.
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Invalid Selection'),
+                                    content:
+                                        Text('Please select a valid category.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text('OK'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
                           });
                         },
                         decoration: InputDecoration(
@@ -587,16 +785,17 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                           ),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (value == null ||
+                              value.isEmpty ||
+                              value == "Select Category") {
                             return "Category is required";
                           }
                           return null;
                         },
                         items: <String>[
+                          "Select Category",
                           "Fruits",
                           "Vegetables",
-                          "Fertilizer",
-                          "Others",
                         ].map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -637,7 +836,6 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                               ),
                             );
                           } else {
-                            // Handle the case when there is no data or the document is empty
                             return Text("No data available");
                           }
                         },
@@ -646,8 +844,30 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                         value: selectedUnit,
                         onChanged: (String? newValue) {
                           setState(() {
-                            selectedUnit = newValue!;
-                            _unitController.text = newValue;
+                            if (newValue != "Select Unit") {
+                              selectedUnit = newValue!;
+                              _unitController.text = newValue;
+                            } else {
+                              // Optional: You can show a message or handle it in a way that makes sense for your application.
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Invalid Selection'),
+                                    content:
+                                        Text('Please select a valid unit.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text('OK'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
                           });
                         },
                         decoration: InputDecoration(
@@ -664,12 +884,15 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                           ),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (value == null ||
+                              value.isEmpty ||
+                              value == "Select Unit") {
                             return "Unit is required";
                           }
                           return null;
                         },
                         items: <String>[
+                          "Select Unit",
                           "Kilograms",
                           "Sacks",
                         ].map<DropdownMenuItem<String>>((String value) {
@@ -678,42 +901,6 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                             child: Text(value),
                           );
                         }).toList(),
-                      ),
-                      StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection('Users')
-                            .where('uid', isEqualTo: currentUser?.uid)
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData &&
-                              snapshot.data!.docs.isNotEmpty) {
-                            QueryDocumentSnapshot userData =
-                                snapshot.data!.docs.first;
-                            String fullName =
-                                userData.get('fullname').toString();
-                            _fullnameController.text = fullName;
-                            return TextFormField(
-                              maxLines: 1,
-                              enabled: false,
-                              controller: _fullnameController,
-                              decoration: InputDecoration(
-                                labelText: "Farmer",
-                                labelStyle: TextStyle(
-                                  fontFamily: 'Poppins-Regular',
-                                  fontSize: 15.5,
-                                  color: Colors.black,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Color(0xFFA9AF7E)),
-                                ),
-                              ),
-                            );
-                          } else {
-                            // Handle the case when there is no data or the document is empty
-                            return Text("No data available");
-                          }
-                        },
                       ),
                       TextFormField(
                         maxLines: 1,
@@ -765,18 +952,25 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                           return null;
                         },
                       ),
-                      TextFormField(
-                        maxLines: 2,
-                        controller: _locationController,
+                      DropdownButtonFormField<String>(
+                        value: selectedLocation,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedLocation = newValue!;
+                            _locationController.text = newValue;
+                          });
+                        },
                         decoration: InputDecoration(
-                          labelText: "Location ",
+                          labelText: "Location",
                           labelStyle: TextStyle(
                             fontFamily: 'Poppins-Regular',
                             fontSize: 15.5,
                             color: Colors.black,
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                            borderSide: BorderSide(
+                              color: Color(0xFFA9AF7E),
+                            ),
                           ),
                         ),
                         validator: (value) {
@@ -785,6 +979,36 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                           }
                           return null;
                         },
+                        items: <String>[
+                          "Brgy. Bagong Buhay",
+                          "Brgy. Bagong Sikat",
+                          "Brgy. Bagong Silang",
+                          "Brgy. Concepcion",
+                          "Brgy. Entablado",
+                          "Brgy. Maligaya",
+                          "Brgy. Natividad North",
+                          "Brgy. Natividad South",
+                          "Brgy. Palasinan",
+                          "Brgy. Polilio",
+                          "Brgy. San Antonio",
+                          "Brgy. San Carlos",
+                          "Brgy. San Fernando Norte",
+                          "Brgy. San Fernando Sur",
+                          "Brgy. San Gregorio",
+                          "Brgy. San Juan North",
+                          "Brgy. San Juan South",
+                          "Brgy. San Roque",
+                          "Brgy. San Vicente",
+                          "Brgy. Santa Ines",
+                          "Brgy. Santa Isabel",
+                          "Brgy. Santa Rita",
+                          "Brgy. Sinipit",
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
                       ),
                       TextFormField(
                         maxLines: 3,
@@ -853,6 +1077,11 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                   "image": imageUrl,
                                 });
 
+                                await _harvested
+                                    .doc(documentSnapshot?.id)
+                                    .delete();
+                                Navigator.of(context).pop();
+
                                 _cropNameController.text = '';
                                 _categoryController.text = '';
                                 _quantityController.text = '';
@@ -879,8 +1108,6 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                     ]))));
       },
     );
-    await _harvested.doc(documentSnapshot?.id).delete();
-    Navigator.of(context).pop();
   }
 
   @override
