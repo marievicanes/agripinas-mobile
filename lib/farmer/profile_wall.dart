@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:capstone/farmer/forum_activity.dart';
+import 'package:capstone/farmer/language.dart';
 import 'package:capstone/farmer/profile_marketplace.dart';
 import 'package:capstone/farmer/profile_screen.dart';
 import 'package:flutter/services.dart';
@@ -273,14 +274,66 @@ class _ProfileWallState extends State<ProfileWall> {
                       },
                     ),
                     ListTile(
+                      leading: Icon(Icons.language_outlined),
+                      title: Text(
+                        'Wika / Langauge',
+                        style: TextStyle(fontFamily: 'Poppins-Medium'),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Language(),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
                       leading: Icon(Icons.logout_outlined),
                       title: Text(
                         'Logout',
                         style: TextStyle(fontFamily: 'Poppins-Medium'),
                       ),
                       onTap: () {
-                        AuthService authService = AuthService();
-                        authService.logOutUser(context);
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(
+                                'Logout your account?',
+                                style: TextStyle(fontFamily: "Poppins"),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                        fontFamily: "Poppins-Regular",
+                                        color: Colors.black),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    AuthService authService = AuthService();
+                                    authService.logOutUser(context);
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text(
+                                    'Logout',
+                                    style: TextStyle(
+                                      fontFamily: "Poppins-Regular",
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF9DC08B).withAlpha(180),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
                     ),
                   ],

@@ -104,17 +104,21 @@ class AuthService {
   void Register(context) async {
     try {
       showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          });
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        },
+      );
+
       await auth
           .createUserWithEmailAndPassword(
-              email: email.text, password: password.text)
+        email: email.text,
+        password: password.text,
+      )
           .then((value) {
         print("User is Registered");
         firestore.collection("Users").add({
@@ -125,11 +129,96 @@ class AuthService {
           "age": age.text,
           "birthdate": birthdate.text,
           "role": role.text,
-          "uid": auth.currentUser!.uid
+          "uid": auth.currentUser!.uid,
         });
-        Navigator.push(context, MaterialPageRoute(builder: (c) => Login()));
+
+        // Close the loading dialog
+        Navigator.pop(context);
+
+        // Show success dialog
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Registration Successful"),
+              content: Text("You have successfully registered."),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (c) => Login()));
+                  },
+                  child: Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+      }).catchError((e) {
+        // Close the loading dialog
+        Navigator.pop(context);
+
+        // Check if the error is due to an existing email
+        if (e.code == 'email-already-in-use') {
+          // Show email already exists dialog
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text("Registration Failed"),
+                content: Text("Error: Email already exists."),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("OK"),
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          // Show generic error dialog
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text("Registration Failed"),
+                content: Text("Error: $e"),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("OK"),
+                  ),
+                ],
+              );
+            },
+          );
+        }
       });
     } catch (e) {
+      // Show generic error dialog
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Registration Failed"),
+            content: Text("Error: $e"),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
       print(e);
     }
   }

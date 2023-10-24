@@ -4,6 +4,7 @@ import 'package:capstone/buyer/buyer_emailverification.dart';
 import 'package:capstone/buyer/buyer_passwordverification.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
@@ -133,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Full name',
+                  "buyerProfileName".tr(),
                   style: TextStyle(
                     fontSize: 18,
                     fontFamily: 'Poppins',
@@ -196,15 +197,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Birth Date',
+                  "buyerProfileBirthDate".tr(),
                   style: TextStyle(
                     fontSize: 18,
                     fontFamily: 'Poppins',
                   ),
                 ),
-                TextField(
+                TextFormField(
                   controller: _birthdateController,
-                  decoration: const InputDecoration(labelText: ''),
+                  readOnly: true,
+                  onTap: () async {
+                    DateTime? selectedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    );
+
+                    if (selectedDate != null) {
+                      _birthdateController.text =
+                          DateFormat('MM-dd-yyyy').format(selectedDate);
+                    }
+                  },
+                  decoration: InputDecoration(
+                    labelText: '',
+                    suffixIcon: Icon(Icons.calendar_today),
+                  ),
                 ),
                 const SizedBox(
                   height: 20,
@@ -259,7 +277,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Address',
+                  "buyerProfileAdd".tr(),
                   style: TextStyle(
                     fontSize: 18,
                     fontFamily: 'Poppins',
@@ -425,7 +443,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller: _fullnameController,
                   readOnly: true,
                   decoration: InputDecoration(
-                    labelText: 'Name',
+                    labelText: "buyerProfileName".tr(),
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
                         iconSize: 18,
@@ -440,7 +458,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller: _birthdateController,
                   readOnly: true,
                   decoration: InputDecoration(
-                    labelText: 'Birth Date',
+                    labelText: "buyerProfileBirthDate".tr(),
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
                         iconSize: 18,
@@ -455,7 +473,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller: _addressController,
                   readOnly: true,
                   decoration: InputDecoration(
-                    labelText: 'Address',
+                    labelText: "buyerProfileAdd".tr(),
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
                         iconSize: 18,

@@ -50,6 +50,8 @@ dependencies:
   firebase_admin: ^0.2.0-dev.7
   localization: ^2.1.0
   intl_translation: ^0.18.2
+  easy_localization: ^3.0.3
+  uuid: ^4.1.0
 
 
 dev_dependencies:
@@ -108,6 +110,9 @@ flutter:
     - assets/email.png
     - assets/forgotpw.png
     - assets/cnpassword.png
+    - assets/translations/
+
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

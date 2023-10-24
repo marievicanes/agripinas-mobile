@@ -3,6 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: BuyerCommunityForumScreen(),
+    );
+  }
+}
 
 String formatPostDate(DateTime postDateTime) {
   DateTime now = DateTime.now();
@@ -327,7 +354,7 @@ class _BuyerCommunityForumScreenState extends State<BuyerCommunityForumScreen> {
                                 ),
                               ),
                               child: Text(
-                                'Post',
+                                "mobfarmerCommunityAddPostButton".tr(),
                                 style: TextStyle(fontFamily: 'Poppins-Regular'),
                               ),
                             ),
@@ -374,7 +401,7 @@ class _BuyerCommunityForumScreenState extends State<BuyerCommunityForumScreen> {
                             });
                           },
                           decoration: InputDecoration(
-                            hintText: "Title",
+                            hintText: "mobfarmerCommunityAddPostText".tr(),
                             labelStyle: TextStyle(
                               fontFamily: 'Poppins-Bold',
                               fontSize: 15.5,
@@ -390,7 +417,7 @@ class _BuyerCommunityForumScreenState extends State<BuyerCommunityForumScreen> {
                             fontSize: 14.0,
                           ),
                           decoration: InputDecoration(
-                            hintText: 'Something in your mind? (Optional)',
+                            hintText: "mobfarmerCommunityAddPostText2".tr(),
                           ),
                         ),
                         SizedBox(height: 16.0),
@@ -609,7 +636,7 @@ class _BuyerPostDetailScreenState extends State<BuyerPostDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Comments',
+                    "mobfarmerCommunityComment".tr(),
                     style: TextStyle(
                       fontSize: 18.0,
                       fontFamily: 'Poppins-Bold',
@@ -651,7 +678,7 @@ class _BuyerPostDetailScreenState extends State<BuyerPostDetailScreen> {
                       Expanded(
                         child: TextField(
                           decoration: InputDecoration(
-                            hintText: 'Write a comment...',
+                            hintText: "mobfarmerCommunityWriteComment".tr(),
                           ),
                           onSubmitted: (reply) {
                             print('Reply: $reply');
@@ -672,10 +699,4 @@ class _BuyerPostDetailScreenState extends State<BuyerPostDetailScreen> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: BuyerCommunityForumScreen(),
-  ));
 }

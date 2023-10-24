@@ -4,6 +4,7 @@ import 'package:capstone/farmer/email_verification.dart';
 import 'package:capstone/farmer/password_verification.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
@@ -135,7 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Full name',
+                "farmerProfileText18".tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontFamily: 'Poppins',
@@ -205,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Birth Date',
+                  "farmerProfileText14".tr(),
                   style: TextStyle(
                     fontSize: 18,
                     fontFamily: 'Poppins',
@@ -285,7 +286,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Address',
+                  "farmerProfileText25".tr(),
                   style: TextStyle(
                     fontSize: 18,
                     fontFamily: 'Poppins',
@@ -451,7 +452,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller: _fullnameController,
                   readOnly: true,
                   decoration: InputDecoration(
-                    labelText: 'Name',
+                    labelText: "farmerProfileText18".tr(),
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
                         iconSize: 18,
@@ -466,7 +467,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller: _birthdateController,
                   readOnly: true,
                   decoration: InputDecoration(
-                    labelText: 'Birth Date',
+                    labelText: "farmerProfileText22".tr(),
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
                         iconSize: 18,
@@ -481,7 +482,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller: _addressController,
                   readOnly: true,
                   decoration: InputDecoration(
-                    labelText: 'Address',
+                    labelText: "farmerProfileText25".tr(),
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
                         iconSize: 18,

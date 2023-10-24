@@ -3,6 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: ForumActivity(),
+    );
+  }
+}
 
 String formatPostDate(DateTime postDateTime) {
   DateTime now = DateTime.now();
@@ -311,7 +338,8 @@ class _ForumActivityState extends State<ForumActivity> {
                                                             ),
                                                           ),
                                                           child: Text(
-                                                            'Post',
+                                                            "mobfarmerCommunityAddPostButton"
+                                                                .tr(),
                                                             style: TextStyle(
                                                                 fontFamily:
                                                                     'Poppins-Regular'),
@@ -371,7 +399,9 @@ class _ForumActivityState extends State<ForumActivity> {
                                                       },
                                                       decoration:
                                                           InputDecoration(
-                                                        hintText: "Title",
+                                                        hintText:
+                                                            "mobfarmerCommunityAddPostText"
+                                                                .tr(),
                                                         labelStyle: TextStyle(
                                                           fontFamily:
                                                               'Poppins-Bold',
@@ -392,7 +422,8 @@ class _ForumActivityState extends State<ForumActivity> {
                                                       decoration:
                                                           InputDecoration(
                                                         hintText:
-                                                            'Something in your mind? (Optional)',
+                                                            "mobfarmerCommunityAddPostText2"
+                                                                .tr(),
                                                       ),
                                                     ),
                                                     SizedBox(height: 16.0),
@@ -408,14 +439,15 @@ class _ForumActivityState extends State<ForumActivity> {
                                           builder: (BuildContext context) {
                                             return AlertDialog(
                                               title: Text(
-                                                'Delete Post?',
+                                                "CommunityForumDeletePost".tr(),
                                                 style: TextStyle(
                                                   fontFamily: 'Poppins-Regular',
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                               content: Text(
-                                                "This can't be undone and it will be removed from your tracker.",
+                                                "CommunityForumCantBeUndonePost"
+                                                    .tr(),
                                                 style: TextStyle(
                                                   fontFamily: 'Poppins-Regular',
                                                   fontSize: 13.8,
@@ -576,7 +608,7 @@ class _ForumActivityState extends State<ForumActivity> {
                                 ),
                               ),
                               child: Text(
-                                'Post',
+                                "mobfarmerCommunityAddPostButton".tr(),
                                 style: TextStyle(fontFamily: 'Poppins-Regular'),
                               ),
                             ),
@@ -623,7 +655,7 @@ class _ForumActivityState extends State<ForumActivity> {
                             });
                           },
                           decoration: InputDecoration(
-                            hintText: "Title",
+                            hintText: "mobfarmerCommunityAddPostText".tr(),
                             labelStyle: TextStyle(
                               fontFamily: 'Poppins-Bold',
                               fontSize: 15.5,
@@ -639,7 +671,7 @@ class _ForumActivityState extends State<ForumActivity> {
                             fontSize: 14.0,
                           ),
                           decoration: InputDecoration(
-                            hintText: 'Something in your mind? (Optional)',
+                            hintText: "mobfarmerCommunityAddPostText2".tr(),
                           ),
                         ),
                         SizedBox(height: 16.0),
@@ -859,7 +891,7 @@ class _ForumActivityPostDetailState extends State<ForumActivityPostDetail> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Comments',
+                    "mobfarmerCommunityComment".tr(),
                     style: TextStyle(
                       fontSize: 18.0,
                       fontFamily: 'Poppins-Bold',
@@ -901,7 +933,7 @@ class _ForumActivityPostDetailState extends State<ForumActivityPostDetail> {
                       Expanded(
                         child: TextField(
                           decoration: InputDecoration(
-                            hintText: 'Write a comment...',
+                            hintText: "mobfarmerCommunityWriteComment".tr(),
                           ),
                           onSubmitted: (reply) {
                             print('Reply: $reply');
@@ -922,10 +954,4 @@ class _ForumActivityPostDetailState extends State<ForumActivityPostDetail> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: ForumActivity(),
-  ));
 }

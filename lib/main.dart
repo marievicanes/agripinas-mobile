@@ -3,92 +3,161 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'helper.dart';
 
-main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MaterialApp(
-    home: WelcomePage(),
-  ));
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: WelcomePage(),
+    );
+  }
 }
 
 class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Positioned(
-            left: 0,
-            top: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Image.asset(
-                  'assets/logo.png',
-                  width: 70,
-                  height: 200,
-                ),
-                Text(
-                  'AgriPinas',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 85, 113, 83),
-                  ),
-                ),
-              ],
+        body: Stack(children: [
+      Positioned(
+        left: 0,
+        top: 0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Image.asset(
+              'assets/logo.png',
+              width: 70,
+              height: 200,
             ),
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Grown with care,\ntraded with trust.',
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontFamily: 'Poppins',
-                    color: Color.fromARGB(255, 85, 113, 83),
-                  ),
-                ),
-                SizedBox(height: 30),
-                Text(
-                  '                           Let’s help farmers! \n     Direct link between farmers and consumers.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontFamily: 'Poppins-Medium',
-                    color: Colors.black54,
-                  ),
-                ),
-                SizedBox(height: 80),
-                Image.asset(
-                  'assets/welcomegrass.png',
-                  width: 900,
-                  height: 200,
-                ),
-                SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Login()),
-                    );
-                  },
-                  child: Text(
-                    'More',
-                    style: TextStyle(fontFamily: 'Poppins'),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF27AE60),
-                  ),
-                )
-              ],
+            Text(
+              'AgriPinas',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 85, 113, 83),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+      Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Grown with care,\ntraded with trust.',
+              style: TextStyle(
+                fontSize: 25,
+                fontFamily: 'Poppins',
+                color: Color.fromARGB(255, 85, 113, 83),
+              ),
+            ),
+            SizedBox(height: 30),
+            Text(
+              '                           Let’s help farmers! \n     Direct link between farmers and consumers.',
+              style: TextStyle(
+                fontSize: 14,
+                fontFamily: 'Poppins-Medium',
+                color: Colors.black54,
+              ),
+            ),
+            SizedBox(height: 80),
+            Image.asset(
+              'assets/welcomegrass.png',
+              width: 900,
+              height: 200,
+            ),
+            SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Login()),
+                );
+              },
+              child: Text(
+                "homeComponentText4".tr(),
+                style: TextStyle(fontFamily: 'Poppins'),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF27AE60),
+              ),
+            ),
+            Positioned(
+              bottom: 20,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      // Toggle between English and Filipino
+                      context.locale = context.locale == Locale('en', 'US')
+                          ? Locale('fil', 'PH')
+                          : Locale('en', 'US');
+                    },
+                    child: Text(
+                      context.locale == Locale('en', 'US')
+                          ? 'Filipino'
+                          : 'English',
+                      style: TextStyle(fontFamily: 'Poppins'),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF27AE60),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      )
+    ]));
+  }
+}
+
+void login() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+  await Firebase.initializeApp();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyLogin extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: Login(),
     );
   }
 }
@@ -161,7 +230,7 @@ class Login extends StatelessWidget {
                         padding:
                             EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                         child: Text(
-                          "Sign-in",
+                          "Signin".tr(),
                           style: TextStyle(
                             fontSize: 24,
                             fontFamily: 'Poppins',
@@ -253,7 +322,7 @@ class Login extends StatelessWidget {
                             }
                           }
                         },
-                        child: Text('Login'),
+                        child: Text("text25".tr()),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFF27AE60),
                           textStyle: TextStyle(fontFamily: 'Poppins'),
@@ -269,7 +338,7 @@ class Login extends StatelessWidget {
                           );
                         },
                         child: Text(
-                          'Forgot Password?',
+                          "ForgotPassword".tr(),
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             color: Color(0xFF9DC08B),
@@ -285,14 +354,14 @@ class Login extends StatelessWidget {
                         },
                         child: RichText(
                           text: TextSpan(
-                            text: "Don't have an account? ",
+                            text: "text26".tr(),
                             style: TextStyle(
                               fontFamily: 'Poppins-Regular',
                               color: Colors.black,
                             ),
                             children: [
                               TextSpan(
-                                text: "Register",
+                                text: "text27".tr(),
                                 style: TextStyle(
                                   fontFamily: 'Poppins-Regular',
                                   color: Color(0xFF27AE60),
@@ -318,6 +387,34 @@ class ForgotPassword extends StatelessWidget {
       return 'Please enter a valid email address.';
     }
     return null;
+  }
+
+  Future<void> _sendResetCode(BuildContext context) async {
+    final email = _emailController.text.trim();
+
+    if (_formKey.currentState?.validate() ?? false) {
+      // Add your logic to send a password reset email here
+      // Example: await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+
+      // Display a success message or navigate to a success screen
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Success'),
+            content: Text('Password reset email sent successfully.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -408,12 +505,7 @@ class ForgotPassword extends StatelessWidget {
                 Container(
                   width: 200,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => VerifyEmail()));
-                    },
+                    onPressed: () => _sendResetCode(context),
                     child: Text(
                       'Send Code',
                       style: TextStyle(fontFamily: 'Poppins'),
@@ -779,17 +871,47 @@ class NewPassword extends StatelessWidget {
   }
 }
 
+void register() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(),
+    ),
+  );
+}
+
+class RegisterTrans extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: Register(),
+    );
+  }
+}
+
 class Register extends StatefulWidget {
   @override
   _RegisterState createState() => _RegisterState();
 }
 
 bool _isChecked = false;
+String? _contactNumber;
 
 class _RegisterState extends State<Register> {
   final AuthService authService = AuthService();
   final _formKey = GlobalKey<FormState>();
   DateTime? _selectedDate;
+  String _password = '';
+  String _confirmPassword = '';
+  bool _passwordsMatch = true;
 
   bool _isPasswordValid(String password) {
     return password.length >= 8 &&
@@ -802,7 +924,7 @@ class _RegisterState extends State<Register> {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(1999),
+      firstDate: DateTime(1955),
       lastDate: DateTime.now(),
     );
 
@@ -856,11 +978,11 @@ class _RegisterState extends State<Register> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                       child: Text(
-                        "Let's get started!",
+                        "Started".tr(),
                         style: TextStyle(
                           fontSize: 28,
                           fontFamily: 'Poppins',
-                          color: Color.fromARGB(255, 85, 113, 83),
+                          color: Color.fromARGB(255, 113, 121, 112),
                         ),
                       ),
                     ),
@@ -871,7 +993,7 @@ class _RegisterState extends State<Register> {
                           Icons.person,
                           color: Color(0xFF9DC08B),
                         ),
-                        labelText: "Full Name",
+                        labelText: "registerComponentText2".tr(),
                         labelStyle: TextStyle(
                           color: Colors.black,
                           fontFamily: 'Poppins-Regular',
@@ -894,7 +1016,7 @@ class _RegisterState extends State<Register> {
                     SizedBox(
                       height: 15,
                     ),
-                    TextField(
+                    TextFormField(
                       controller: authService.contact,
                       decoration: InputDecoration(
                         prefixIcon: Icon(
@@ -914,6 +1036,17 @@ class _RegisterState extends State<Register> {
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
+                      onChanged: (value) {},
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      keyboardType: TextInputType.phone,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your contact number';
+                        } else if (value.length != 11) {
+                          return 'Contact number must be exactly 11 digits';
+                        }
+                        return null;
+                      },
                     ),
                     SizedBox(
                       height: 15,
@@ -925,7 +1058,7 @@ class _RegisterState extends State<Register> {
                           Icons.house,
                           color: Color(0xFF9DC08B),
                         ),
-                        labelText: "Address",
+                        labelText: "registerComponentText4".tr(),
                         labelStyle: TextStyle(
                           color: Colors.black,
                           fontFamily: 'Poppins-Regular',
@@ -959,7 +1092,7 @@ class _RegisterState extends State<Register> {
                           Icons.calendar_today,
                           color: Color(0xFF9DC08B),
                         ),
-                        labelText: "Birth Date",
+                        labelText: "farmerProfileText14".tr(),
                         labelStyle: TextStyle(
                           color: Colors.black,
                           fontFamily: 'Poppins-Regular',
@@ -989,7 +1122,7 @@ class _RegisterState extends State<Register> {
                           Icons.hourglass_bottom_outlined,
                           color: Color(0xFF9DC08B),
                         ),
-                        labelText: "Age",
+                        labelText: "text32".tr(),
                         labelStyle: TextStyle(
                           color: Colors.black,
                           fontFamily: 'Poppins-Regular',
@@ -1057,14 +1190,14 @@ class _RegisterState extends State<Register> {
                         DropdownMenuItem(
                           value: "Farmer",
                           child: Text(
-                            "Farmer",
+                            "registerRoleFarmer".tr(),
                             style: TextStyle(fontFamily: 'Poppins-Regular'),
                           ),
                         ),
                         DropdownMenuItem(
                           value: "Buyer",
                           child: Text(
-                            "Buyer",
+                            "registerRoleBuyer".tr(),
                             style: TextStyle(fontFamily: 'Poppins-Regular'),
                           ),
                         ),
@@ -1113,7 +1246,7 @@ class _RegisterState extends State<Register> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'Password must be at least 8 characters long and contain a combination of letters, numbers, and symbols',
+                      "registerPasswordCharacters".tr(),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey,
@@ -1129,7 +1262,7 @@ class _RegisterState extends State<Register> {
                           Icons.lock,
                           color: Color(0xFF9DC08B),
                         ),
-                        labelText: "Confirm Password",
+                        labelText: "registerComponentText9".tr(),
                         labelStyle: TextStyle(
                           color: Colors.black,
                           fontFamily: 'Poppins-Regular',
@@ -1145,7 +1278,7 @@ class _RegisterState extends State<Register> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please confirm your password';
-                        } else if (value != authService.password) {
+                        } else if (value != authService.password.text) {
                           return 'Passwords do not match';
                         }
                         return null;
@@ -1155,7 +1288,7 @@ class _RegisterState extends State<Register> {
                       height: 30,
                     ),
                     Text(
-                      "By clicking Register, you are agreeing to the",
+                      "registerClickingRegister".tr(),
                       style: TextStyle(
                         fontSize: 13,
                         fontFamily: 'Poppins',
@@ -1170,7 +1303,30 @@ class _RegisterState extends State<Register> {
                               builder:
                                   (BuildContext context, StateSetter setState) {
                                 return AlertDialog(
-                                  title: Text("Terms and Conditions"),
+                                  title: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Terms and Condition",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontFamily: 'Poppins',
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Icon(
+                                          Icons.close,
+                                          color:
+                                              Color.fromARGB(255, 85, 113, 83),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                   content: SingleChildScrollView(
                                     child: Column(
                                       crossAxisAlignment:
@@ -1179,92 +1335,101 @@ class _RegisterState extends State<Register> {
                                       children: [
                                         Text(
                                           "Welcome to the AgriPinas! These terms and conditions outline the rules and regulations for the use of our mobile application.",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Regular',
+                                            color: Colors.black,
+                                          ),
                                         ),
-                                        SizedBox(height: 10),
+                                        SizedBox(height: 5),
                                         Text(
                                           "By accessing this app, we assume you accept these terms and conditions. Do not continue to use the AgriApp if you do not agree to all of the terms and conditions stated on this page.",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Regular',
+                                            color: Colors.black,
+                                          ),
                                         ),
-                                        SizedBox(height: 10),
+                                        SizedBox(height: 5),
                                         Text(
                                           "The following terminology applies to these Terms and Conditions, Privacy Statement, and Disclaimer Notice and all Agreements: 'Client', 'You' and 'Your' refer to you, the person log in to this app and compliant to the Company’s terms and conditions. 'The Company', 'Ourselves', 'We', 'Our' and 'Us', refer to our Company. 'Party', 'Parties', or 'Us', refers to both the Client and ourselves.",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Regular',
+                                            color: Colors.black,
+                                          ),
                                         ),
                                         SizedBox(height: 10),
                                         Text(
                                           "1. INTELLECTUAL PROPERTY RIGHTS",
                                           style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17,
+                                            fontFamily: 'Poppins',
+                                            color: Colors.black,
                                           ),
                                         ),
                                         Text(
                                           "Unless otherwise indicated, we retain all right, title, and interest in and to the Software and the Website, including without limitation all graphics, user interfaces, databases, functionality, software, website designs, audio, video, text, photographs, graphics, logos, and trademarks or service marks reproduced through the System. These Terms of Use do not grant you any intellectual property license or rights in or to the Software and the Website or any of its components, except to the limited extent that these Terms of Use specifically sets forth your license rights to it. You recognize that the Software and the Website and their components are protected by copyright and other laws.",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Regular',
+                                            color: Colors.black,
+                                          ),
                                         ),
                                         SizedBox(height: 10),
                                         Text(
                                           "2. USER REPRESENTATIONS",
                                           style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17,
+                                            fontFamily: 'Poppins',
+                                            color: Colors.black,
                                           ),
                                         ),
                                         Text(
                                           "By using the AgriPinas, you represent and warrant that: (1) all registration information you submit will be true, accurate, current, and complete; (2) you will maintain the accuracy of such information and promptly update such registration information as necessary; (3) you have the legal capacity and you agree to comply with these Terms of Use; (4) you are not a minor in the jurisdiction in which you reside; (5) you will not access the AgriPinas through automated or non-human means, whether through a bot, script or otherwise; (6) you will not use the Services for any illegal or unauthorized purpose; and (7) your use of the AgriPinas will not violate any applicable law or regulation.",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Regular',
+                                            color: Colors.black,
+                                          ),
                                         ),
                                         SizedBox(height: 10),
                                         Text(
                                           "3. USER REGISTRATION",
                                           style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17,
+                                            fontFamily: 'Poppins',
+                                            color: Colors.black,
                                           ),
                                         ),
                                         Text(
                                           "You may be required to register with the Services. You agree to keep your password confidential and will be responsible for all use of your account and password. We reserve the right to remove, reclaim, or change a username you select if we determine, in our sole discretion, that such username is inappropriate, obscene, or otherwise objectionable.",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Regular',
+                                            color: Colors.black,
+                                          ),
                                         ),
                                         SizedBox(height: 10),
                                         Text(
                                           "4. PRIVACY NOTICE",
                                           style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17,
+                                            fontFamily: 'Poppins',
+                                            color: Colors.black,
                                           ),
                                         ),
                                         Text(
                                           "This Privacy Notice applies to personal information we collect and process on all AgriPinas forms, website and online services. Personal information refers to any information, whether recorded in material form or not, that will directly ascertain your identity. This includes your address and contact information. Sensitive personal information is personal information that includes your age, date of birth, email, password, and name.",
-                                        ),
-                                        SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            Checkbox(
-                                              value: _isChecked,
-                                              onChanged: (bool? value) {
-                                                setState(() {
-                                                  _isChecked = value ?? false;
-                                                });
-                                              },
-                                            ),
-                                            Flexible(
-                                              child: Text(
-                                                "I agree to the Terms and Conditions",
-                                              ),
-                                            ),
-                                          ],
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Regular',
+                                            color: Colors.black,
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text("Decline"),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        if (_isChecked) {
-                                          Navigator.of(context).pop();
-                                        } else {}
-                                      },
-                                      child: Text("Accept"),
-                                    ),
-                                  ],
                                 );
                               },
                             );
@@ -1272,7 +1437,7 @@ class _RegisterState extends State<Register> {
                         );
                       },
                       child: Text(
-                        "Terms and Conditions",
+                        "registerTermsCondi".tr(),
                         style: TextStyle(
                           fontSize: 13,
                           fontFamily: 'Poppins',
@@ -1280,40 +1445,24 @@ class _RegisterState extends State<Register> {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      height: 10,
+                    ),
                     ElevatedButton(
                       onPressed: () {
                         final form = _formKey.currentState;
                         if (form!.validate()) {
                           form.save();
                         }
-
-                        authService.Register(context);
                       },
                       child: Text(
-                        'Register',
+                        "rehisteroComponentText1".tr(),
                         style: TextStyle(fontFamily: 'Poppins'),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF27AE60),
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Login()));
-                      },
-                      child: Text("Already have an account? Login",
-                          style: TextStyle(
-                              color: Color.fromARGB(
-                            255,
-                            85,
-                            113,
-                            83,
-                          ))),
-                    )
                   ],
                 ),
               ),

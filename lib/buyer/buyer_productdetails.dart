@@ -1,5 +1,38 @@
 import 'package:capstone/buyer/checkout.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(
+        productData: {},
+      ),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  final Map productData;
+
+  MyApp({required this.productData});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: ProductDetails(this.productData),
+    );
+  }
+}
 
 class ProductDetails extends StatelessWidget {
   final TextEditingController _searchController = TextEditingController();
@@ -70,16 +103,17 @@ class ProductDetails extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              'Price: ',
+                              "buyerPagePrice".tr(),
                               style: TextStyle(
                                 fontSize: 17,
-                                fontWeight: FontWeight.bold,
+                                fontFamily: "Poppins",
                               ),
                             ),
                             Text(
                               '${productData['price']}',
                               style: TextStyle(
                                 fontSize: 17,
+                                fontFamily: "Poppins-Regular",
                               ),
                             ),
                           ],
@@ -88,52 +122,17 @@ class ProductDetails extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              'Quantity: ',
+                              "buyerPageUserRole2".tr(),
                               style: TextStyle(
                                 fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              '${productData['quantity']}',
-                              style: TextStyle(
-                                fontSize: 17,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 6),
-                        Row(
-                          children: [
-                            Text(
-                              'Unit: ',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              '${productData['unit']}',
-                              style: TextStyle(
-                                fontSize: 17,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 6),
-                        Row(
-                          children: [
-                            Text(
-                              'Farmer: ',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
+                                fontFamily: "Poppins",
                               ),
                             ),
                             Text(
                               '${productData['farmer']}',
                               style: TextStyle(
                                 fontSize: 17,
+                                fontFamily: "Poppins-Regular",
                               ),
                             ),
                           ],
@@ -142,16 +141,55 @@ class ProductDetails extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              'Location: ',
+                              "buyerPageLocation".tr(),
                               style: TextStyle(
                                 fontSize: 17,
-                                fontWeight: FontWeight.bold,
+                                fontFamily: "Poppins",
                               ),
                             ),
                             Text(
                               '${productData['location']}',
                               style: TextStyle(
                                 fontSize: 17,
+                                fontFamily: "Poppins-Regular",
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 6),
+                        Row(
+                          children: [
+                            Text(
+                              "farmerPageQuantity".tr(),
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontFamily: "Poppins",
+                              ),
+                            ),
+                            Text(
+                              '${productData['quantity']}',
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontFamily: "Poppins-Regular",
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 6),
+                        Row(
+                          children: [
+                            Text(
+                              "farmerPageUnit".tr(),
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontFamily: "Poppins",
+                              ),
+                            ),
+                            Text(
+                              '${productData['unit']}',
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontFamily: "Poppins-Regular",
                               ),
                             ),
                           ],
@@ -166,7 +204,7 @@ class ProductDetails extends StatelessWidget {
                                     'Description:',
                                     style: TextStyle(
                                       fontSize: 17,
-                                      fontWeight: FontWeight.bold,
+                                      fontFamily: "Poppins",
                                     ),
                                   ),
                                   SizedBox(height: 6),
@@ -174,6 +212,7 @@ class ProductDetails extends StatelessWidget {
                                     '${productData['description']}',
                                     style: TextStyle(
                                       fontSize: 17,
+                                      fontFamily: "Poppins-Regular",
                                     ),
                                   ),
                                   SizedBox(height: 10),

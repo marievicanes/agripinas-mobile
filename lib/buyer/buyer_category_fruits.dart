@@ -1,6 +1,33 @@
 import 'package:capstone/buyer/buyer_productdetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: BuyerFruitsScreen(),
+    );
+  }
+}
 
 class BuyerFruitsScreen extends StatefulWidget {
   @override
@@ -30,7 +57,7 @@ class _BuyerFruitsScreenState extends State<BuyerFruitsScreen> {
               Text(
                 'AgriPinas',
                 style: TextStyle(
-                  fontSize: 17.0,
+                  fontSize: 18.0,
                   fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
@@ -39,19 +66,27 @@ class _BuyerFruitsScreenState extends State<BuyerFruitsScreen> {
           ),
           actions: [
             Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(5.0),
               child: Container(
-                width: 190.0,
+                width: 175.0,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25.0),
                 ),
                 child: TextField(
                   controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      _searchText = value;
+                    });
+                  },
                   decoration: InputDecoration(
                     hintText: 'Search',
                     prefixIcon: Icon(Icons.search),
                     border: InputBorder.none,
+                    hintStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                    ),
                   ),
                 ),
               ),
@@ -59,7 +94,8 @@ class _BuyerFruitsScreenState extends State<BuyerFruitsScreen> {
           ],
         ),
         body: StreamBuilder(
-            stream: _marketplace.snapshots(),
+            stream:
+                _marketplace.where('category', isEqualTo: 'Fruits').snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
               if (streamSnapshot.hasError) {
                 return Center(
@@ -91,10 +127,10 @@ class _BuyerFruitsScreenState extends State<BuyerFruitsScreen> {
                     Padding(
                       padding: EdgeInsets.all(10.0),
                       child: Text(
-                        'Fruits',
+                        "buyerPageCategoryText1".tr(),
                         style: TextStyle(
                           fontSize: 20,
-                          fontFamily: 'Poppins-Regular',
+                          fontFamily: 'Poppins',
                         ),
                       ),
                     ),
@@ -104,11 +140,14 @@ class _BuyerFruitsScreenState extends State<BuyerFruitsScreen> {
                 Expanded(
                   child: GridView.builder(
                     itemCount: items?.length ?? 0,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.all(3),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      crossAxisSpacing: 12,
+                      crossAxisSpacing: 15,
                       mainAxisSpacing: 10,
-                      childAspectRatio: 3 / 2.7,
+                      childAspectRatio: 2.3 / 4,
                     ),
                     itemBuilder: (BuildContext context, int index) {
                       final Map thisItem = items![index];
@@ -123,93 +162,71 @@ class _BuyerFruitsScreenState extends State<BuyerFruitsScreen> {
                             );
                           },
                           child: Card(
-                              child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Center(
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: AspectRatio(
-                                      aspectRatio: 68 /
-                                          20, // You can adjust the aspect ratio as needed
-                                      child: Image.network(
-                                        '${thisItem['image']}',
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        height: 500,
+                              child: Stack(children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Center(
+                                    child: Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.network(
+                                          '${thisItem['image']}',
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: 250,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(8),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Center(
-                                      child: Text(
-                                        '${thisItem['cropName']}',
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          fontFamily: 'Poppins',
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Center(
+                                        child: Text(
+                                          '${thisItem['cropName']}',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontFamily: 'Poppins',
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(height: 4),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'Price: ',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins',
-                                          ),
-                                        ),
-                                        Text(
-                                          '${thisItem['price']}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 4),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'Farmer: ',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins',
-                                          ),
-                                        ),
-                                        Text(
-                                          '${thisItem['farmer']}',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontFamily: 'Poppins-Regular',
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(1.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                      SizedBox(height: 4),
+                                      Row(
                                         children: [
                                           Text(
-                                            'Location:',
+                                            "buyerPagePrice".tr(),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
                                             ),
                                           ),
-                                          SizedBox(height: 4),
                                           Text(
-                                            '${thisItem['farmer']}',
+                                            '${thisItem['price']}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "buyerPageUserRole2".tr(),
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: 'Poppins',
+                                            ),
+                                          ),
+                                          Text(
+                                            '${thisItem['fullname']}',
                                             style: TextStyle(
                                               fontSize: 13,
                                               fontFamily: 'Poppins-Regular',
@@ -217,12 +234,36 @@ class _BuyerFruitsScreenState extends State<BuyerFruitsScreen> {
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  ],
+                                      Padding(
+                                        padding: const EdgeInsets.all(1.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "buyerPageLocation".tr(),
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontFamily: 'Poppins',
+                                              ),
+                                            ),
+                                            SizedBox(height: 4),
+                                            Text(
+                                              '${thisItem['location']}',
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                fontFamily: 'Poppins-Regular',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          )));
+                              ],
+                            )
+                          ])));
                     },
                   ),
                 )
