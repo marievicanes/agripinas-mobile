@@ -1,4 +1,7 @@
 import 'package:capstone/buyer/transactions_screen.dart';
+import 'package:capstone/helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -15,7 +18,28 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class CheckoutScreen extends StatelessWidget {
+GlobalKey<AnimatedListState> listKey = GlobalKey();
+
+class CheckoutScreen extends StatefulWidget {
+  @override
+  _CheckoutScreenState createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends State<CheckoutScreen> {
+  final CollectionReference _user =
+      FirebaseFirestore.instance.collection('Users');
+  final CollectionReference _marketplace =
+      FirebaseFirestore.instance.collection('Marketplace');
+  final CollectionReference _userCarts =
+      FirebaseFirestore.instance.collection('UserCarts');
+
+  final currentUser = FirebaseAuth.instance;
+  AuthService authService = AuthService();
+  TextEditingController _fullnameController = TextEditingController();
+
+  double totalPayment = 0.0;
+  String selectedPaymentMethod = 'Select Payment';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,87 +66,144 @@ class CheckoutScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.location_on,
-                      size: 18,
-                      color: Color(0xFFA9AF7E),
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('Marketplace')
+                  .where('uid')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                  QueryDocumentSnapshot userData = snapshot.data!.docs.first;
+                  String fullName = userData.get('fullname').toString();
+
+                  return Text(
+                    _fullnameController.text,
+                    style: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                      fontSize: 15.5,
+                      color: Colors.black,
                     ),
-                    SizedBox(width: 8.0),
-                    Text(
-                      'Delivery Address',
-                      style: TextStyle(fontSize: 18, fontFamily: 'Poppins'),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(
-                          color: Color(0xFFA9AF7E),
-                        ),
-                      ),
-                      child: Text(
-                        'Default',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'Poppins-Regular',
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 8.0),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Color(0xFF9DC08B)),
-                      ),
-                      child: Text(
-                        'Change',
-                        style: TextStyle(
-                          fontFamily: 'Poppins-Regular',
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Text(
-              'Marievic Anes | 09123445598',
-              style: TextStyle(fontFamily: 'Poppins-Regular', fontSize: 13),
-            ),
-            Text(
-              '551 F Jhocson St.',
-              style: TextStyle(fontFamily: 'Poppins-Regular', fontSize: 13),
-            ),
-            Text(
-              'Sampaloc, Manila, 1008 Metro Manila',
-              style: TextStyle(fontFamily: 'Poppins-Regular', fontSize: 13),
-            ),
-            SizedBox(height: 20.0),
-            Divider(),
-            Text(
-              'Seller: Marievic Anes',
-              style: TextStyle(fontFamily: 'Poppins', fontSize: 18),
+                  );
+                } else {
+                  return Text("No data available");
+                }
+              },
             ),
             Card(
               elevation: 3.0,
               margin: EdgeInsets.symmetric(vertical: 8.0),
               child: Column(
                 children: [
-                  _buildCartItem('Pechay', 200.0, 2, 'assets/pechay.png',
-                      'Poppins-Regular'),
-                  _buildCartItem('Tomato', 150.0, 1, 'assets/tomato.png',
-                      'Poppins-Regular'),
+                  StreamBuilder<QuerySnapshot>(
+                    stream: _userCarts
+                        .where('uid', isEqualTo: currentUser.currentUser!.uid)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      }
+
+                      if (!snapshot.hasData) {
+                        return Text("No items in your cart.");
+                      }
+
+                      // Initialize totalCost to 0.0 here
+                      double totalCost = 0.0;
+
+                      // Build a list of product items in the cart and calculate the total cost.
+                      List<Widget> cartItems = snapshot.data!.docs
+                          .where((cartItem) => cartItem['isChecked'] == true)
+                          .map((cartItem) {
+                        double price =
+                            double.tryParse(cartItem['price'] ?? '0.0') ?? 0.0;
+                        int itemQuantity =
+                            int.tryParse(cartItem['boughtQuantity'] ?? '0') ??
+                                0;
+
+                        // Calculate the total cost for this item and add it to the totalCost.
+                        totalCost += price * itemQuantity;
+
+                        return _buildCartItem(
+                          cartItem['cropName'],
+                          price,
+                          itemQuantity,
+                          cartItem['image'],
+                          'Poppins-Regular',
+                        );
+                      }).toList();
+
+                      // totalCost now holds the correct total cost, update totalPayment.
+                      totalPayment = totalCost;
+
+                      return Column(
+                        children: cartItems,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 16.0),
+            Divider(),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Payment Option:',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                  DropdownButton<String>(
+                    value: selectedPaymentMethod,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedPaymentMethod = newValue!;
+                        if (newValue != "Select Payment") {
+                          selectedPaymentMethod = newValue!;
+                        } else {
+                          // Optional: You can show a message or handle it in a way that makes sense for your application.
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Invalid Selection'),
+                                content: Text(
+                                    'Please select a valid payment option.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      });
+                    },
+                    items: <String>[
+                      'Select Payment',
+                      'Cash on Pickup',
+                      'Sending proof of payment'
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: TextStyle(
+                            fontFamily: 'Poppins-Regular',
+                            fontSize: 13.5,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ],
               ),
             ),
@@ -133,15 +214,11 @@ class CheckoutScreen extends StatelessWidget {
               style: TextStyle(fontFamily: 'Poppins', fontSize: 18),
             ),
             _buildPaymentInfo(
-                'Payment Method:', 'Cash on Delivery', 'Poppins-Regular'),
-            _buildPaymentInfo('Total Payment:', '₱350.00', 'Poppins-Regular'),
+                'Payment Method:', '$selectedPaymentMethod', 'Poppins-Regular'),
+            _buildPaymentInfo('Total Payment:',
+                '₱${totalPayment.toStringAsFixed(2)}', 'Poppins-Regular'),
             SizedBox(height: 16.0),
             Divider(),
-            Text(
-              'Total: ₱350.00',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).push(
@@ -175,7 +252,7 @@ class CheckoutScreen extends StatelessWidget {
   Widget _buildCartItem(String name, double price, int quantity,
       String productImageAsset, String fontFamily) {
     return ListTile(
-      leading: Image.asset(
+      leading: Image.network(
         productImageAsset,
         width: 60,
         height: 60,

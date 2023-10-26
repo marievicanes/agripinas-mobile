@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../main.dart';
 import 'about_us.dart';
@@ -288,12 +292,90 @@ class _TransactionBuyerState extends State<TransactionBuyer>
     super.dispose();
   }
 
+  String imageUrl = '';
+
+  XFile? file;
+  final ImagePicker _picker = ImagePicker();
+
+  Future imgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future UimgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future UimgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future imgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future uploadFile() async {
+    if (file == null) return;
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+
+    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+
+    try {
+      await referenceImageToUpload.putFile(File(file!.path));
+      imageUrl = await referenceImageToUpload.getDownloadURL();
+    } catch (error) {}
+  }
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final currentUser = FirebaseAuth.instance;
   AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
+      key: _formKey,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xFFA9AF7E),
@@ -331,9 +413,16 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                     UserAccountsDrawerHeader(
                       accountName: Text(data['fullname']),
                       accountEmail: Text(data['email']),
-                      currentAccountPicture: CircleAvatar(
-                        radius: 10.0,
-                        backgroundImage: AssetImage('assets/user.png'),
+                      currentAccountPicture: GestureDetector(
+                        onTap: () {
+                          _showPicker(context);
+                        },
+                        child: CircleAvatar(
+                          radius: 10.0,
+                          backgroundImage: imageUrl.isNotEmpty
+                              ? NetworkImage(imageUrl)
+                              : NetworkImage(data['image']),
+                        ),
                       ),
                       decoration: BoxDecoration(
                         color: Color(0xFFA9AF7E),
@@ -1009,4 +1098,97 @@ class _TransactionBuyerState extends State<TransactionBuyer>
   }
 
   void _saveInformation() {}
+
+  void _UshowPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Gallery'),
+                      onTap: () {
+                        UimgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      UimgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Container(
+            child: new Wrap(
+              children: <Widget>[
+                new ListTile(
+                  leading: new Icon(Icons.photo_library),
+                  title: new Text('Gallery'),
+                  onTap: () {
+                    imgFromGallery().then((imageUrl) {
+                      if (imageUrl != null) {
+                        setState(() {
+                          // Update the imageUrl in Firestore
+                          updateProfileImageUrl(imageUrl);
+
+                          // Set the imageUrl for displaying
+                          this.imageUrl = imageUrl;
+                        });
+                      }
+                      Navigator.of(context).pop();
+                    });
+                  },
+                ),
+                new ListTile(
+                  leading: new Icon(Icons.photo_camera),
+                  title: new Text('Camera'),
+                  onTap: () {
+                    imgFromCamera().then((imageUrl) {
+                      if (imageUrl != null) {
+                        setState(() {
+                          // Update the imageUrl in Firestore
+                          updateProfileImageUrl(imageUrl);
+
+                          // Set the imageUrl for displaying
+                          this.imageUrl = imageUrl;
+                        });
+                      }
+                      Navigator.of(context).pop();
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> updateProfileImageUrl(String imageUrl) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(currentUser.currentUser!.uid) // Use the user's UID
+          .update({'image': imageUrl});
+    } catch (error) {
+      print('Error updating profile image: $error');
+    }
+  }
 }

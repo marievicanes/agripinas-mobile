@@ -9,6 +9,7 @@ import 'package:capstone/farmer/transactions_screen.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -44,39 +45,106 @@ class _ProfileWallState extends State<ProfileWall> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isButtonVisible = true;
   final _postController = TextEditingController();
-  File? _selectedImage;
   String selectedCategory = "Fruits";
   String selectedUnit = "Sacks";
-  bool _isImageSelected = false;
 
-  Future<void> _selectImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+  String imageUrl = '';
 
-    if (pickedFile != null) {
-      setState(() {
-        _selectedImage = File(pickedFile.path);
-      });
-    }
+  XFile? file;
+  final ImagePicker _picker = ImagePicker();
+
+  Future imgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile().then((imageUrl) {
+          if (imageUrl != null) {
+            setState(() {
+              // Update the imageUrl in Firestore
+              updateProfileImageUrl(imageUrl);
+
+              // Set the imageUrl for displaying
+              this.imageUrl = imageUrl;
+            });
+          }
+        });
+      } else {
+        print('No image selected.');
+      }
+    });
   }
 
-  void _pickImageFromGallery() async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      setState(() {
-        _selectedImage = File(pickedImage.path);
-      });
-    }
+  Future UimgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
   }
 
-  void _captureImageFromCamera() async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.camera);
-    if (pickedImage != null) {
-      setState(() {
-        _selectedImage = File(pickedImage.path);
-      });
+  Future UimgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future imgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile().then((imageUrl) {
+          if (imageUrl != null) {
+            setState(() {
+              // Update the imageUrl in Firestore
+              updateProfileImageUrl(imageUrl);
+
+              // Set the imageUrl for displaying
+              this.imageUrl = imageUrl;
+            });
+          }
+        });
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future<String?> uploadFile() async {
+    if (file == null) return null;
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+
+    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+
+    try {
+      await referenceImageToUpload.putFile(File(file!.path));
+      String imageUrl = await referenceImageToUpload.getDownloadURL();
+      return imageUrl;
+    } catch (error) {
+      print('Error uploading image: $error');
+      return null;
     }
   }
 
@@ -97,45 +165,6 @@ class _ProfileWallState extends State<ProfileWall> {
       'title': 'Posted Products',
       'icon': Icons.store_mall_directory_outlined,
     },
-  ];
-
-  final List<MarketplaceItem> gridViewitems = [
-    MarketplaceItem(
-      title: 'Tomato',
-      price: '₱400',
-      farmer: 'Arriane Gatpo',
-      location: 'Brgy. Bagong Buhay',
-      description:
-          'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
-      imageUrl: 'assets/tomato.png',
-    ),
-    MarketplaceItem(
-      title: 'Corn',
-      price: '₱4500',
-      farmer: 'Marievic Añes',
-      location: 'Brgy. Bagong Silang',
-      description:
-          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
-      imageUrl: 'assets/corn.png',
-    ),
-    MarketplaceItem(
-      title: 'Calamansi',
-      price: '₱400',
-      farmer: 'Jenkins Mesina',
-      location: 'Brgy. Concepcion',
-      description:
-          'Calamansi tastes sour with a hint of sweetness, like a mix between a lime and a mandarin',
-      imageUrl: 'assets/calamansi.png',
-    ),
-    MarketplaceItem(
-      title: 'Corn',
-      price: '₱4500',
-      farmer: 'Marievic Añes',
-      location: 'Brgy. Bagong Silang',
-      description:
-          'Corn is a tall annual cereal grass that is widely grown for its large elongated ears.',
-      imageUrl: 'assets/corn.png',
-    ),
   ];
 
   final currentUser = FirebaseAuth.instance;
@@ -179,9 +208,16 @@ class _ProfileWallState extends State<ProfileWall> {
                     UserAccountsDrawerHeader(
                       accountName: Text(data['fullname']),
                       accountEmail: Text(data['email']),
-                      currentAccountPicture: CircleAvatar(
-                        radius: 10.0,
-                        backgroundImage: AssetImage('assets/user.png'),
+                      currentAccountPicture: GestureDetector(
+                        onTap: () {
+                          _showPicker(context);
+                        },
+                        child: CircleAvatar(
+                          radius: 10.0,
+                          backgroundImage: imageUrl.isNotEmpty
+                              ? NetworkImage(imageUrl)
+                              : NetworkImage(data['image']),
+                        ),
                       ),
                       decoration: BoxDecoration(
                         color: Color(0xFFA9AF7E),
@@ -350,5 +386,101 @@ class _ProfileWallState extends State<ProfileWall> {
             ),
           ),
         ])));
+  }
+
+  void _UshowPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Gallery'),
+                      onTap: () {
+                        UimgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      UimgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Container(
+            child: new Wrap(
+              children: <Widget>[
+                new ListTile(
+                  leading: new Icon(Icons.photo_library),
+                  title: new Text('Gallery'),
+                  onTap: () {
+                    imgFromGallery().then((imageUrl) {
+                      if (imageUrl != null) {
+                        setState(() {
+                          // Update the imageUrl in Firestore
+                          updateProfileImageUrl(imageUrl);
+
+                          // Set the imageUrl for displaying
+                          this.imageUrl = imageUrl;
+                        });
+                      }
+                      Navigator.of(context).pop();
+                    });
+                  },
+                ),
+                new ListTile(
+                  leading: new Icon(Icons.photo_camera),
+                  title: new Text('Camera'),
+                  onTap: () {
+                    imgFromCamera().then((imageUrl) {
+                      if (imageUrl != null) {
+                        setState(() {
+                          // Update the imageUrl in Firestore
+                          updateProfileImageUrl(imageUrl);
+
+                          // Set the imageUrl for displaying
+                          this.imageUrl = imageUrl;
+                        });
+                      }
+                      Navigator.of(context).pop();
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> updateProfileImageUrl(String imageUrl) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(currentUser.currentUser!.uid) // Use the user's UID
+          .update({'image': imageUrl});
+      setState(() {
+        this.imageUrl = imageUrl;
+      });
+    } catch (error) {
+      print('Error updating profile image: $error');
+    }
   }
 }

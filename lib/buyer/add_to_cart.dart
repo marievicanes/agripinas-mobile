@@ -1,3 +1,4 @@
+import 'package:capstone/buyer/checkout.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,8 @@ void main() {
   );
 }
 
+GlobalKey<AnimatedListState> listKey = GlobalKey();
+
 class AddToCart extends StatefulWidget {
   @override
   _AddToCartState createState() => _AddToCartState();
@@ -22,12 +25,16 @@ class _AddToCartState extends State<AddToCart>
   String _searchText = '';
   String? selectedStatus;
   late TabController _tabController;
+  int totalBoughtQuantity = 0;
+  int totalItems = 0;
+  double totalAmount = 0.0;
 
   final CollectionReference _userCarts =
       FirebaseFirestore.instance.collection('UserCarts');
   final currentUser = FirebaseAuth.instance.currentUser;
 
-  List<bool> isCheckedList = [];
+  Set<String> selectedItems = Set<String>();
+  List<Map>? items;
 
   @override
   void initState() {
@@ -47,15 +54,131 @@ class _AddToCartState extends State<AddToCart>
     });
   }
 
-  Future<void> _updateBoughtQuantity(String cropID, int newQuantity) async {
-    try {
-      await _userCarts.doc(cropID).update({
-        'boughtQuantity': newQuantity.toString(),
-      });
-    } catch (e) {
-      // Handle the error, e.g., show a snackbar or log the error
-      print('Error updating boughtQuantity: $e');
+  bool isAnyItemSelected() {
+    return selectedItems.isNotEmpty;
+  }
+
+  void toggleItemSelection(String itemId) {
+    final selected = !selectedItems.contains(itemId);
+    setState(() {
+      selectedItems.contains(itemId)
+          ? selectedItems.remove(itemId)
+          : selectedItems.add(itemId);
+      // Update isChecked based on the new selected state.
+      updateIsChecked(itemId, selected);
+
+      // Recalculate totals based on the current selected items
+      updateTotals();
+    });
+  }
+
+// Function to update isChecked in Firebase
+  void updateIsChecked(String itemId, bool isChecked) async {
+    final documentSnapshot = await _userCarts.doc(itemId).get();
+    if (documentSnapshot.exists) {
+      try {
+        await _userCarts.doc(itemId).update({
+          'isChecked': isChecked,
+        });
+        // Successfully updated isChecked, now update the totals.
+        updateTotals();
+      } catch (e) {
+        print('Error updating isChecked: $e');
+      }
+    } else {
+      print('Document not found for docId: $itemId');
     }
+  }
+
+  // Function to update totalAmount and totalBoughtQuantity
+  void updateTotals() {
+    double updatedTotalAmount = 0.0;
+    int updatedTotalBoughtQuantity = 0;
+
+    for (final item in items!) {
+      bool isChecked = item['isChecked'] ?? false;
+
+      if (isChecked) {
+        int boughtQuantity =
+            int.tryParse(item['boughtQuantity'].toString()) ?? 0;
+        double price = double.tryParse(item['price'].toString()) ?? 0.0;
+        updatedTotalAmount += boughtQuantity * price;
+        updatedTotalBoughtQuantity += boughtQuantity;
+      }
+    }
+
+    setState(() {
+      totalAmount = updatedTotalAmount;
+      totalBoughtQuantity = updatedTotalBoughtQuantity;
+    });
+  }
+
+  Future<void> _updateBoughtQuantity(
+      DocumentSnapshot? documentSnapshot, String boughtQuantity) async {
+    final document = await _userCarts.doc(documentSnapshot!.id).get();
+    if (document.exists) {
+      try {
+        await _userCarts.doc(documentSnapshot.id).update({
+          'boughtQuantity': boughtQuantity,
+        });
+      } catch (e) {
+        print('Error updating boughtQuantity: $e');
+      }
+    } else {
+      // Handle the case where the document doesn't exist.
+      print('Document not found for docId: $documentSnapshot');
+    }
+    updateTotals(); // Call updateTotals after updating boughtQuantity.
+  }
+
+  Future<void> _updateTotalCostPlus(DocumentSnapshot? documentSnapshot,
+      String boughtQuantity, String price) async {
+    final document = await _userCarts.doc(documentSnapshot!.id).get();
+    if (document.exists) {
+      int boughtQuantity =
+          int.tryParse(document.get('boughtQuantity').toString()) ?? 0;
+      double price = double.tryParse(document.get('price').toString()) ?? 0.0;
+
+      double totalCost = boughtQuantity * price + price;
+      String totalCostString = totalCost.toStringAsFixed(2);
+
+      try {
+        await _userCarts.doc(documentSnapshot.id).update({
+          'totalCost': totalCostString,
+        });
+      } catch (e) {
+        print('Error updating totalCost: $e');
+      }
+    } else {
+      // Handle the case where the document doesn't exist.
+      print('Document not found for docId: $documentSnapshot');
+    }
+    updateTotals(); // Call updateTotals after updating totalCost.
+  }
+
+  Future<void> _updateTotalCostMinus(DocumentSnapshot? documentSnapshot,
+      String boughtQuantity, String price) async {
+    final document = await _userCarts.doc(documentSnapshot!.id).get();
+    if (document.exists) {
+      int boughtQuantity =
+          int.tryParse(document.get('boughtQuantity').toString()) ?? 0;
+      double price = double.tryParse(document.get('price').toString()) ?? 0.0;
+
+      double totalCost = boughtQuantity * price - price;
+      String totalCostString = totalCost.toStringAsFixed(2);
+
+      try {
+        await _userCarts.doc(documentSnapshot.id).update({
+          'totalCost': totalCostString,
+        });
+      } catch (e) {
+        print('Error updating totalCost: $e');
+      }
+    } else {
+      // Handle the case where the document doesn't exist.
+      print('Document not found for docId: $documentSnapshot');
+    }
+    updateTotals(); // Call updateTotals after updating totalCost.
   }
 
   Future<void> _delete(
@@ -78,8 +201,8 @@ class _AddToCartState extends State<AddToCart>
               'assets/logo.png',
               height: 32.0,
             ),
-            SizedBox(width: 8.0),
-            Text(
+            const SizedBox(width: 8.0),
+            const Text(
               'AgriPinas',
               style: TextStyle(
                 fontSize: 17.0,
@@ -100,7 +223,7 @@ class _AddToCartState extends State<AddToCart>
               ),
               child: TextField(
                 controller: _searchController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Search',
                   prefixIcon: Icon(Icons.search),
                   border: InputBorder.none,
@@ -134,13 +257,12 @@ class _AddToCartState extends State<AddToCart>
 
           QuerySnapshot<Object?>? querySnapshot = streamSnapshot.data;
           List<QueryDocumentSnapshot<Object?>>? documents = querySnapshot?.docs;
-          List<Map>? items = documents?.map((e) => e.data() as Map).toList();
-
-          isCheckedList = List.generate(items!.length, (index) => false);
+          items = documents?.map((e) => e.data() as Map).toList();
+          List.generate(items!.length, (index) => false);
 
           return Column(
             children: [
-              Row(
+              const Row(
                 children: [
                   Expanded(
                     child: Text(
@@ -153,7 +275,7 @@ class _AddToCartState extends State<AddToCart>
                   ),
                 ],
               ),
-              Row(
+              const Row(
                 children: [
                   Expanded(
                     child: Text(
@@ -166,7 +288,7 @@ class _AddToCartState extends State<AddToCart>
                   ),
                 ],
               ),
-              Row(
+              const Row(
                 children: [
                   Expanded(
                     child: Text(
@@ -182,15 +304,17 @@ class _AddToCartState extends State<AddToCart>
               Expanded(
                 child: ListView.builder(
                   padding: EdgeInsets.all(10),
-                  itemCount: items.length,
+                  itemCount: items?.length ?? 0,
+                  key: listKey,
                   itemBuilder: (BuildContext context, int index) {
-                    final Map thisItem = items[index];
+                    final Map thisItem = items![index];
                     final DocumentSnapshot documentSnapshot =
                         streamSnapshot.data!.docs[index];
-                    bool isChecked = isCheckedList[index];
+                    final String itemId = documentSnapshot.id;
 
                     return Card(
-                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 16),
                       elevation: 2,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -199,7 +323,7 @@ class _AddToCartState extends State<AddToCart>
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
+                                SizedBox(
                                   width: 100,
                                   height: 95,
                                   child: ClipRRect(
@@ -221,7 +345,7 @@ class _AddToCartState extends State<AddToCart>
                                   SizedBox(height: 45),
                                   Row(
                                     children: [
-                                      Text(
+                                      const Text(
                                         'Item: ',
                                         style: TextStyle(
                                             fontSize: 13,
@@ -229,17 +353,17 @@ class _AddToCartState extends State<AddToCart>
                                       ),
                                       Text(
                                         '${thisItem['cropName']}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 13,
                                           fontFamily: 'Poppins',
                                         ),
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Row(
                                     children: [
-                                      Text(
+                                      const Text(
                                         'Price: ',
                                         style: TextStyle(
                                           fontSize: 13,
@@ -248,7 +372,7 @@ class _AddToCartState extends State<AddToCart>
                                       ),
                                       Text(
                                         '${thisItem['price']}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -257,125 +381,135 @@ class _AddToCartState extends State<AddToCart>
                                   ),
                                   Row(
                                     children: [
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: Icon(
-                                              Icons.remove,
-                                              size: 16,
-                                            ),
-                                            onPressed: () {
-                                              int boughtQuantity = int.parse(
-                                                  thisItem['boughtQuantity']);
-                                              if (boughtQuantity > 1) {
-                                                setState(() {
-                                                  boughtQuantity--;
-                                                  thisItem['boughtQuantity'] =
-                                                      boughtQuantity.toString();
-                                                });
-                                              } else {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: Text(
-                                                        'Delete Item?',
-                                                        style: TextStyle(
-                                                          fontFamily: 'Poppins',
-                                                          fontSize: 19,
-                                                        ),
-                                                      ),
-                                                      content: Text(
-                                                        'Do you want to delete this item?',
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.remove,
+                                          size: 16,
+                                        ),
+                                        onPressed: () {
+                                          int boughtQuantity = int.parse(
+                                              thisItem['boughtQuantity']);
+                                          int price = int.parse(
+                                              thisItem['price'].toString());
+                                          if (boughtQuantity > 1) {
+                                            setState(() {
+                                              boughtQuantity--;
+                                              thisItem['boughtQuantity'] =
+                                                  boughtQuantity.toString();
+                                            });
+                                            // Update the boughtQuantity in Firestore
+                                            _updateBoughtQuantity(
+                                                documentSnapshot,
+                                                boughtQuantity.toString());
+                                            _updateTotalCostMinus(
+                                                documentSnapshot,
+                                                boughtQuantity.toString(),
+                                                price.toString());
+                                            updateTotals();
+                                          } else {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                    'Delete Item?',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Poppins',
+                                                      fontSize: 19,
+                                                    ),
+                                                  ),
+                                                  content: const Text(
+                                                    'Do you want to delete this item?',
+                                                    style: TextStyle(
+                                                      fontFamily:
+                                                          'Poppins-Regular',
+                                                      fontSize: 15,
+                                                    ),
+                                                  ),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      child: const Text(
+                                                        'No',
                                                         style: TextStyle(
                                                           fontFamily:
                                                               'Poppins-Regular',
                                                           fontSize: 15,
+                                                          color: Colors.black,
                                                         ),
                                                       ),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          child: Text(
-                                                            'No',
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'Poppins-Regular',
-                                                              fontSize: 15,
-                                                              color:
-                                                                  Colors.black,
-                                                            ),
-                                                          ),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    ),
+                                                    TextButton(
+                                                      child: const Text(
+                                                        'Yes',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Poppins-Regular',
+                                                          color:
+                                                              Color(0xFF9DC08B),
+                                                          fontSize: 15,
                                                         ),
-                                                        TextButton(
-                                                          child: Text(
-                                                            'Yes',
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'Poppins-Regular',
-                                                              color: Color(
-                                                                  0xFF9DC08B),
-                                                              fontSize: 15,
-                                                            ),
-                                                          ),
-                                                          onPressed: () {
-                                                            _delete(
-                                                                documentSnapshot
-                                                                    .id);
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
+                                                      ),
+                                                      onPressed: () {
+                                                        _delete(documentSnapshot
+                                                            .id);
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    ),
+                                                  ],
                                                 );
-                                              }
-                                            },
-                                          ),
-                                          Text(
-                                            thisItem['boughtQuantity'],
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontFamily: 'Poppins',
-                                            ),
-                                          ),
-                                          IconButton(
-                                              icon: Icon(
-                                                Icons.add,
-                                                size: 16,
+                                              },
+                                            );
+                                          }
+                                        },
+                                      ),
+                                      Text(
+                                        thisItem['boughtQuantity'],
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.add,
+                                          size: 16,
+                                        ),
+                                        onPressed: () {
+                                          int boughtQuantity = int.parse(
+                                              thisItem['boughtQuantity']);
+                                          int price = int.parse(
+                                              thisItem['price'].toString());
+                                          int quantity =
+                                              int.parse(thisItem['quantity']);
+                                          if (boughtQuantity < quantity) {
+                                            setState(() {
+                                              boughtQuantity++;
+                                            });
+                                            // Update the boughtQuantity in Firestore
+                                            _updateBoughtQuantity(
+                                                documentSnapshot,
+                                                boughtQuantity.toString());
+                                            _updateTotalCostPlus(
+                                                documentSnapshot,
+                                                boughtQuantity.toString(),
+                                                price.toString());
+                                            updateTotals();
+                                          } else {
+                                            final snackBar = SnackBar(
+                                              content: Text(
+                                                'Cannot add more items. Limited stocks up to $quantity only',
                                               ),
-                                              onPressed: () {
-                                                int boughtQuantity = int.parse(
-                                                    thisItem['boughtQuantity']);
-                                                int quantity = int.parse(
-                                                    thisItem['quantity']);
-                                                if (boughtQuantity < quantity) {
-                                                  setState(() {
-                                                    boughtQuantity++;
-                                                  });
-                                                  // Update the boughtQuantity in Firestore
-                                                  _updateBoughtQuantity(
-                                                      thisItem['cropID'],
-                                                      boughtQuantity);
-                                                } else {
-                                                  final snackBar = SnackBar(
-                                                    content: Text(
-                                                        'Cannot add more items. Limited to $quantity'),
-                                                    duration:
-                                                        Duration(seconds: 2),
-                                                  );
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(snackBar);
-                                                }
-                                              }),
-                                        ],
+                                              duration: Duration(seconds: 3),
+                                            );
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(snackBar);
+                                          }
+                                        },
                                       ),
                                     ],
                                   ),
@@ -383,11 +517,9 @@ class _AddToCartState extends State<AddToCart>
                               ),
                             ),
                             Checkbox(
-                              value: isCheckedList[index],
+                              value: selectedItems.contains(itemId),
                               onChanged: (value) {
-                                setState(() {
-                                  isCheckedList[index] = value!;
-                                });
+                                toggleItemSelection(itemId);
                               },
                               activeColor: Color(0xFF9DC08B),
                             ),
@@ -398,14 +530,14 @@ class _AddToCartState extends State<AddToCart>
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: Text(
+                                      title: const Text(
                                         'Delete Item?',
                                         style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 19,
                                         ),
                                       ),
-                                      content: Text(
+                                      content: const Text(
                                         'Do you want to delete this item?',
                                         style: TextStyle(
                                           fontFamily: 'Poppins-Regular',
@@ -414,7 +546,7 @@ class _AddToCartState extends State<AddToCart>
                                       ),
                                       actions: <Widget>[
                                         TextButton(
-                                          child: Text(
+                                          child: const Text(
                                             'No',
                                             style: TextStyle(
                                               fontFamily: 'Poppins-Regular',
@@ -427,7 +559,7 @@ class _AddToCartState extends State<AddToCart>
                                           },
                                         ),
                                         TextButton(
-                                          child: Text(
+                                          child: const Text(
                                             'Yes',
                                             style: TextStyle(
                                               fontFamily: 'Poppins-Regular',
@@ -455,7 +587,7 @@ class _AddToCartState extends State<AddToCart>
               ),
               Container(
                 padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   border: Border(
                     top: BorderSide(width: 1.0, color: Colors.grey),
                   ),
@@ -463,14 +595,23 @@ class _AddToCartState extends State<AddToCart>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
-                      'Total Items: ${items.length}',
-                      style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
-                    ),
-                    SizedBox(height: 8),
                     Row(
                       children: [
+                        const Text(
+                          'Total Items: ',
+                          style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
+                        ),
                         Text(
+                          '$totalBoughtQuantity',
+                          style: const TextStyle(
+                              fontSize: 16, fontFamily: 'Poppins'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Text(
                           'Total Amount: ',
                           style: TextStyle(
                             fontSize: 17,
@@ -479,8 +620,8 @@ class _AddToCartState extends State<AddToCart>
                           ),
                         ),
                         Text(
-                          '₱${calculateTotalCost(items)}',
-                          style: TextStyle(
+                          '₱$totalAmount',
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF27AE60),
@@ -488,13 +629,22 @@ class _AddToCartState extends State<AddToCart>
                         ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     ElevatedButton(
-                        onPressed: () {},
+                        onPressed: isAnyItemSelected()
+                            ? () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CheckoutScreen(),
+                                  ),
+                                );
+                              }
+                            : null, // Disable the button if no item is selected
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFC0D090),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Checkout',
                           style: TextStyle(
                             fontSize: 16,
@@ -510,22 +660,5 @@ class _AddToCartState extends State<AddToCart>
         },
       ),
     );
-  }
-
-  double calculateTotalCost(List<Map>? items) {
-    double totalCost = 0;
-
-    for (int i = 0; i < items!.length; i++) {
-      if (isCheckedList[i]) {
-        int quantity = items[i]['quantity'];
-        double unitPrice = double.parse(items[i]['price']
-            .toString()
-            .replaceAll('₱', '')
-            .replaceAll('Php', '')
-            .replaceAll(',', ''));
-        totalCost += quantity * unitPrice;
-      }
-    }
-    return totalCost;
   }
 }
