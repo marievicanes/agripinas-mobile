@@ -60,16 +60,49 @@ class AuthService {
               ),
             );
           });
+
       await auth
           .signInWithEmailAndPassword(
               email: email.text, password: password.text)
-          .then((value) => {
-                print("Buyer is Logged In"),
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => BuyerNavBar()),
-                    (route) => false),
-              });
+          .then((value) {
+        if (auth.currentUser!.emailVerified) {
+          print("Farmer is Logged In");
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => BuyerNavBar()),
+            (route) => false,
+          );
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                  '',
+                  style: TextStyle(fontFamily: "Poppins", fontSize: 5),
+                ),
+                content: Text(
+                  'Please verify your email before logging in.',
+                  style: TextStyle(fontFamily: "Poppins-Regular", fontSize: 15),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'OK',
+                      style: TextStyle(
+                          fontFamily: "Poppins-Regular", fontSize: 17),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      });
     } catch (e) {
       print(e);
     }
@@ -86,16 +119,51 @@ class AuthService {
               ),
             );
           });
+
       await auth
           .signInWithEmailAndPassword(
               email: email.text, password: password.text)
-          .then((value) => {
-                print("Farmer is Logged In"),
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => BottomNavBar()),
-                    (route) => false),
-              });
+          .then((value) {
+        if (auth.currentUser!.emailVerified) {
+          // Check if email is verified
+          print("Farmer is Logged In");
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => BottomNavBar()),
+            (route) => false,
+          );
+        } else {
+          // If email is not verified, show an error dialog
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                  '',
+                  style: TextStyle(fontFamily: "Poppins", fontSize: 5),
+                ),
+                content: Text(
+                  'Please verify your email before logging in.',
+                  style: TextStyle(fontFamily: "Poppins-Regular", fontSize: 15),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'OK',
+                      style: TextStyle(
+                          fontFamily: "Poppins-Regular", fontSize: 17),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      });
     } catch (e) {
       print(e);
     }
@@ -114,14 +182,49 @@ class AuthService {
         },
       );
 
+      if (password.text.trim() != confirmpassword.text.trim()) {
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                '',
+                style: TextStyle(fontFamily: "Poppins", fontSize: 10),
+              ),
+              content: Text(
+                'Password and Confirm Password do not match.',
+                style: TextStyle(fontFamily: "Poppins-Regular", fontSize: 14),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'OK',
+                    style:
+                        TextStyle(fontFamily: "Poppins-Regular", fontSize: 17),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+
+        return;
+      }
+
       await auth
           .createUserWithEmailAndPassword(
         email: email.text,
         password: password.text,
       )
-          .then((value) {
+          .then((value) async {
         print("User is Registered");
-        firestore.collection("Users").add({
+
+        // Save user details to Firestore
+        await firestore.collection("Users").doc(auth.currentUser!.uid).set({
           "email": email.text,
           "fullname": fullname.text,
           "contact": contact.text,
@@ -132,94 +235,79 @@ class AuthService {
           "uid": auth.currentUser!.uid,
         });
 
-        // Close the loading dialog
-        Navigator.pop(context);
+        // Send email verification
+        await auth.currentUser!.sendEmailVerification();
 
-        // Show success dialog
+        Navigator.pop(context); // Dismiss the loading dialog
+
+        // Display a dialog informing the user to check their email for verification
         showDialog(
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: Text("Registration Successful"),
-              content: Text("You have successfully registered."),
-              actions: <Widget>[
+              title: Text(
+                'Account Registered',
+                style: TextStyle(fontFamily: "Poppins", fontSize: 14),
+              ),
+              content: Text(
+                'An email verification has been sent to ${auth.currentUser!.email}. Please verify your email before logging in.',
+                style: TextStyle(fontFamily: "Poppins-Regular", fontSize: 14),
+              ),
+              actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                     Navigator.push(
-                        context, MaterialPageRoute(builder: (c) => Login()));
+                      context,
+                      MaterialPageRoute(builder: (c) => Login()),
+                    );
                   },
-                  child: Text("OK"),
+                  child: Text(
+                    'OK',
+                    style:
+                        TextStyle(fontFamily: "Poppins-Regular", fontSize: 17),
+                  ),
                 ),
               ],
             );
           },
         );
-      }).catchError((e) {
-        // Close the loading dialog
-        Navigator.pop(context);
-
-        // Check if the error is due to an existing email
-        if (e.code == 'email-already-in-use') {
-          // Show email already exists dialog
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text("Registration Failed"),
-                content: Text("Error: Email already exists."),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("OK"),
-                  ),
-                ],
-              );
-            },
-          );
-        } else {
-          // Show generic error dialog
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text("Registration Failed"),
-                content: Text("Error: $e"),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("OK"),
-                  ),
-                ],
-              );
-            },
-          );
-        }
       });
     } catch (e) {
-      // Show generic error dialog
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text("Registration Failed"),
-            content: Text("Error: $e"),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text("OK"),
+      Navigator.pop(context); // Dismiss the loading dialog
+
+      if (e is FirebaseAuthException && e.code == 'email-already-in-use') {
+        // Display email already in use error dialog
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                '',
+                style: TextStyle(fontFamily: "Poppins", fontSize: 10),
               ),
-            ],
-          );
-        },
-      );
-      print(e);
+              content: Text(
+                'Email is already in use. Please use a different email.',
+                style: TextStyle(fontFamily: "Poppins-Regular", fontSize: 17),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'OK',
+                    style:
+                        TextStyle(fontFamily: "Poppins-Regular", fontSize: 17),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        print(e);
+      }
     }
   }
 

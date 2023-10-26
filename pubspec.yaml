@@ -52,6 +52,9 @@ dependencies:
   intl_translation: ^0.18.2
   easy_localization: ^3.0.3
   uuid: ^4.1.0
+  firebase_messaging: ^14.7.2
+  shared_preferences: ^2.2.2
+  password_generator: ^1.0.0
 
 
 dev_dependencies:
@@ -110,6 +113,7 @@ flutter:
     - assets/email.png
     - assets/forgotpw.png
     - assets/cnpassword.png
+    - assets/archiveicon.png
     - assets/translations/
 
 

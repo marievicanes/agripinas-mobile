@@ -477,9 +477,6 @@
       "mobfarmerCommunityComment": "Mga komento",
       "mobfarmerCommunityWriteComment": "Maglagay ng komento...",
 
-
-
-      
       "farmerCropTrackerText1": "Mga Tanim",
       "farmerCropTrackerText2": "Ang iyong imbentaryo",
       "farmerCropTrackerText3": "Pakita: ",
@@ -516,6 +513,18 @@
       "CommunityForumDeletePost": "Tanggalin ang Post?",
       "CommunityForumCantBeUndonePost": "Ito ay hindi maaaring bawiin at ito ay matatanggal sa Community Forum.",
   
+      "farmerRestoreProduct": "Ibalik ang Produkto sa Pamilihan?",
+      "farmerRestore": "Ibalik",
+      "farmerArchive": "I-archive",
+      "farmerDeleteScaffoldMessage": "Nabura na ang produkto",
+      "farmerRestoreProductDialog": "Ang item na iyong ibinalik sa pamilihan ay maaaring makita ng mga mamimili.",
+
+      "userCancel": "Kanselahin",
+      "userDelete": "Burahin",
+      "userEdit": "I-edit",
+      "userForgotPassword1": "Nakalimutan ang Password",
+      "userForgotPassword": "      Ilagay ang iyong rehistradong email sa ibaba \n       upang makatanggap ng tagubilin para sa \n                          pagsasaayos ng password",
+      "userSendCode": "I-send ang Link",
       "farmerCropTrackerNavigationText1": "Mga ani" ,
       "farmerCropTrackerNavigationText2": "Mga na-ani " ,
 
@@ -652,6 +661,17 @@
       "buyerCartText12": "Kamatis",
       "buyerCartText13": "Sibuyas",
       "buyerCartText14": "Palay",
+
+      "buyerShoppingCart": "Kabuuang Halaga: ",
+      "buyerShoppingCartDeleteItem": "Gusto mo bang tanggalin ang produktong ito?",
+      "buyerShoppingCartDeleteItemYes": "Oo",
+      "buyerShoppingCartDeleteItemNo": "Hindi",
+
+      "buyerCheckout1": "Option sa Pagbabayad:",
+      "buyerCheckout2": "Detalye ng Pagbabayad:",
+      "buyerCheckout3": "Paraan ng Pagbabayad:",
+      "buyerCheckout4": "Kabuuang Bayad:",
+
   
       "buyerTransactionText1": "Transaksyon",
       "buyerTransactionText2": "Ang iyong Pamimili",

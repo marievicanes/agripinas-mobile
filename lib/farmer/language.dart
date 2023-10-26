@@ -69,7 +69,7 @@ class _LanguageState extends State<Language> {
             Text(
               'Choose Language',
               style: TextStyle(
-                fontSize: 17.0,
+                fontSize: 20.0,
                 fontFamily: 'Poppins',
                 color: Colors.white,
               ),

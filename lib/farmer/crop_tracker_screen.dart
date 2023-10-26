@@ -1582,6 +1582,11 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                         querySnapshot?.docs;
                     List<Map>? items =
                         documents?.map((e) => e.data() as Map).toList();
+                    List<Map>? filteredItems = items
+                        ?.where((item) => item['cropName']
+                            .toLowerCase()
+                            .contains(_searchText.toLowerCase()))
+                        .toList();
 
                     return Column(children: [
                       TabBar(
@@ -1678,19 +1683,27 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                           ),
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: EdgeInsets.all(5.0),
                               child: Container(
-                                width: 200.0,
+                                width: 175.0,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(25.0),
                                 ),
                                 child: TextField(
                                   controller: _searchController,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _searchText = value;
+                                    });
+                                  },
                                   decoration: InputDecoration(
                                     hintText: 'Search',
                                     prefixIcon: Icon(Icons.search),
                                     border: InputBorder.none,
+                                    hintStyle: TextStyle(
+                                      fontFamily: 'Poppins-Regular',
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1703,8 +1716,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                           Stack(
                             children: [
                               GridView.builder(
-                                  itemCount:
-                                      streamSnapshot.data?.docs.length ?? 0,
+                                  itemCount: filteredItems?.length ?? 0,
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2,
@@ -1717,7 +1729,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                     // Get the item at this index from streamSnapshot
                                     final DocumentSnapshot documentSnapshot =
                                         streamSnapshot.data!.docs[index];
-                                    final Map thisItem = items![index];
+                                    final Map thisItem = filteredItems![index];
 
                                     {
                                       return GestureDetector(
@@ -2131,12 +2143,16 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                   List<Map>? items = documents
                                       ?.map((e) => e.data() as Map)
                                       .toList();
+
+                                  List<Map>? filteredItems = items
+                                      ?.where((item) => item['cropName']
+                                          .toLowerCase()
+                                          .contains(_searchText.toLowerCase()))
+                                      .toList();
                                   return Stack(
                                     children: [
                                       GridView.builder(
-                                        itemCount:
-                                            streamSnapshot.data?.docs.length ??
-                                                0,
+                                        itemCount: filteredItems?.length ?? 0,
                                         gridDelegate:
                                             SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 2,
@@ -2150,7 +2166,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                           final DocumentSnapshot
                                               documentSnapshot =
                                               streamSnapshot.data!.docs[index];
-                                          final Map thisItem = items![index];
+                                          final Map thisItem =
+                                              filteredItems![index];
 
                                           return GestureDetector(
                                             onTap: () {},

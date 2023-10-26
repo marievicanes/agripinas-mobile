@@ -6,24 +6,15 @@ class AboutUsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFA9AF7E),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        centerTitle: false,
         title: Row(
           children: [
-            Image.asset(
-              'assets/logo.png',
-              height: 32.0,
-            ),
-            SizedBox(width: 7.0),
+            SizedBox(width: 8.0),
             Text(
-              'AgriPinas',
+              'About Us',
               style: TextStyle(
-                fontSize: 17.0,
-                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+                fontFamily: 'Poppins',
                 color: Colors.white,
               ),
             ),

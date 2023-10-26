@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:capstone/farmer/farmer_archive.dart';
 import 'package:capstone/farmer/product_details.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -509,15 +510,42 @@ class _PostedProductsState extends State<PostedProducts> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: EdgeInsets.all(2.0),
-                          child: Text(
-                            'Posted Products',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'Poppins-Bold',
-                            ),
+                        Text(
+                          'Posted Products',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'Poppins-Bold',
                           ),
+                        ),
+                        SizedBox(width: 175.0),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FarmerArchive(),
+                                  ),
+                                );
+                              },
+                              child: Image.asset(
+                                'assets/archiveicon.png',
+                                width: 30,
+                                height: 30,
+                                color: Color(0xFF5c9348),
+                              ),
+                            ),
+                            Text(
+                              'Archive',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontFamily: 'Poppins-Regular',
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -535,7 +563,6 @@ class _PostedProductsState extends State<PostedProducts> {
                       childAspectRatio: 2.5 / 3.9,
                     ),
                     itemBuilder: (BuildContext context, int index) {
-                      // Get the item at this index from streamSnapshot
                       final DocumentSnapshot documentSnapshot =
                           streamSnapshot.data!.docs[index];
                       final Map thisItem = filteredItems![index];
@@ -674,7 +701,7 @@ class _PostedProductsState extends State<PostedProducts> {
                                           ),
                                           SizedBox(width: 8),
                                           Text(
-                                            'Edit',
+                                            "userEdit".tr(),
                                             style: TextStyle(
                                               fontFamily: 'Poppins-Regular',
                                             ),
@@ -692,7 +719,25 @@ class _PostedProductsState extends State<PostedProducts> {
                                           ),
                                           SizedBox(width: 8),
                                           Text(
-                                            'Delete',
+                                            "userDelete".tr(),
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins-Regular',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    PopupMenuItem<String>(
+                                      value: 'archive',
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.archive,
+                                            color: Color(0xFF9DC08B),
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            "farmerArchive".tr(),
                                             style: TextStyle(
                                               fontFamily: 'Poppins-Regular',
                                             ),
@@ -740,7 +785,7 @@ class _PostedProductsState extends State<PostedProducts> {
                                                   },
                                                 ),
                                                 TextButton(
-                                                  child: Text('Delete',
+                                                  child: Text("userDelete".tr(),
                                                       style: TextStyle(
                                                         fontFamily:
                                                             'Poppins-Regular',

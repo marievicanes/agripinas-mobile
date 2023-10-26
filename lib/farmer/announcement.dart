@@ -19,7 +19,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
             Text(
               'Announcements',
               style: TextStyle(
-                fontSize: 17.0,
+                fontSize: 20.0,
                 fontFamily: 'Poppins',
                 color: Colors.white,
               ),

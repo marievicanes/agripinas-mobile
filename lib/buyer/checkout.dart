@@ -15,7 +15,13 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class CheckoutScreen extends StatelessWidget {
+class CheckoutScreen extends StatefulWidget {
+  @override
+  _CheckoutScreenState createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends State<CheckoutScreen> {
+  String selectedPaymentMethod = 'Cash on Pickup';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +34,7 @@ class CheckoutScreen extends StatelessWidget {
             Text(
               'Checkout',
               style: TextStyle(
-                fontSize: 17.0,
+                fontSize: 20.0,
                 fontFamily: 'Poppins',
                 color: Colors.white,
               ),
@@ -47,66 +53,13 @@ class CheckoutScreen extends StatelessWidget {
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    Icon(
-                      Icons.location_on,
-                      size: 18,
-                      color: Color(0xFFA9AF7E),
-                    ),
                     SizedBox(width: 8.0),
-                    Text(
-                      'Delivery Address',
-                      style: TextStyle(fontSize: 18, fontFamily: 'Poppins'),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(
-                          color: Color(0xFFA9AF7E),
-                        ),
-                      ),
-                      child: Text(
-                        'Default',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'Poppins-Regular',
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 8.0),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Color(0xFF9DC08B)),
-                      ),
-                      child: Text(
-                        'Change',
-                        style: TextStyle(
-                          fontFamily: 'Poppins-Regular',
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ],
             ),
             Text(
-              'Marievic Anes | 09123445598',
-              style: TextStyle(fontFamily: 'Poppins-Regular', fontSize: 13),
-            ),
-            Text(
-              '551 F Jhocson St.',
-              style: TextStyle(fontFamily: 'Poppins-Regular', fontSize: 13),
-            ),
-            Text(
-              'Sampaloc, Manila, 1008 Metro Manila',
-              style: TextStyle(fontFamily: 'Poppins-Regular', fontSize: 13),
+              '',
             ),
             SizedBox(height: 20.0),
             Divider(),
@@ -123,6 +76,45 @@ class CheckoutScreen extends StatelessWidget {
                       'Poppins-Regular'),
                   _buildCartItem('Tomato', 150.0, 1, 'assets/tomato.png',
                       'Poppins-Regular'),
+                ],
+              ),
+            ),
+            SizedBox(height: 20.0),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Payment Option:',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                  DropdownButton<String>(
+                    value: selectedPaymentMethod,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedPaymentMethod = newValue!;
+                      });
+                    },
+                    items: <String>[
+                      'Cash on Pickup',
+                      'Sending proof of payment'
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: TextStyle(
+                            fontFamily: 'Poppins-Regular',
+                            fontSize: 13.5,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ],
               ),
             ),

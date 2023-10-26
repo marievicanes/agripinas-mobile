@@ -1,0 +1,61 @@
+ void loginFarmer(context) async {
+    try {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          });
+      await auth
+          .signInWithEmailAndPassword(
+              email: email.text, password: password.text)
+          .then((value) => {
+                print("Farmer is Logged In"),
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => BottomNavBar()),
+                    (route) => false),
+              });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+where can i add this codes (on the codes above)
+
+ FirebaseFirestore.instance
+              .collection('Announcement')
+              .where('UID', isEqualTo: userId)
+              .where('DateSubmitted', isEqualTo: currentDateString)
+              .get()
+              .then((announcement) {
+            if (announcement.docs.isNotEmpty) {
+              // Mood entry for today already exists, navigate to the Dashboard
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => BottomNavBar()),
+              );
+            } else {
+              // Mood entry for today doesn't exist, load the DashboardModal
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => AnnouncementScreen()),
+              );
+            }
+          }).catchError((error) {
+            // Handle the error
+            print('Error: $error');
+            // You can choose to navigate to DashboardModal or Dashboard in case of an error
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => AnnouncementScreen()), // or Dashboard()
+            );
+          });
+        }
+
+
+        

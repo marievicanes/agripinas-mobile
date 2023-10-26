@@ -1,19 +1,32 @@
+import 'package:capstone/farmer/product_details.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
-class OFProductsItem {
-  final String title;
-  final String price;
-  final String farmer;
-  final String location;
-  final String imageUrl;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
 
-  OFProductsItem({
-    required this.title,
-    required this.price,
-    required this.farmer,
-    required this.location,
-    required this.imageUrl,
-  });
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: OFProductScreen(),
+    );
+  }
 }
 
 class OFProductScreen extends StatefulWidget {
@@ -24,403 +37,254 @@ class OFProductScreen extends StatefulWidget {
 class _OFProductsScreenState extends State<OFProductScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
-  List<OFProductsItem> filteredItems = [];
 
-  final List<OFProductsItem> items = [
-    OFProductsItem(
-      title: 'Crops',
-      price: '₱300',
-      farmer: 'Jenkins Mesina',
-      location: 'Brgy. Bagong Buhay',
-      imageUrl: 'assets/crops.png',
-    ),
-  ];
-  final List<Widget Function(BuildContext)> routes = [
-    (context) => CropsScreen(),
-  ];
-  void searchItem(String text) {
-    setState(() {
-      _searchText = text;
-      filteredItems = items
-          .where((item) =>
-              item.title.toLowerCase().contains(text.toLowerCase()) ||
-              item.farmer.toLowerCase().contains(text.toLowerCase()) ||
-              item.price.toLowerCase().contains(text.toLowerCase()) ||
-              item.location.toLowerCase().contains(text.toLowerCase()))
-          .toList();
-    });
-  }
+  final CollectionReference _marketplace =
+      FirebaseFirestore.instance.collection('Marketplace');
 
   @override
   Widget build(BuildContext context) {
-    List<OFProductsItem> displayItems =
-        _searchText.isEmpty ? items : filteredItems;
-
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xFFA9AF7E),
-        centerTitle: true,
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/logo.png',
-              height: 32.0,
-            ),
-            SizedBox(width: 8.0),
-            Text(
-              'AgriPinas',
-              style: TextStyle(
-                fontSize: 17.0,
-                fontFamily: 'Poppins',
-                color: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Color(0xFFA9AF7E),
+          centerTitle: true,
+          title: Row(
+            children: [
+              Image.asset(
+                'assets/logo.png',
+                height: 32.0,
               ),
-            ),
-          ],
-        ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Container(
-              width: 190.0,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25.0),
-              ),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  prefixIcon: Icon(Icons.search),
-                  border: InputBorder.none,
+              SizedBox(width: 8.0),
+              Text(
+                'AgriPinas',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontFamily: 'Poppins',
+                  color: Colors.white,
                 ),
-                onChanged: searchItem,
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-      body: GridView.builder(
-        padding: EdgeInsets.all(10),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 15,
-          mainAxisSpacing: 10,
-          childAspectRatio: 2 / 3.5,
-        ),
-        itemCount: displayItems.length,
-        itemBuilder: (context, index) {
-          final item = displayItems[index];
-          return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: routes[index],
-                  ),
-                );
-              },
-              child: Card(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          item.imageUrl,
-                          fit: BoxFit.cover,
-                          width: 200,
-                          height: 250,
-                        ),
-                      ),
+          actions: [
+            Padding(
+              padding: EdgeInsets.all(5.0),
+              child: Container(
+                width: 175.0,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      _searchText = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Search',
+                    prefixIcon: Icon(Icons.search),
+                    border: InputBorder.none,
+                    hintStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center(
-                          child: Text(
-                            item.title,
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Text(
-                              'Price: ',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                            Text(
-                              item.price,
-                              style: TextStyle(
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Text(
-                              'Farmer: ',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                            Text(
-                              item.farmer,
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontFamily: 'Poppins-Regular',
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(1.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Location:',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: 'Poppins',
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                item.location,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontFamily: 'Poppins-Regular',
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )));
-        },
-      ),
-    );
-  }
-}
-
-class Crops {
-  final String title;
-  final String price;
-  final String farmer;
-  final String location;
-  final String description;
-  final String imageUrl;
-
-  Crops({
-    required this.title,
-    required this.price,
-    required this.farmer,
-    required this.location,
-    required this.description,
-    required this.imageUrl,
-  });
-}
-
-class CropsScreen extends StatefulWidget {
-  @override
-  _CropsState createState() => _CropsState();
-}
-
-class _CropsState extends State<CropsScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  String _searchText = '';
-  List<Crops> filteredItems = [];
-
-  final List<Crops> items = [
-    Crops(
-      title: 'Crops',
-      price: '₱300',
-      farmer: 'Jenkins Mesina',
-      location: 'Brgy. Bagong Buhay',
-      description:
-          'The tomato is the edible berry of the plant, commonly known as the tomato plant.',
-      imageUrl: 'assets/crops.png',
-    ),
-  ];
-
-  void searchItem(String text) {
-    setState(() {
-      _searchText = text;
-      filteredItems = items
-          .where((item) =>
-              item.title.toLowerCase().contains(text.toLowerCase()) ||
-              item.farmer.toLowerCase().contains(text.toLowerCase()) ||
-              item.price.toLowerCase().contains(text.toLowerCase()) ||
-              item.location.toLowerCase().contains(text.toLowerCase()))
-          .toList();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    List<Crops> displayItems = _searchText.isEmpty ? items : filteredItems;
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xFFA9AF7E),
-        centerTitle: false,
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/logo.png',
-              height: 32.0,
-            ),
-            SizedBox(width: 8.0),
-            Text(
-              'AgriPinas',
-              style: TextStyle(
-                fontSize: 17.0,
-                fontFamily: 'Poppins',
-                color: Colors.white,
+                ),
               ),
             ),
           ],
         ),
-      ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(10),
-        itemCount: displayItems.length,
-        itemBuilder: (context, index) {
-          final item = displayItems[index];
-          return GestureDetector(
-            child: Card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        body: StreamBuilder(
+            stream:
+                _marketplace.where('category', isEqualTo: 'Others').snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+              if (streamSnapshot.hasError) {
+                return Center(
+                  child: Text('Some error occurred ${streamSnapshot.error}'),
+                );
+              }
+              if (streamSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (!streamSnapshot.hasData ||
+                  streamSnapshot.data!.docs.isEmpty) {
+                return Center(
+                  child: Text('No data available'),
+                );
+              }
+
+              QuerySnapshot<Object?>? querySnapshot = streamSnapshot.data;
+              List<QueryDocumentSnapshot<Object?>>? documents =
+                  querySnapshot?.docs;
+              List<Map>? items =
+                  documents?.map((e) => e.data() as Map).toList();
+
+              List<Map>? filteredItems = items
+                  ?.where((item) =>
+                      item['cropName']
+                          .toLowerCase()
+                          .contains(_searchText.toLowerCase()) ||
+                      item['location']
+                          .toLowerCase()
+                          .contains(_searchText.toLowerCase()))
+                  .toList();
+
+              return Column(
                 children: [
-                  Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        item.imageUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: 250,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Text(
+                          'Other Farm Products',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'Poppins-Regular',
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center(
-                          child: Text(
-                            item.title,
-                            style: TextStyle(
-                              fontSize: 25,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Text(
-                              'Price: ',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              item.price,
-                              style: TextStyle(
-                                fontSize: 17,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 6),
-                        Row(
-                          children: [
-                            Text(
-                              'Farmer: ',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              item.farmer,
-                              style: TextStyle(
-                                fontSize: 17,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 6),
-                        Row(
-                          children: [
-                            Text(
-                              'Location: ',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              item.location,
-                              style: TextStyle(
-                                fontSize: 17,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 6),
-                        Padding(
-                          padding: const EdgeInsets.all(1.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Description:',
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold,
+                  SizedBox(height: 5.0),
+                  Expanded(
+                    child: GridView.builder(
+                      itemCount: filteredItems?.length ?? 0,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.all(3),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 15,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 2.3 / 4,
+                      ),
+                      itemBuilder: (BuildContext context, int index) {
+                        final Map thisItem = items![index];
+
+                        return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ProductDetails(thisItem),
                                 ),
-                              ),
-                              SizedBox(height: 6),
-                              Text(
-                                item.description,
-                                style: TextStyle(
-                                  fontSize: 17,
+                              );
+                            },
+                            child: Card(
+                              child: Stack(children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Center(
+                                        child: Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            child: Image.network(
+                                              '${thisItem['image']}',
+                                              fit: BoxFit.cover,
+                                              width: double.infinity,
+                                              height: 250,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Center(
+                                            child: Text(
+                                              '${thisItem['cropName']}',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                fontFamily: 'Poppins',
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "farmerPagePrice".tr(),
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'Poppins',
+                                                ),
+                                              ),
+                                              Text(
+                                                '${thisItem['price']}',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 4),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "farmerPageUserRole".tr(),
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'Poppins',
+                                                ),
+                                              ),
+                                              Text(
+                                                '${thisItem['fullname']}',
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontFamily: 'Poppins-Regular',
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(1.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "farmerPageCategoriesLocation"
+                                                      .tr(),
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontFamily: 'Poppins',
+                                                  ),
+                                                ),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                  '${thisItem['location']}',
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontFamily:
+                                                        'Poppins-Regular',
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                              ]),
+                            ));
+                      },
                     ),
                   ),
                 ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
+              );
+            }));
   }
 }

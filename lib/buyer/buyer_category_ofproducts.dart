@@ -1,6 +1,33 @@
 import 'package:capstone/buyer/buyer_productdetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: BuyerOFProductScreen(),
+    );
+  }
+}
 
 class BuyerOFProductScreen extends StatefulWidget {
   @override
@@ -93,6 +120,16 @@ class _BuyerOFProductsScreenState extends State<BuyerOFProductScreen> {
               List<Map>? items =
                   documents?.map((e) => e.data() as Map).toList();
 
+              List<Map>? filteredItems = items
+                  ?.where((item) =>
+                      item['cropName']
+                          .toLowerCase()
+                          .contains(_searchText.toLowerCase()) ||
+                      item['location']
+                          .toLowerCase()
+                          .contains(_searchText.toLowerCase()))
+                  .toList();
+
               return Column(children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -100,7 +137,7 @@ class _BuyerOFProductsScreenState extends State<BuyerOFProductScreen> {
                     Padding(
                       padding: EdgeInsets.all(10.0),
                       child: Text(
-                        'Other Farm Products',
+                        "buyerCartText11".tr(),
                         style: TextStyle(
                           fontSize: 20,
                           fontFamily: 'Poppins-Regular',
@@ -112,7 +149,7 @@ class _BuyerOFProductsScreenState extends State<BuyerOFProductScreen> {
                 SizedBox(height: 5.0),
                 Expanded(
                   child: GridView.builder(
-                    itemCount: items?.length ?? 0,
+                    itemCount: filteredItems?.length ?? 0,
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     padding: EdgeInsets.all(3),
@@ -174,7 +211,7 @@ class _BuyerOFProductsScreenState extends State<BuyerOFProductScreen> {
                                       Row(
                                         children: [
                                           Text(
-                                            'Price: ',
+                                            "buyerPagePrice".tr(),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
@@ -192,7 +229,7 @@ class _BuyerOFProductsScreenState extends State<BuyerOFProductScreen> {
                                       Row(
                                         children: [
                                           Text(
-                                            'Farmer: ',
+                                            "buyerPageUserRole2".tr(),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
@@ -214,7 +251,7 @@ class _BuyerOFProductsScreenState extends State<BuyerOFProductScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Location:',
+                                              "buyerPageLocation".tr(),
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 fontFamily: 'Poppins',

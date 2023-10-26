@@ -9,24 +9,15 @@ class ContactUsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFA9AF7E),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        centerTitle: false,
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Image.asset(
-              'assets/logo.png',
-              height: 32.0,
-            ),
-            SizedBox(width: 7.0),
             Text(
-              'AgriPinas',
+              'Contact Us',
               style: TextStyle(
-                fontSize: 17.0,
-                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+                fontFamily: 'Poppins',
                 color: Colors.white,
               ),
             ),
@@ -50,52 +41,8 @@ class ContactUsScreen extends StatelessWidget {
                 child: Text(
                   'Get in touch!',
                   style: TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              SizedBox(height: 24.0),
-              Text('Name'),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Enter your name',
-                ),
-              ),
-              SizedBox(height: 16.0),
-              Text('Email'),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Enter your email',
-                ),
-              ),
-              SizedBox(height: 16.0),
-              Text('Subject'),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Enter the subject',
-                ),
-              ),
-              SizedBox(height: 16.0),
-              Text('Message'),
-              TextField(
-                maxLines: 4,
-                decoration: InputDecoration(
-                  hintText: 'Enter your message',
-                ),
-              ),
-              SizedBox(height: 24.0),
-              Align(
-                alignment: Alignment.centerRight,
-                child: FractionallySizedBox(
-                  widthFactor: 0.5,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      primary: Color.fromRGBO(157, 192, 139, 1),
-                      onPrimary: Colors.white,
-                    ),
-                    child: Text('Send'),
+                    fontSize: 30.0,
+                    fontFamily: "Poppins",
                   ),
                 ),
               ),
@@ -104,29 +51,35 @@ class ContactUsScreen extends StatelessWidget {
                 leading: Icon(Icons.location_on),
                 title: Text(
                   'Office Location',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontFamily: "Poppins"),
                 ),
                 subtitle: Text(
                   '551 M.F. Jhocson St, Sampaloc, Manila, 1008 Metro Manila',
+                  style: TextStyle(fontFamily: "Poppins-Regular"),
                 ),
               ),
               ListTile(
                 leading: Icon(Icons.phone),
                 title: Text(
                   'Telephone Number',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontFamily: "Poppins"),
                 ),
-                subtitle: Text('(02) 8712 1922'),
+                subtitle: Text(
+                  '(02) 8712 1922',
+                  style: TextStyle(fontFamily: "Poppins-Regular"),
+                ),
               ),
               ListTile(
                 leading: Icon(Icons.email),
                 title: Text(
                   'Email',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontFamily: "Poppins"),
                 ),
-                subtitle: Text('agripinas@gmail.com'),
+                subtitle: Text(
+                  'agripinas@gmail.com',
+                  style: TextStyle(fontFamily: "Poppins-Regular"),
+                ),
               ),
-
             ],
           ),
         ),

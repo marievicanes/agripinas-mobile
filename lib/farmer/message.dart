@@ -19,7 +19,7 @@ class _MessageState extends State<Message> {
             Text(
               'Messages',
               style: TextStyle(
-                fontSize: 17.0,
+                fontSize: 20.0,
                 fontFamily: 'Poppins',
                 color: Colors.white,
               ),
@@ -81,7 +81,7 @@ class ChatAgriScreen extends StatelessWidget {
         backgroundColor: Color(0xFFA9AF7E),
         title: Text(
           userName,
-          style: TextStyle(fontFamily: 'Poppins', fontSize: 16.5),
+          style: TextStyle(fontFamily: 'Poppins', fontSize: 17),
         ),
       ),
       body: Column(
