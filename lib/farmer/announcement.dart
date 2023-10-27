@@ -1,41 +1,24 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(AnnouncementScreen());
-}
-
-class AnnouncementScreen extends StatelessWidget {
+class AnnouncementScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: AnnouncementPage(),
-    );
-  }
+  _AnnouncementScreenState createState() => _AnnouncementScreenState();
 }
 
-class AnnouncementPage extends StatelessWidget {
+class _AnnouncementScreenState extends State<AnnouncementScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFA9AF7E),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        centerTitle: false,
         title: Row(
           children: [
-            Image.asset(
-              'assets/logo.png',
-              height: 32.0,
-            ),
             SizedBox(width: 8.0),
             Text(
-              'AgriPinas',
+              'Announcements',
               style: TextStyle(
-                fontSize: 17.0,
+                fontSize: 20.0,
                 fontFamily: 'Poppins',
                 color: Colors.white,
               ),
@@ -104,6 +87,7 @@ class AnnouncementCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontFamily: 'Poppins-Medium',
+                    color: Colors.grey,
                   ),
                 ),
               ],

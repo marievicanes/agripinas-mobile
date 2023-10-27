@@ -10,20 +10,19 @@ class _MessageState extends State<Message> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         backgroundColor: Color(0xFFA9AF7E),
-        centerTitle: false,
-        title: Row(
-          children: [
-            SizedBox(width: 8.0),
-            Text(
-              'Messages',
-              style: TextStyle(
-                fontSize: 17.0,
-                fontFamily: 'Poppins',
-                color: Colors.white,
-              ),
-            ),
-          ],
+        title: Text(
+          'Messages',
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 20.0,
+          ),
         ),
       ),
       body: Column(
@@ -149,30 +148,27 @@ class User {
 
 List<User> users = [
   User(
-    name: 'Marievic Anes',
+    name: 'Arriane Gatpo',
     message:
-        'Lorem ipsum dolorem ipsum, quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem',
+        'Musta? Sample sample qui dolorem ipsum, quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem',
     time: '5:34 PM',
     profile: 'assets/user.png',
   ),
   User(
-    name: 'Arriane Gatpo',
-    message:
-        'Lorem ipsum dolorem ipsum, quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem',
+    name: 'Daniella Marie Tungol',
+    message: 'Nice one! Sample oks',
     time: '7:23 PM',
     profile: 'assets/user2.png',
   ),
   User(
-    name: 'Daniella Marie Tungol',
-    message:
-        'Lorem ipsum dolorem ipsum, quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem',
+    name: 'Marievic Anes',
+    message: 'Kamusta? Uy!',
     time: '8:45 PM',
     profile: 'assets/user3.png',
   ),
   User(
     name: 'Jenkins Mesina',
-    message:
-        'Lorem ipsum dolorem ipsum, quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem',
+    message: 'Pre',
     time: '9:12 PM',
     profile: 'assets/user4.png',
   ),

@@ -1,6 +1,33 @@
 import 'package:capstone/buyer/buyer_productdetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: BuyerFertilizersScreen(),
+    );
+  }
+}
 
 class BuyerFertilizersScreen extends StatefulWidget {
   @override
@@ -30,7 +57,7 @@ class _BuyerFertilizersScreenState extends State<BuyerFertilizersScreen> {
               Text(
                 'AgriPinas',
                 style: TextStyle(
-                  fontSize: 10.0,
+                  fontSize: 18.0,
                   fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
@@ -39,19 +66,27 @@ class _BuyerFertilizersScreenState extends State<BuyerFertilizersScreen> {
           ),
           actions: [
             Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(5.0),
               child: Container(
-                width: 190.0,
+                width: 175.0,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25.0),
                 ),
                 child: TextField(
                   controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      _searchText = value;
+                    });
+                  },
                   decoration: InputDecoration(
                     hintText: 'Search',
                     prefixIcon: Icon(Icons.search),
                     border: InputBorder.none,
+                    hintStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                    ),
                   ),
                 ),
               ),
@@ -86,6 +121,16 @@ class _BuyerFertilizersScreenState extends State<BuyerFertilizersScreen> {
               List<Map>? items =
                   documents?.map((e) => e.data() as Map).toList();
 
+              List<Map>? filteredItems = items
+                  ?.where((item) =>
+                      item['cropName']
+                          .toLowerCase()
+                          .contains(_searchText.toLowerCase()) ||
+                      item['location']
+                          .toLowerCase()
+                          .contains(_searchText.toLowerCase()))
+                  .toList();
+
               return Column(children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -93,7 +138,7 @@ class _BuyerFertilizersScreenState extends State<BuyerFertilizersScreen> {
                     Padding(
                       padding: EdgeInsets.all(10.0),
                       child: Text(
-                        'Fertilizers',
+                        "text54".tr(),
                         style: TextStyle(
                           fontSize: 20,
                           fontFamily: 'Poppins-Regular',
@@ -105,7 +150,7 @@ class _BuyerFertilizersScreenState extends State<BuyerFertilizersScreen> {
                 SizedBox(height: 5.0),
                 Expanded(
                   child: GridView.builder(
-                    itemCount: items?.length ?? 0,
+                    itemCount: filteredItems?.length ?? 0,
                     padding: EdgeInsets.all(3),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
@@ -114,7 +159,7 @@ class _BuyerFertilizersScreenState extends State<BuyerFertilizersScreen> {
                       childAspectRatio: 2.3 / 4,
                     ),
                     itemBuilder: (BuildContext context, int index) {
-                      final Map thisItem = items![index];
+                      final Map thisItem = filteredItems![index];
 
                       return InkWell(
                           onTap: () {
@@ -165,7 +210,7 @@ class _BuyerFertilizersScreenState extends State<BuyerFertilizersScreen> {
                                       Row(
                                         children: [
                                           Text(
-                                            'Price: ',
+                                            "buyerPagePrice".tr(),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
@@ -183,7 +228,7 @@ class _BuyerFertilizersScreenState extends State<BuyerFertilizersScreen> {
                                       Row(
                                         children: [
                                           Text(
-                                            'Farmer: ',
+                                            "buyerPageUserRole2".tr(),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
@@ -205,7 +250,7 @@ class _BuyerFertilizersScreenState extends State<BuyerFertilizersScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Location:',
+                                              "buyerPageLocation".tr(),
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 fontFamily: 'Poppins',

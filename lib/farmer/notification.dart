@@ -19,7 +19,10 @@ class AgriNotif extends StatelessWidget {
           backgroundColor: Color(0xFFA9AF7E),
           title: Text(
             'Notifications',
-            style: TextStyle(fontFamily: 'Poppins'),
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 20.0,
+            ),
           ),
         ),
         body: ListView.builder(

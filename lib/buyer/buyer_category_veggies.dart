@@ -1,6 +1,33 @@
 import 'package:capstone/buyer/buyer_productdetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: BuyerVegetablesScreen(),
+    );
+  }
+}
 
 class BuyerVegetablesScreen extends StatefulWidget {
   @override
@@ -29,7 +56,7 @@ class _BuyerVegetablesScreenState extends State<BuyerVegetablesScreen> {
               Text(
                 'AgriPinas',
                 style: TextStyle(
-                  fontSize: 10.0,
+                  fontSize: 18.0,
                   fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
@@ -38,19 +65,27 @@ class _BuyerVegetablesScreenState extends State<BuyerVegetablesScreen> {
           ),
           actions: [
             Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(5.0),
               child: Container(
-                width: 190.0,
+                width: 175.0,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25.0),
                 ),
                 child: TextField(
                   controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      _searchText = value;
+                    });
+                  },
                   decoration: InputDecoration(
                     hintText: 'Search',
                     prefixIcon: Icon(Icons.search),
                     border: InputBorder.none,
+                    hintStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                    ),
                   ),
                 ),
               ),
@@ -92,10 +127,10 @@ class _BuyerVegetablesScreenState extends State<BuyerVegetablesScreen> {
                     Padding(
                       padding: EdgeInsets.all(10.0),
                       child: Text(
-                        'Vegetables',
+                        "buyerPageCategoryText2".tr(),
                         style: TextStyle(
                           fontSize: 20,
-                          fontFamily: 'Poppins-Regular',
+                          fontFamily: 'Poppins',
                         ),
                       ),
                     ),
@@ -166,7 +201,7 @@ class _BuyerVegetablesScreenState extends State<BuyerVegetablesScreen> {
                                       Row(
                                         children: [
                                           Text(
-                                            'Price: ',
+                                            "buyerPagePrice".tr(),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
@@ -184,7 +219,7 @@ class _BuyerVegetablesScreenState extends State<BuyerVegetablesScreen> {
                                       Row(
                                         children: [
                                           Text(
-                                            'Farmer: ',
+                                            "buyerPageUserRole2".tr(),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
@@ -206,7 +241,7 @@ class _BuyerVegetablesScreenState extends State<BuyerVegetablesScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Location:',
+                                              "buyerPageLocation".tr(),
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 fontFamily: 'Poppins',

@@ -5,8 +5,35 @@ import 'package:capstone/buyer/buyer_category_veggies.dart';
 import 'package:capstone/buyer/buyer_productdetails.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: BuyerCategoriesScreen(),
+    );
+  }
+}
 
 class BuyerCategoryItem {
   final String title;
@@ -32,19 +59,19 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
 
   final List<BuyerCategoryItem> items = [
     BuyerCategoryItem(
-      title: 'Fruits',
+      title: "farmerPageCategoryText1".tr(),
       imageUrl: 'assets/fruits.png',
     ),
     BuyerCategoryItem(
-      title: 'Vegetables',
+      title: "farmerPageCategoryText2".tr(),
       imageUrl: 'assets/veggies.png',
     ),
     BuyerCategoryItem(
-      title: 'Fertilizers',
+      title: "text54".tr(),
       imageUrl: 'assets/fertilizer.png',
     ),
     BuyerCategoryItem(
-      title: 'Other Farm Products',
+      title: "farmerPageCategoryText4".tr(),
       imageUrl: 'assets/products.png',
     ),
   ];
@@ -91,10 +118,18 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
               ),
               child: TextField(
                 controller: _searchController,
+                onChanged: (value) {
+                  setState(() {
+                    _searchText = value;
+                  });
+                },
                 decoration: InputDecoration(
                   hintText: 'Search',
                   prefixIcon: Icon(Icons.search),
                   border: InputBorder.none,
+                  hintStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
                 ),
               ),
             ),
@@ -112,7 +147,7 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
                   Padding(
                     padding: EdgeInsets.all(2.0),
                     child: Text(
-                      'Marketplace',
+                      "buyerPageNavigationText1".tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontFamily: 'Poppins-Bold',
@@ -131,7 +166,7 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
                     Padding(
                       padding: EdgeInsets.all(10.0),
                       child: Text(
-                        'Categories',
+                        "farmerPageCategory".tr(),
                         style: TextStyle(
                           fontSize: 15,
                           fontFamily: 'Poppins-Regular',
@@ -191,7 +226,7 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
                                 child: Text(
                                   item.title,
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontSize: 12.2,
                                     fontFamily: 'Poppins',
                                   ),
                                 ),
@@ -239,11 +274,21 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
         List<QueryDocumentSnapshot<Object?>>? documents = querySnapshot?.docs;
         List<Map>? items = documents?.map((e) => e.data() as Map).toList();
 
+        List<Map>? filteredItems = items
+            ?.where((item) =>
+                item['cropName']
+                    .toLowerCase()
+                    .contains(_searchText.toLowerCase()) ||
+                item['location']
+                    .toLowerCase()
+                    .contains(_searchText.toLowerCase()))
+            .toList();
+
         return SingleChildScrollView(
           child: GridView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: items?.length ?? 0,
+            itemCount: filteredItems?.length ?? 0,
             padding: EdgeInsets.all(3),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
@@ -252,7 +297,7 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
               childAspectRatio: 2.3 / 4,
             ),
             itemBuilder: (BuildContext context, int index) {
-              final Map thisItem = items![index];
+              final Map thisItem = filteredItems![index];
 
               return InkWell(
                   onTap: () {
@@ -302,7 +347,7 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
                                 Row(
                                   children: [
                                     Text(
-                                      'Price: ',
+                                      "buyerPagePrice".tr(),
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'Poppins',
@@ -320,7 +365,7 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
                                 Row(
                                   children: [
                                     Text(
-                                      'Farmer: ',
+                                      "buyerPageUserRole2".tr(),
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'Poppins',
@@ -342,7 +387,7 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Location:',
+                                        "buyerPageLocation".tr(),
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontFamily: 'Poppins',

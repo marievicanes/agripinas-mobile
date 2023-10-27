@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(DashboardScreen());
@@ -10,6 +11,75 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  late SharedPreferences prefs;
+  bool hasShownPopup = false;
+
+  @override
+  void initState() {
+    super.initState();
+    initSharedPreferences();
+
+    // Callback after the frame is painted
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      // Check if the popup has not been shown
+      if (!hasShownPopup) {
+        // Show the popup
+        showPopup();
+      }
+    });
+  }
+
+  Future<void> initSharedPreferences() async {
+    prefs = await SharedPreferences.getInstance();
+    // Check if the popup has been shown before
+    setState(() {
+      hasShownPopup = prefs.getBool('hasShownPopup') ?? false;
+    });
+  }
+
+  void showPopup() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return WillPopScope(
+          // Disable back button
+          onWillPop: () async => false,
+          child: AlertDialog(
+            title: Center(
+              child: Text(
+                'Announcement',
+                style: TextStyle(fontFamily: 'Poppins', fontSize: 19),
+              ),
+            ),
+            content: Text(
+              'Dear Cabiao farmers,\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lacinia pretium aliquet. Quisque euismod suscipit mi id accumsan. Quisque molestie varius nisl, eget dictum nunc eleifend quis. Mauris massa est, tincidunt vel venenatis venenatis, fringilla sed orci. Integer et rutrum est, quis venenatis mi. Vestibulum dictum posuere quam, facilisis convallis nunc auctor eu. Etiam iaculis eleifend lorem, ut consequat lacus efficitur rutrum. Sed porta tortor nec velit luctus ullamcorper. Aenean rutrum lectus id tristique tempor. Fusce non ligula varius orci euismod imperdiet at eu ipsum. Maecenas mollis ac est ac vehicula. Donec sit amet orci risus. Nunc malesuada ut ante ac pretium. In hac habitasse platea dictumst. Integer dapibus sodales tortor, et dapibus magna ullamcorper pretium.',
+              style: TextStyle(fontFamily: 'Poppins-Regular', fontSize: 14),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                    color: Color(0xFF4D7046),
+                    fontFamily: 'Poppins-Bold',
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  // Set hasShownPopup to true after the user clicks OK
+                  prefs.setBool('hasShownPopup', true);
+                  setState(() {
+                    hasShownPopup = true;
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   final List<Map<String, dynamic>> tomorrowForecast = [
     {
       'date': 'July 7',
@@ -192,7 +262,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       icon: tomorrowForecast[index]['icon'],
                       temperature: tomorrowForecast[index]['temperature'],
                       weatherCondition: tomorrowForecast[index]
-                          ['weatherCondition'], // Pass the weather condition
+                          ['weatherCondition'],
                     );
                   },
                 ),
@@ -208,7 +278,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       icon: nextSevenDaysForecast[index]['icon'],
                       temperature: nextSevenDaysForecast[index]['temperature'],
                       weatherCondition: nextSevenDaysForecast[index]
-                          ['weatherCondition'], // Pass the weather condition
+                          ['weatherCondition'],
                     );
                   },
                 ),

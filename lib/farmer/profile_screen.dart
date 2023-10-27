@@ -1,8 +1,15 @@
+import 'dart:io';
+
+import 'package:capstone/farmer/email_verification.dart';
+import 'package:capstone/farmer/password_verification.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -12,8 +19,9 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
-  final currentUser = FirebaseAuth.instance;
-  AuthService authService = AuthService();
+  String imageUrl = '';
+  String? _imageUrl;
+  String? _contactNumber;
 
   final TextEditingController _fullnameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -24,11 +32,86 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   final CollectionReference _users =
       FirebaseFirestore.instance.collection('Users');
-  final CollectionReference _marketplace =
-      FirebaseFirestore.instance.collection('Marketplace');
 
   bool _isEditing = false;
   DateTime? _selectedDate;
+
+  XFile? file;
+  final ImagePicker _picker = ImagePicker();
+
+  Future imgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future UimgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future UimgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future imgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future uploadFile() async {
+    if (file == null) return;
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    firebase_storage.Reference referenceRoot =
+        firebase_storage.FirebaseStorage.instance.ref();
+    firebase_storage.Reference referenceDirImages =
+        referenceRoot.child('images');
+
+    firebase_storage.Reference referenceImageToUpload =
+        referenceDirImages.child(uniqueFileName);
+
+    try {
+      await referenceImageToUpload.putFile(File(file!.path));
+      imageUrl = await referenceImageToUpload.getDownloadURL();
+    } catch (error) {}
+  }
 
   Future<void> _updateName([DocumentSnapshot? documentSnapshot]) async {
     if (documentSnapshot != null) {
@@ -36,48 +119,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     await showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext ctx) {
-          return Padding(
-            padding: EdgeInsets.only(
-                top: 20,
-                left: 20,
-                right: 20,
-                bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextField(
-                  controller: _fullnameController,
-                  decoration: const InputDecoration(labelText: 'Fullname'),
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext ctx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            top: 20,
+            left: 20,
+            right: 20,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "farmerProfileText18".tr(),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Poppins',
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Color.fromRGBO(157, 192, 139, 1), // Background color
-                    foregroundColor: Colors.white, // Text color
+              ),
+              const SizedBox(height: 4),
+              TextField(
+                controller: _fullnameController,
+                decoration: const InputDecoration(
+                  labelText: '',
+                  labelStyle: TextStyle(
+                    fontFamily: 'Poppins',
                   ),
-                  child: const Text('Update'),
-                  onPressed: () async {
-                    final String fullname = _fullnameController.text;
-                    if (fullname != null) {
-                      await _users
-                          .doc(documentSnapshot!.id)
-                          .update({"fullname": fullname});
-                      _fullnameController.text = '';
-                      Navigator.of(context).pop();
-                    }
-                  },
-                )
-              ],
-            ),
-          );
-        });
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text(
+                  'Update',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins-Regular',
+                  ),
+                ),
+                onPressed: () async {
+                  final String fullname = _fullnameController.text;
+                  if (fullname != null) {
+                    await _users
+                        .doc(documentSnapshot!.id)
+                        .update({"fullname": fullname});
+                    _fullnameController.text = '';
+                    Navigator.of(context).pop();
+                  }
+                },
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _updateBirthdate([DocumentSnapshot? documentSnapshot]) async {
@@ -97,22 +201,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                TextField(
+                Text(
+                  "farmerProfileText14".tr(),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
+                TextFormField(
                   controller: _birthdateController,
-                  decoration: const InputDecoration(labelText: 'Birthdate'),
+                  readOnly: true,
+                  onTap: () async {
+                    DateTime? selectedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    );
+
+                    if (selectedDate != null) {
+                      _birthdateController.text =
+                          DateFormat('MM-dd-yyyy').format(selectedDate);
+                    }
+                  },
+                  decoration: InputDecoration(
+                    labelText: '',
+                    suffixIcon: Icon(Icons.calendar_today),
+                  ),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Color.fromRGBO(157, 192, 139, 1), // Background color
-                    foregroundColor: Colors.white, // Text color
+                    backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                    foregroundColor: Colors.white,
                   ),
-                  child: const Text('Update'),
+                  child: const Text(
+                    'Update',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins-Regular',
+                    ),
+                  ),
                   onPressed: () async {
                     final String birthdate = _birthdateController.text;
                     if (birthdate != null) {
@@ -147,22 +281,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Text(
+                  "farmerProfileText25".tr(),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
                 TextField(
                   controller: _addressController,
-                  decoration: const InputDecoration(labelText: 'Address'),
+                  decoration: const InputDecoration(labelText: ''),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Color.fromRGBO(157, 192, 139, 1), // Background color
-                    foregroundColor: Colors.white, // Text color
+                    backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                    foregroundColor: Colors.white,
                   ),
-                  child: const Text('Update'),
+                  child: const Text(
+                    'Update',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins-Regular',
+                    ),
+                  ),
                   onPressed: () async {
                     final String address = _addressController.text;
                     if (address != null) {
@@ -197,23 +344,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Text(
+                  'Contact Number',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
                 TextField(
                   controller: _contactController,
-                  decoration:
-                      const InputDecoration(labelText: 'Contact Number'),
+                  decoration: const InputDecoration(labelText: ''),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(11),
+                  ],
+                  keyboardType: TextInputType.phone,
+                  onChanged: (value) {
+                    _contactNumber = value;
+                  },
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Color.fromRGBO(157, 192, 139, 1), // Background color
-                    foregroundColor: Colors.white, // Text color
+                    backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                    foregroundColor: Colors.white,
                   ),
-                  child: const Text('Update'),
+                  child: const Text(
+                    'Update',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins-Regular',
+                    ),
+                  ),
                   onPressed: () async {
                     final String contact = _contactController.text;
                     if (contact != null) {
@@ -231,6 +398,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
   }
 
+  final currentUser = FirebaseAuth.instance;
+  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -250,11 +419,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // Show loading indicator while fetching data.
+            return CircularProgressIndicator();
           }
 
           if (!snapshot.hasData) {
-            return Text("No data available."); // Handle when there's no data.
+            return Text("No data available.");
           }
 
           var data = snapshot.data!.docs[0];
@@ -282,11 +451,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller: _fullnameController,
                   readOnly: true,
                   decoration: InputDecoration(
-                    labelText: 'Name',
+                    labelText: "farmerProfileText18".tr(),
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
-                        iconSize: 18, // You can use any icon you prefer
+                        iconSize: 18,
                         onPressed: () => _updateName(documentSnapshot)),
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                    ),
                   ),
                 ),
                 SizedBox(height: 16.0),
@@ -294,11 +466,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller: _birthdateController,
                   readOnly: true,
                   decoration: InputDecoration(
-                    labelText: 'Birth Date',
+                    labelText: "farmerProfileText22".tr(),
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
-                        iconSize: 18, // You can use any icon you prefer
+                        iconSize: 18,
                         onPressed: () => _updateBirthdate(documentSnapshot)),
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                    ),
                   ),
                 ),
                 SizedBox(height: 16.0),
@@ -306,11 +481,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller: _addressController,
                   readOnly: true,
                   decoration: InputDecoration(
-                    labelText: 'Address',
+                    labelText: "farmerProfileText25".tr(),
                     suffixIcon: IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
-                        iconSize: 18, // You can use any icon you prefer
+                        iconSize: 18,
                         onPressed: () => _updateAddress(documentSnapshot)),
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                    ),
                   ),
                 ),
                 SizedBox(height: 16.0),
@@ -320,10 +498,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: InputDecoration(
                     labelText: 'Contact Number',
                     suffixIcon: IconButton(
-                        icon: Icon(Icons.arrow_forward_ios),
-                        iconSize: 18, // You can use any icon you prefer
-                        onPressed: () => _updateContact(documentSnapshot)),
+                      icon: Icon(Icons.arrow_forward_ios),
+                      iconSize: 18,
+                      onPressed: () => _updateContact(documentSnapshot),
+                    ),
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                    ),
                   ),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  keyboardType: TextInputType.phone,
+                  onChanged: (value) {
+                    _contactNumber = value;
+                  },
                 ),
                 SizedBox(height: 16.0),
                 TextField(
@@ -332,12 +519,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: InputDecoration(
                     labelText: 'Email',
                     suffixIcon: IconButton(
-                      icon: Icon(Icons
-                          .arrow_forward_ios), // You can use any icon you prefer
+                      icon: Icon(Icons.arrow_forward_ios),
                       onPressed: () {
-                        // Handle the button press event here
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EmailSecurityVerification(),
+                          ),
+                        );
                       },
                       iconSize: 18,
+                    ),
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
                     ),
                   ),
                 ),
@@ -349,12 +543,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: InputDecoration(
                     labelText: 'Password',
                     suffixIcon: IconButton(
-                      icon: Icon(Icons
-                          .arrow_forward_ios), // You can use any icon you prefer
+                      icon: Icon(Icons.arrow_forward_ios),
                       onPressed: () {
-                        // Handle the button press event here
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SecurityVerification(),
+                          ),
+                        );
                       },
                       iconSize: 18,
+                    ),
+                    labelStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
                     ),
                   ),
                 ),
@@ -364,6 +565,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         },
       ),
+    );
+  }
+
+  void _saveInformation() {}
+
+  void _UshowPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Gallery'),
+                      onTap: () {
+                        UimgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      UimgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Container(
+            child: new Wrap(
+              children: <Widget>[
+                new ListTile(
+                  leading: new Icon(Icons.photo_library),
+                  title: new Text('Gallery'),
+                  onTap: () {
+                    imgFromGallery();
+                    Navigator.of(context).pop();
+                  },
+                ),
+                new ListTile(
+                  leading: new Icon(Icons.photo_camera),
+                  title: new Text('Camera'),
+                  onTap: () {
+                    imgFromCamera();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,6 +1,33 @@
 import 'package:capstone/farmer/product_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: FertilizersScreen(),
+    );
+  }
+}
 
 class FertilizersScreen extends StatefulWidget {
   @override
@@ -30,7 +57,7 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
               Text(
                 'AgriPinas',
                 style: TextStyle(
-                  fontSize: 10.0,
+                  fontSize: 18.0,
                   fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
@@ -39,19 +66,27 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
           ),
           actions: [
             Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(5.0),
               child: Container(
-                width: 190.0,
+                width: 175.0,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25.0),
                 ),
                 child: TextField(
                   controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      _searchText = value;
+                    });
+                  },
                   decoration: InputDecoration(
                     hintText: 'Search',
                     prefixIcon: Icon(Icons.search),
                     border: InputBorder.none,
+                    hintStyle: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                    ),
                   ),
                 ),
               ),
@@ -86,6 +121,16 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
               List<Map>? items =
                   documents?.map((e) => e.data() as Map).toList();
 
+              List<Map>? filteredItems = items
+                  ?.where((item) =>
+                      item['cropName']
+                          .toLowerCase()
+                          .contains(_searchText.toLowerCase()) ||
+                      item['location']
+                          .toLowerCase()
+                          .contains(_searchText.toLowerCase()))
+                  .toList();
+
               return Column(
                 children: [
                   Row(
@@ -94,7 +139,7 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                       Padding(
                         padding: EdgeInsets.all(10.0),
                         child: Text(
-                          'Fertilizers',
+                          "farmerPageCategoryText3".tr(),
                           style: TextStyle(
                             fontSize: 20,
                             fontFamily: 'Poppins-Regular',
@@ -106,7 +151,7 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                   SizedBox(height: 5.0),
                   Expanded(
                     child: GridView.builder(
-                      itemCount: items?.length ?? 0,
+                      itemCount: filteredItems?.length ?? 0,
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       padding: EdgeInsets.all(3),
@@ -170,7 +215,7 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                                           Row(
                                             children: [
                                               Text(
-                                                'Price: ',
+                                                "farmerPagePrice".tr(),
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   fontFamily: 'Poppins',
@@ -188,7 +233,7 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                                           Row(
                                             children: [
                                               Text(
-                                                'Farmer: ',
+                                                "farmerPageUserRole".tr(),
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   fontFamily: 'Poppins',
@@ -210,7 +255,8 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  'Location:',
+                                                  "farmerPageCategoriesLocation"
+                                                      .tr(),
                                                   style: TextStyle(
                                                     fontSize: 14,
                                                     fontFamily: 'Poppins',

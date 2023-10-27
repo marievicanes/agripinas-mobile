@@ -2,13 +2,39 @@ import 'dart:io';
 
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: CropTrackerScreen(),
+    );
+  }
+}
 
 class CropTrackerScreen extends StatefulWidget {
   @override
@@ -204,17 +230,18 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                   SizedBox(height: 16.0),
                   Center(
                     child: Text(
-                      'Add New Crop',
+                      "farmerCropTrackerAddText2".tr(),
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 20.0,
                       ),
                     ),
                   ),
+                  SizedBox(height: 16.0),
                   TextFormField(
                     controller: _cropNameController,
                     decoration: InputDecoration(
-                      labelText: "Crop's Name",
+                      labelText: "farmerCropTrackerAddText3".tr(),
                       labelStyle: TextStyle(
                         fontFamily: 'Poppins-Regular',
                         fontSize: 15.5,
@@ -249,7 +276,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                       }
                     },
                     decoration: InputDecoration(
-                      labelText: 'Date Planted',
+                      labelText: "farmerCropTrackerDP".tr(),
                       labelStyle: const TextStyle(
                         color: Colors.black,
                         fontFamily: 'Poppins-Regular',
@@ -287,7 +314,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                       }
                     },
                     decoration: InputDecoration(
-                      labelText: 'Estimated Date of Harvest',
+                      labelText: "farmerCropTrackerETH".tr(),
                       labelStyle: TextStyle(
                         color: Colors.black,
                         fontFamily: 'Poppins-Regular',
@@ -400,6 +427,406 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
     );
   }
 
+  Future<void> othersellProduct([DocumentSnapshot? documentSnapshot]) async {
+    String cropID = documentSnapshot?['cropID'];
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              ),
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 16.0),
+                  Center(
+                    child: Text(
+                      "farmerCropTrackerAddProduct".tr(),
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 20.0,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "farmerCropTrackerAddImage".tr(),
+                        style: TextStyle(
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 15.5,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          _showPicker(context);
+                          setState(() {
+                            _isImageSelected = true;
+                          });
+                        },
+                        icon: Icon(Icons.file_upload),
+                      ),
+                    ],
+                  ),
+                  if (!_isImageSelected)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Image is required.",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      ),
+                    ),
+                  StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('Users')
+                        .where('uid', isEqualTo: currentUser?.uid)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                        QueryDocumentSnapshot userData =
+                            snapshot.data!.docs.first;
+                        String fullName = userData.get('fullname').toString();
+                        _fullnameController.text = fullName;
+                        return TextFormField(
+                          maxLines: 1,
+                          enabled: false,
+                          controller: _fullnameController,
+                          decoration: InputDecoration(
+                            labelText: "farmerCropTrackerFarmerName".tr(),
+                            labelStyle: TextStyle(
+                              fontFamily: 'Poppins-Regular',
+                              fontSize: 15.5,
+                              color: Colors.black,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Text("No data available");
+                      }
+                    },
+                  ),
+                  DropdownButtonFormField<String>(
+                    value: selectedLocation,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedLocation = newValue!;
+                        _locationController.text = newValue;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: "farmerCropTrackerAddProductLocation".tr(),
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xFFA9AF7E),
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Location is required";
+                      }
+                      return null;
+                    },
+                    items: <String>[
+                      "Brgy. Bagong Buhay",
+                      "Brgy. Bagong Sikat",
+                      "Brgy. Bagong Silang",
+                      "Brgy. Concepcion",
+                      "Brgy. Entablado",
+                      "Brgy. Maligaya",
+                      "Brgy. Natividad North",
+                      "Brgy. Natividad South",
+                      "Brgy. Palasinan",
+                      "Brgy. Polilio",
+                      "Brgy. San Antonio",
+                      "Brgy. San Carlos",
+                      "Brgy. San Fernando Norte",
+                      "Brgy. San Fernando Sur",
+                      "Brgy. San Gregorio",
+                      "Brgy. San Juan North",
+                      "Brgy. San Juan South",
+                      "Brgy. San Roque",
+                      "Brgy. San Vicente",
+                      "Brgy. Santa Ines",
+                      "Brgy. Santa Isabel",
+                      "Brgy. Santa Rita",
+                      "Brgy. Sinipit",
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  DropdownButtonFormField<String>(
+                    value: selectedCategory,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedCategory = newValue!;
+                        _categoryController.text = newValue;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: "text160".tr(),
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xFFA9AF7E),
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Category is required";
+                      }
+                      return null;
+                    },
+                    items: <String>[
+                      "Select Category",
+                      "Fertilizer",
+                      "Others",
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  TextFormField(
+                    maxLines: 1,
+                    controller: _cropNameController,
+                    decoration: InputDecoration(
+                      labelText: "farmerCropTrackerProductName".tr(),
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15.5,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                      ),
+                    ),
+                  ),
+                  DropdownButtonFormField<String>(
+                    value: selectedUnit,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedUnit = newValue!;
+                        _unitController.text = newValue;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: "farmerCropTrackerAddProductUnit".tr(),
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xFFA9AF7E),
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Unit is required";
+                      }
+                      return null;
+                    },
+                    items: <String>[
+                      "Select Unit",
+                      "Kilograms",
+                      "Sacks",
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  TextFormField(
+                    maxLines: 1,
+                    controller: _quantityController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    ],
+                    decoration: InputDecoration(
+                      labelText: "farmerCropTrackerText13".tr(),
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Quantity is required";
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    maxLines: 1,
+                    controller: _priceController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    ],
+                    decoration: InputDecoration(
+                      labelText: "text63".tr(),
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Price is required";
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    maxLines: 3,
+                    controller: _descriptionController,
+                    decoration: InputDecoration(
+                      labelText: "text164".tr(),
+                      labelStyle: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 15,
+                        color: Colors.black,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Description is required";
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Poppins-Regular',
+                            fontSize: 13.5,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      ElevatedButton(
+                        child: Text(
+                          'Add',
+                          style: TextStyle(
+                            fontFamily: 'Poppins-Regular',
+                          ),
+                        ),
+                        onPressed: () async {
+                          final String cropName = _cropNameController.text;
+                          final String unit = _unitController.text;
+                          final String category = _categoryController.text;
+                          final String quantity = _quantityController.text;
+                          final String price = _priceController.text;
+                          final String fullname = _fullnameController.text;
+                          final String location = _locationController.text;
+                          final String description =
+                              _descriptionController.text;
+                          FirebaseAuth auth = FirebaseAuth.instance;
+                          User? user = auth.currentUser;
+
+                          if (cropName != null) {
+                            String? uid = user?.uid;
+                            await _marketplace.add({
+                              "uid": uid,
+                              "cropID": cropID,
+                              "cropName": cropName,
+                              "unit": unit,
+                              "category": category,
+                              "quantity": quantity,
+                              "price": price,
+                              "fullname": fullname,
+                              "location": location,
+                              "description": description,
+                              "image": imageUrl,
+                            });
+
+                            await _harvested.doc(documentSnapshot?.id).delete();
+                            Navigator.of(context).pop();
+
+                            _cropNameController.text = '';
+                            _categoryController.text = '';
+                            _quantityController.text = '';
+                            _unitController.text = '';
+                            _priceController.text = '';
+                            _fullnameController.text = '';
+                            _locationController.text = '';
+                            _descriptionController.text = '';
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _update([DocumentSnapshot? documentSnapshot]) async {
     if (documentSnapshot != null) {
       _cropNameController.text = documentSnapshot['cropName'];
@@ -425,20 +852,21 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                     SizedBox(height: 16.0),
                     Center(
                       child: Text(
-                        'Edit Crop',
+                        "farmerEditCropTracker".tr(),
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 20.0,
                         ),
                       ),
                     ),
+                    SizedBox(height: 16.0),
                     TextFormField(
                       controller: _cropNameController,
                       decoration: InputDecoration(
-                        labelText: "Crop's Name",
+                        labelText: "farmerCropTrackerAddText3".tr(),
                         labelStyle: TextStyle(
                           fontFamily: 'Poppins-Regular',
-                          fontSize: 15.5,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -458,11 +886,11 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                       readOnly: true,
                       controller: _plantedController,
                       decoration: InputDecoration(
-                        labelText: "Date Planted",
+                        labelText: "farmerCropTrackerDP".tr(),
                         labelStyle: TextStyle(
                           color: Colors.black,
                           fontFamily: 'Poppins-Regular',
-                          fontSize: 13,
+                          fontSize: 15,
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
@@ -498,11 +926,11 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                       readOnly: true,
                       controller: _harvestController,
                       decoration: InputDecoration(
-                        labelText: "Date Planted",
+                        labelText: "farmerCropTrackerETH".tr(),
                         labelStyle: TextStyle(
                           color: Colors.black,
                           fontFamily: 'Poppins-Regular',
-                          fontSize: 13,
+                          fontSize: 15,
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
@@ -537,10 +965,10 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                     TextFormField(
                       controller: _statusController,
                       decoration: InputDecoration(
-                        labelText: "Crop's Name",
+                        labelText: "Status",
                         labelStyle: TextStyle(
                           fontFamily: 'Poppins-Regular',
-                          fontSize: 15.5,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -676,7 +1104,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Add Image',
+                            "farmerCropTrackerAddImage".tr(),
                             style: TextStyle(
                               fontFamily: 'Poppins-Regular',
                               fontSize: 15.5,
@@ -724,7 +1152,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                               enabled: false,
                               controller: _fullnameController,
                               decoration: InputDecoration(
-                                labelText: "Farmer",
+                                labelText: "farmerCropTrackerFarmerName".tr(),
                                 labelStyle: TextStyle(
                                   fontFamily: 'Poppins-Regular',
                                   fontSize: 15.5,
@@ -772,7 +1200,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                           });
                         },
                         decoration: InputDecoration(
-                          labelText: "Category",
+                          labelText: "text160".tr(),
                           labelStyle: TextStyle(
                             fontFamily: 'Poppins-Regular',
                             fontSize: 15.5,
@@ -823,7 +1251,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                               enabled: false,
                               controller: _cropNameController,
                               decoration: InputDecoration(
-                                labelText: "Product",
+                                labelText: "farmerPageEditText2".tr(),
                                 labelStyle: TextStyle(
                                   fontFamily: 'Poppins-Regular',
                                   fontSize: 15.5,
@@ -871,7 +1299,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                           });
                         },
                         decoration: InputDecoration(
-                          labelText: "Unit",
+                          labelText: "farmerCropTrackerAddProductUnit".tr(),
                           labelStyle: TextStyle(
                             fontFamily: 'Poppins-Regular',
                             fontSize: 15.5,
@@ -910,7 +1338,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                         ],
                         decoration: InputDecoration(
-                          labelText: "Quantity",
+                          labelText: "farmerCropTrackerText13".tr(),
                           labelStyle: TextStyle(
                             fontFamily: 'Poppins-Regular',
                             fontSize: 15.5,
@@ -935,7 +1363,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                         ],
                         decoration: InputDecoration(
-                          labelText: "Price",
+                          labelText: "text63".tr(),
                           labelStyle: TextStyle(
                             fontFamily: 'Poppins-Regular',
                             fontSize: 15.5,
@@ -961,7 +1389,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                           });
                         },
                         decoration: InputDecoration(
-                          labelText: "Location",
+                          labelText: "farmerCropTrackerAddProductLocation".tr(),
                           labelStyle: TextStyle(
                             fontFamily: 'Poppins-Regular',
                             fontSize: 15.5,
@@ -1153,6 +1581,11 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                         querySnapshot?.docs;
                     List<Map>? items =
                         documents?.map((e) => e.data() as Map).toList();
+                    List<Map>? filteredItems = items
+                        ?.where((item) => item['cropName']
+                            .toLowerCase()
+                            .contains(_searchText.toLowerCase()))
+                        .toList();
 
                     return Column(children: [
                       TabBar(
@@ -1160,7 +1593,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                         tabs: [
                           Tab(
                             child: Text(
-                              'Harvest',
+                              "farmerCropTrackerNavigationText1".tr(),
                               style: TextStyle(
                                   fontFamily: 'Poppins-Regular',
                                   color: Color(0xFF718C53)),
@@ -1168,7 +1601,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                           ),
                           Tab(
                             child: Text(
-                              'Harvested',
+                              "farmerCropTrackerNavigationText2".tr(),
                               style: TextStyle(
                                   fontFamily: 'Poppins-Regular',
                                   color: Color(0xFF718C53)),
@@ -1249,19 +1682,27 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                           ),
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: EdgeInsets.all(5.0),
                               child: Container(
-                                width: 200.0,
+                                width: 175.0,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(25.0),
                                 ),
                                 child: TextField(
                                   controller: _searchController,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _searchText = value;
+                                    });
+                                  },
                                   decoration: InputDecoration(
                                     hintText: 'Search',
                                     prefixIcon: Icon(Icons.search),
                                     border: InputBorder.none,
+                                    hintStyle: TextStyle(
+                                      fontFamily: 'Poppins-Regular',
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1274,8 +1715,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                           Stack(
                             children: [
                               GridView.builder(
-                                  itemCount:
-                                      streamSnapshot.data?.docs.length ?? 0,
+                                  itemCount: filteredItems?.length ?? 0,
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2,
@@ -1288,7 +1728,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                     // Get the item at this index from streamSnapshot
                                     final DocumentSnapshot documentSnapshot =
                                         streamSnapshot.data!.docs[index];
-                                    final Map thisItem = items![index];
+                                    final Map thisItem = filteredItems![index];
 
                                     {
                                       return GestureDetector(
@@ -1322,24 +1762,36 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                           ),
                                                         ),
                                                         SizedBox(height: 9),
-                                                        Row(
-                                                          children: [
-                                                            Text(
-                                                              'Date Planted: ',
-                                                              style: TextStyle(
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(1.0),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                "farmerCropTrackerDP1"
+                                                                    .tr(),
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 13,
+                                                                  fontFamily:
+                                                                      "Poppins",
+                                                                ),
                                                               ),
-                                                            ),
-                                                            Text(
-                                                              '${thisItem['planted']}',
-                                                              style: TextStyle(
-                                                                fontSize: 14,
+                                                              SizedBox(
+                                                                  height: 4),
+                                                              Text(
+                                                                '${thisItem['planted']}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 14,
+                                                                ),
                                                               ),
-                                                            ),
-                                                          ],
+                                                            ],
+                                                          ),
                                                         ),
                                                         SizedBox(height: 4),
                                                         Padding(
@@ -1352,13 +1804,13 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                                     .start,
                                                             children: [
                                                               Text(
-                                                                'Estimated Date to Harvest:',
+                                                                "farmerCropTrackerETH1"
+                                                                    .tr(),
                                                                 style:
                                                                     TextStyle(
-                                                                  fontSize: 14,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                                                                  fontSize: 13,
+                                                                  fontFamily:
+                                                                      "Poppins",
                                                                 ),
                                                               ),
                                                               SizedBox(
@@ -1386,10 +1838,9 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                                 'Status:',
                                                                 style:
                                                                     TextStyle(
-                                                                  fontSize: 14,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                                                                  fontSize: 12,
+                                                                  fontFamily:
+                                                                      "Poppins",
                                                                 ),
                                                               ),
                                                               SizedBox(
@@ -1398,7 +1849,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                                 '${thisItem['status']}',
                                                                 style:
                                                                     TextStyle(
-                                                                  fontSize: 14,
+                                                                  fontSize: 13,
                                                                 ),
                                                               ),
                                                             ],
@@ -1521,7 +1972,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                                       context) {
                                                                 return AlertDialog(
                                                                   title: Text(
-                                                                    'Delete Tracker?',
+                                                                    "farmerDeleteTracker"
+                                                                        .tr(),
                                                                     style: TextStyle(
                                                                         fontFamily:
                                                                             'Poppins-Regular',
@@ -1529,7 +1981,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                                             FontWeight.bold),
                                                                   ),
                                                                   content: Text(
-                                                                    "This can't be undone and it will be removed from your tracker.",
+                                                                    "farmerDeleteTrackerCantBeUndone"
+                                                                        .tr(),
                                                                     style:
                                                                         TextStyle(
                                                                       fontFamily:
@@ -1689,12 +2142,16 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                   List<Map>? items = documents
                                       ?.map((e) => e.data() as Map)
                                       .toList();
+
+                                  List<Map>? filteredItems = items
+                                      ?.where((item) => item['cropName']
+                                          .toLowerCase()
+                                          .contains(_searchText.toLowerCase()))
+                                      .toList();
                                   return Stack(
                                     children: [
                                       GridView.builder(
-                                        itemCount:
-                                            streamSnapshot.data?.docs.length ??
-                                                0,
+                                        itemCount: filteredItems?.length ?? 0,
                                         gridDelegate:
                                             SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 2,
@@ -1708,7 +2165,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                           final DocumentSnapshot
                                               documentSnapshot =
                                               streamSnapshot.data!.docs[index];
-                                          final Map thisItem = items![index];
+                                          final Map thisItem =
+                                              filteredItems![index];
 
                                           return GestureDetector(
                                             onTap: () {},
@@ -1751,28 +2209,39 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                               ),
                                                             ),
                                                             SizedBox(height: 0),
-                                                            Row(
-                                                              children: [
-                                                                Text(
-                                                                  'Date Planted: ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(1.0),
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    "farmerCropTrackerDP1"
+                                                                        .tr(),
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          13,
+                                                                      fontFamily:
+                                                                          "Poppins",
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                                Text(
-                                                                  '${thisItem['planted']}',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        14,
+                                                                  SizedBox(
+                                                                      height:
+                                                                          4),
+                                                                  Text(
+                                                                    '${thisItem['planted']}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ],
+                                                                ],
+                                                              ),
                                                             ),
                                                             SizedBox(height: 4),
                                                             Padding(
@@ -1785,15 +2254,13 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                                         .start,
                                                                 children: [
                                                                   Text(
-                                                                    'Harvested Date:',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          14,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                    ),
+                                                                    "farmerCropTrackerHD"
+                                                                        .tr(),
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            13,
+                                                                        fontFamily:
+                                                                            "Poppins"),
                                                                   ),
                                                                   SizedBox(
                                                                       height:
@@ -1853,7 +2320,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                                   sellProduct(
                                                                       documentSnapshot),
                                                               child: Text(
-                                                                'Add Product in Marketplace',
+                                                                "farmerCropTrackerHarvestedSellProductButton"
+                                                                    .tr(),
                                                                 style:
                                                                     TextStyle(
                                                                   fontFamily:
@@ -1961,7 +2429,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                                         context) {
                                                                   return AlertDialog(
                                                                     title: Text(
-                                                                      'Delete Tracker?',
+                                                                      "farmerDeleteTracker"
+                                                                          .tr(),
                                                                       style: TextStyle(
                                                                           fontFamily:
                                                                               'Poppins-Regular',
@@ -1970,7 +2439,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                                     ),
                                                                     content:
                                                                         Text(
-                                                                      "This can't be undone and it will be removed from your tracker.",
+                                                                      "farmerDeleteTrackerCantBeUndone"
+                                                                          .tr(),
                                                                       style:
                                                                           TextStyle(
                                                                         fontFamily:
@@ -2027,6 +2497,17 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                             ),
                                           );
                                         },
+                                      ),
+                                      SizedBox(height: 16),
+                                      Positioned(
+                                        bottom: 16.0,
+                                        right: 16.0,
+                                        child: FloatingActionButton(
+                                          onPressed: () => othersellProduct(),
+                                          child: Icon(Icons.add),
+                                          backgroundColor:
+                                              Color.fromRGBO(157, 192, 139, 1),
+                                        ),
                                       ),
                                     ],
                                   );
