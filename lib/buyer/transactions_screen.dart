@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:capstone/buyer/buyer_language.dart';
+import 'package:capstone/buyer/buyer_transactiondetails.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
-import '../main.dart';
 import 'about_us.dart';
 import 'buyer_notif.dart';
 import 'buyer_profilepage.dart';
@@ -84,8 +88,6 @@ class TransactionBuyer extends StatefulWidget {
 
 class _TransactionBuyerState extends State<TransactionBuyer>
     with SingleTickerProviderStateMixin {
-  final TextEditingController _searchController = TextEditingController();
-  String _searchText = '';
   String? selectedStatus;
   bool _isButtonVisible = true;
   late TabController _tabController;
@@ -291,195 +293,272 @@ class _TransactionBuyerState extends State<TransactionBuyer>
     super.dispose();
   }
 
-  void searchItem(String text) {
+  String imageUrl = '';
+
+  XFile? file;
+  final ImagePicker _picker = ImagePicker();
+
+  Future imgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
     setState(() {
-      _searchText = text;
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
     });
   }
 
+  Future UimgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future UimgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future imgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future uploadFile() async {
+    if (file == null) return;
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+
+    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+
+    try {
+      await referenceImageToUpload.putFile(File(file!.path));
+      imageUrl = await referenceImageToUpload.getDownloadURL();
+    } catch (error) {}
+  }
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final currentUser = FirebaseAuth.instance;
   AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color(0xFFA9AF7E),
-          centerTitle: true,
-          title: Row(
-            children: [
-              Image.asset(
-                'assets/logo.png',
-                height: 32.0,
-              ),
-              SizedBox(width: 7.0),
-              Text(
-                'AgriPinas',
-                style: TextStyle(
-                  fontSize: 17.0,
-                  fontFamily: 'Poppins',
-                  color: Colors.white,
+        length: 3,
+        key: _formKey,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Color(0xFFA9AF7E),
+            centerTitle: true,
+            title: Row(
+              children: [
+                Image.asset(
+                  'assets/logo.png',
+                  height: 32.0,
                 ),
-              ),
-            ],
+                SizedBox(width: 7.0),
+                Text(
+                  'AgriPinas',
+                  style: TextStyle(
+                    fontSize: 17.0,
+                    fontFamily: 'Poppins',
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        drawer: Drawer(
-          child: StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection("Users")
-                .where("uid", isEqualTo: currentUser.currentUser!.uid)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                var data = snapshot.data!.docs[0];
-                return ListView(
-                  padding: EdgeInsets.zero,
-                  children: <Widget>[
-                    UserAccountsDrawerHeader(
-                      accountName: Text(data['fullname']),
-                      accountEmail: Text(data['email']),
-                      currentAccountPicture: CircleAvatar(
-                        radius: 10.0,
-                        backgroundImage: AssetImage('assets/user.png'),
-                      ),
-                      decoration: BoxDecoration(
-                        color: Color(0xFFA9AF7E),
-                      ),
-                      otherAccountsPictures: [
-                        IconButton(
-                          icon: Icon(Icons.notifications),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => BuyerAgriNotif()));
+          drawer: Drawer(
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection("Users")
+                  .where("uid", isEqualTo: currentUser.currentUser!.uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  var data = snapshot.data!.docs[0];
+                  return ListView(
+                    padding: EdgeInsets.zero,
+                    children: <Widget>[
+                      UserAccountsDrawerHeader(
+                        accountName: Text(data['fullname']),
+                        accountEmail: Text(data['email']),
+                        currentAccountPicture: GestureDetector(
+                          onTap: () {
+                            _showPicker(context);
                           },
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.message),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Message()));
-                          },
-                        ),
-                      ],
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.person_2_outlined),
-                      title: Text(
-                        'Profile',
-                        style: TextStyle(fontFamily: 'Poppins-Medium'),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ProfileScreen()));
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.info_outlined),
-                      title: Text(
-                        'About Us',
-                        style: TextStyle(fontFamily: 'Poppins-Medium'),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AboutUsScreen()));
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.contact_mail_outlined),
-                      title: Text(
-                        'Contact Us',
-                        style: TextStyle(fontFamily: 'Poppins-Medium'),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ContactUsScreen()));
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.language_outlined),
-                      title: Text(
-                        'Wika / Langauge',
-                        style: TextStyle(fontFamily: 'Poppins-Medium'),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BuyerLanguage(),
+                          child: CircleAvatar(
+                            radius: 10.0,
+                            backgroundImage: AssetImage('assets/user.png'),
                           ),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.logout_outlined),
-                      title: Text(
-                        'Logout',
-                        style: TextStyle(fontFamily: 'Poppins-Medium'),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFA9AF7E),
+                        ),
+                        otherAccountsPictures: [
+                          IconButton(
+                            icon: Icon(Icons.notifications),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => BuyerAgriNotif()));
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.message),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Message()));
+                            },
+                          ),
+                        ],
                       ),
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text(
-                                'Logout your account?',
-                                style: TextStyle(fontFamily: "Poppins"),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text(
-                                    'Cancel',
-                                    style: TextStyle(
-                                        fontFamily: "Poppins-Regular",
-                                        color: Colors.black),
-                                  ),
+                      ListTile(
+                        leading: Icon(Icons.person_2_outlined),
+                        title: Text(
+                          'Profile',
+                          style: TextStyle(fontFamily: 'Poppins-Medium'),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfileScreen()));
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.info_outlined),
+                        title: Text(
+                          'About Us',
+                          style: TextStyle(fontFamily: 'Poppins-Medium'),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BuyerAboutUsScreen()));
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.contact_mail_outlined),
+                        title: Text(
+                          'Contact Us',
+                          style: TextStyle(fontFamily: 'Poppins-Medium'),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      BuyerContactUsScreen()));
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.language_outlined),
+                        title: Text(
+                          'Wika / Langauge',
+                          style: TextStyle(fontFamily: 'Poppins-Medium'),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BuyerLanguage(),
+                            ),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.logout_outlined),
+                        title: Text(
+                          'Logout',
+                          style: TextStyle(fontFamily: 'Poppins-Medium'),
+                        ),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  'Logout your account?',
+                                  style: TextStyle(fontFamily: "Poppins"),
                                 ),
-                                TextButton(
-                                  onPressed: () {
-                                    AuthService authService = AuthService();
-                                    authService.logOutUser(context);
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text(
-                                    'Logout',
-                                    style: TextStyle(
-                                      fontFamily: "Poppins-Regular",
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF9DC08B).withAlpha(180),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text(
+                                      'Cancel',
+                                      style: TextStyle(
+                                          fontFamily: "Poppins-Regular",
+                                          color: Colors.black),
                                     ),
                                   ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                );
-              } else {
-                return CircularProgressIndicator(); // Add loading indicator
-              }
-            }, // Add a closing parenthesis here
-          ), // Add a closing parenthesis here
-        ),
-        body: Column(
-          children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      AuthService authService = AuthService();
+                                      authService.logOutUser(context);
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text(
+                                      'Logout',
+                                      style: TextStyle(
+                                        fontFamily: "Poppins-Regular",
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF9DC08B).withAlpha(180),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                } else {
+                  return CircularProgressIndicator(); // Add loading indicator
+                }
+              }, // Add a closing parenthesis here
+            ), // Add a closing parenthesis here
+          ),
+          body: Column(children: [
             TabBar(
               indicatorColor: Color(0xFF557153),
               tabs: [
@@ -493,7 +572,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                 ),
                 Tab(
                   child: Text(
-                    'Cancelled',
+                    'Completed',
                     style: TextStyle(
                         fontFamily: 'Poppins-Regular',
                         color: Color(0xFF718C53)),
@@ -501,7 +580,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                 ),
                 Tab(
                   child: Text(
-                    'Completed',
+                    'Cancelled',
                     style: TextStyle(
                         fontFamily: 'Poppins-Regular',
                         color: Color(0xFF718C53)),
@@ -547,540 +626,620 @@ class _TransactionBuyerState extends State<TransactionBuyer>
               ],
             ),
             Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(0.0),
-                    child: Container(
-                      width: 200.0,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25.0),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              children: [],
             ),
             Expanded(
-              child: TabBarView(
-                children: [
-                  ListView.builder(
-                    padding: EdgeInsets.all(10),
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      return GestureDetector(
-                        onTap: () {},
-                        child: Card(
-                          child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        item.pendingitemname,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontFamily: 'Poppins',
-                                        ),
+                child: TabBarView(
+              children: [
+                ListView.builder(
+                  padding: EdgeInsets.all(10),
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    return GestureDetector(
+                      onTap: () {},
+                      child: Card(
+                        child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.pendingitemname,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: 'Poppins',
                                       ),
-                                      SizedBox(height: 8),
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: Image.asset(
-                                          item.imageUrl,
-                                          fit: BoxFit.cover,
-                                          width: 80,
-                                          height: 80,
-                                        ),
+                                    ),
+                                    SizedBox(height: 8),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.asset(
+                                        item.imageUrl,
+                                        fit: BoxFit.cover,
+                                        width: 80,
+                                        height: 80,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(
-                                  width: 6,
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(height: 8),
-                                      Text(
-                                        '',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF718C53),
+                              ),
+                              SizedBox(
+                                width: 6,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 8),
+                                    Text(
+                                      '',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF718C53),
+                                      ),
+                                    ),
+                                    SizedBox(height: 2),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Category: ",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 2),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "Category: ",
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        Text(
+                                          item.rcategory,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.rcategory,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 2),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Farmer's Name: ",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 2),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "Farmer's Name: ",
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        ),
+                                        Text(
+                                          item.buyername,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.buyername,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Date Ordered: ',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'Date Ordered: ',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        ),
+                                        Text(
+                                          item.dateordered,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.dateordered,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Price: ',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'Price: ',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        ),
+                                        Text(
+                                          item.unitprice,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.unitprice,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Quantity: ',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'Quantity: ',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        ),
+                                        Text(
+                                          item.quantity,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.quantity,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Total Amount: ',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'Total Amount: ',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        ),
+                                        Text(
+                                          item.totalamount,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.totalamount,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                      );
-                    },
-                  ),
-                  ListView.builder(
-                    padding: EdgeInsets.all(10),
-                    itemCount: cancelitems.length,
-                    itemBuilder: (context, index) {
-                      final item = cancelitems[index];
-                      return GestureDetector(
-                        onTap: () {},
-                        child: Card(
-                          child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        item.cancelitemname,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                      ),
+                    );
+                  },
+                ),
+                ListView.builder(
+                  padding: EdgeInsets.all(10),
+                  itemCount: completeitems.length,
+                  itemBuilder: (context, index) {
+                    final item = completeitems[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BuyerTransactionDetails(
+                                productData: {}, // Pass your product data here
+                                item: item, // Pass the selected item
+                              ),
+                            ));
+                      },
+                      child: Card(
+                        child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.completeitemname,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      SizedBox(height: 8),
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: Image.asset(
-                                          item.imageUrl1,
-                                          fit: BoxFit.cover,
-                                          width: 80,
-                                          height: 80,
-                                        ),
+                                    ),
+                                    SizedBox(height: 8),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.asset(
+                                        item.imageUrl2,
+                                        fit: BoxFit.cover,
+                                        width: 80,
+                                        height: 80,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(
-                                  width: 6,
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(height: 8),
-                                      Text(
-                                        '',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF718C53),
+                              ),
+                              SizedBox(
+                                width: 6,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 8),
+                                    Text(
+                                      '',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF718C53),
+                                      ),
+                                    ),
+                                    SizedBox(height: 2),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Category: ",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 2),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "Category: ",
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        Text(
+                                          item.comcategory,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.cancategory,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 2),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Farmer's Name: ",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 2),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "Farmer's Name: ",
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        ),
+                                        Text(
+                                          item.buyername,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.buyername,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Date Ordered: ',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'Date Ordered: ',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        ),
+                                        Text(
+                                          item.dateordered,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.dateordered,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Price: ',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'Price: ',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        ),
+                                        Text(
+                                          item.unitprice,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.unitprice,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Quantity: ',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'Quantity: ',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        ),
+                                        Text(
+                                          item.quantity,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.quantity,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Total Amount: ',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'Total Amount: ',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        ),
+                                        Text(
+                                          item.totalamount,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.totalamount,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                      );
-                    },
-                  ),
-                  ListView.builder(
-                    padding: EdgeInsets.all(10),
-                    itemCount: completeitems.length,
-                    itemBuilder: (context, index) {
-                      final item = completeitems[index];
-                      return GestureDetector(
-                        onTap: () {},
-                        child: Card(
-                          child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        item.completeitemname,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                      ),
+                    );
+                  },
+                ),
+                ListView.builder(
+                  padding: EdgeInsets.all(10),
+                  itemCount: cancelitems.length,
+                  itemBuilder: (context, index) {
+                    final item = cancelitems[index];
+                    return GestureDetector(
+                      onTap: () {},
+                      child: Card(
+                        child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.cancelitemname,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      SizedBox(height: 8),
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: Image.asset(
-                                          item.imageUrl2,
-                                          fit: BoxFit.cover,
-                                          width: 80,
-                                          height: 80,
-                                        ),
+                                    ),
+                                    SizedBox(height: 8),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.asset(
+                                        item.imageUrl1,
+                                        fit: BoxFit.cover,
+                                        width: 80,
+                                        height: 80,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(
-                                  width: 6,
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(height: 8),
-                                      Text(
-                                        '',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF718C53),
+                              ),
+                              SizedBox(
+                                width: 6,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 8),
+                                    Text(
+                                      '',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF718C53),
+                                      ),
+                                    ),
+                                    SizedBox(height: 2),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Category: ",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 2),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "Category: ",
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        Text(
+                                          item.cancategory,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.comcategory,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 2),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Farmer's Name: ",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 2),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "Farmer's Name: ",
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        ),
+                                        Text(
+                                          item.buyername,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.buyername,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Date Ordered: ',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 4),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'Date Ordered: ',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        ),
+                                        Text(
+                                          item.dateordered,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.dateordered,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Price: ',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'Price: ',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        ),
+                                        Text(
+                                          item.unitprice,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.unitprice,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Quantity: ',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'Quantity: ',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        ),
+                                        Text(
+                                          item.quantity,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.quantity,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Total Amount: ',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'Total Amount: ',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        ),
+                                        Text(
+                                          item.totalamount,
+                                          style: TextStyle(
+                                            fontSize: 14.5,
                                           ),
-                                          Text(
-                                            item.totalamount,
-                                            style: TextStyle(
-                                              fontSize: 14.5,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                      );
+                      ),
+                    );
+                  },
+                ),
+              ],
+            )),
+          ]),
+        ));
+  }
+
+  void _saveInformation() {}
+
+  void _UshowPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Gallery'),
+                      onTap: () {
+                        UimgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      UimgFromCamera();
+                      Navigator.of(context).pop();
                     },
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
+          );
+        });
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Container(
+            child: new Wrap(
+              children: <Widget>[
+                new ListTile(
+                  leading: new Icon(Icons.photo_library),
+                  title: new Text('Gallery'),
+                  onTap: () {
+                    imgFromGallery().then((imageUrl) {
+                      if (imageUrl != null) {
+                        setState(() {
+                          // Update the imageUrl in Firestore
+                          updateProfileImageUrl(imageUrl);
+
+                          // Set the imageUrl for displaying
+                          this.imageUrl = imageUrl;
+                        });
+                      }
+                      Navigator.of(context).pop();
+                    });
+                  },
+                ),
+                new ListTile(
+                  leading: new Icon(Icons.photo_camera),
+                  title: new Text('Camera'),
+                  onTap: () {
+                    imgFromCamera().then((imageUrl) {
+                      if (imageUrl != null) {
+                        setState(() {
+                          // Update the imageUrl in Firestore
+                          updateProfileImageUrl(imageUrl);
+
+                          // Set the imageUrl for displaying
+                          this.imageUrl = imageUrl;
+                        });
+                      }
+                      Navigator.of(context).pop();
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
-  void _saveInformation() {}
+  Future<void> updateProfileImageUrl(String imageUrl) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(currentUser.currentUser!.uid) // Use the user's UID
+          .update({'image': imageUrl});
+    } catch (error) {
+      print('Error updating profile image: $error');
+    }
+  }
 }
