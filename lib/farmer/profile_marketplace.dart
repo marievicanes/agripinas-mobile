@@ -1,40 +1,12 @@
 import 'dart:io';
 
-import 'package:capstone/farmer/farmer_archive.dart';
 import 'package:capstone/farmer/product_details.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await EasyLocalization.ensureInitialized();
-
-  runApp(
-    EasyLocalization(
-      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
-      path: 'assets/translations',
-      fallbackLocale: Locale('en', 'US'),
-      child: MyApp(),
-    ),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-      home: PostedProducts(),
-    );
-  }
-}
 
 class PostedProducts extends StatefulWidget {
   @override
@@ -164,7 +136,7 @@ class _PostedProductsState extends State<PostedProducts> {
                     SizedBox(height: 16.0),
                     Center(
                       child: Text(
-                        "farmerPageEditText1".tr(),
+                        'Edit Crop',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 20.0,
@@ -175,10 +147,10 @@ class _PostedProductsState extends State<PostedProducts> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "farmerCropTrackerAddImage".tr(),
+                          'Add Image',
                           style: TextStyle(
                             fontFamily: 'Poppins-Regular',
-                            fontSize: 15,
+                            fontSize: 15.5,
                           ),
                         ),
                         IconButton(
@@ -208,7 +180,7 @@ class _PostedProductsState extends State<PostedProducts> {
                     TextFormField(
                       controller: _cropNameController,
                       decoration: InputDecoration(
-                        labelText: "farmerPageEditText2".tr(),
+                        labelText: "Crop's Name",
                         labelStyle: TextStyle(
                           fontFamily: 'Poppins-Regular',
                           fontSize: 15.5,
@@ -231,11 +203,11 @@ class _PostedProductsState extends State<PostedProducts> {
                       readOnly: true,
                       controller: _priceController,
                       decoration: InputDecoration(
-                        labelText: "text63".tr(),
+                        labelText: "Price",
                         labelStyle: TextStyle(
                           color: Colors.black,
                           fontFamily: 'Poppins-Regular',
-                          fontSize: 15.5,
+                          fontSize: 13,
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
@@ -254,7 +226,7 @@ class _PostedProductsState extends State<PostedProducts> {
                     TextFormField(
                       controller: _quantityController,
                       decoration: InputDecoration(
-                        labelText: "farmerCropTrackerText13".tr(),
+                        labelText: "Quantity",
                         labelStyle: TextStyle(
                           fontFamily: 'Poppins-Regular',
                           fontSize: 15.5,
@@ -303,7 +275,7 @@ class _PostedProductsState extends State<PostedProducts> {
                         });
                       },
                       decoration: InputDecoration(
-                        labelText: "farmerCropTrackerAddProductUnit".tr(),
+                        labelText: "Unit",
                         labelStyle: TextStyle(
                           fontFamily: 'Poppins-Regular',
                           fontSize: 15.5,
@@ -342,7 +314,7 @@ class _PostedProductsState extends State<PostedProducts> {
                         labelStyle: TextStyle(
                           color: Colors.black,
                           fontFamily: 'Poppins-Regular',
-                          fontSize: 15.5,
+                          fontSize: 13,
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
@@ -441,7 +413,7 @@ class _PostedProductsState extends State<PostedProducts> {
               Text(
                 'AgriPinas',
                 style: TextStyle(
-                  fontSize: 18.0,
+                  fontSize: 14.0,
                   fontFamily: 'Poppins',
                   color: Colors.white,
                 ),
@@ -450,27 +422,19 @@ class _PostedProductsState extends State<PostedProducts> {
           ),
           actions: [
             Padding(
-              padding: EdgeInsets.all(5.0),
+              padding: EdgeInsets.all(8.0),
               child: Container(
-                width: 175.0,
+                width: 170.0,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25.0),
                 ),
                 child: TextField(
                   controller: _searchController,
-                  onChanged: (value) {
-                    setState(() {
-                      _searchText = value;
-                    });
-                  },
                   decoration: InputDecoration(
                     hintText: 'Search',
                     prefixIcon: Icon(Icons.search),
                     border: InputBorder.none,
-                    hintStyle: TextStyle(
-                      fontFamily: 'Poppins-Regular',
-                    ),
                   ),
                 ),
               ),
@@ -493,16 +457,6 @@ class _PostedProductsState extends State<PostedProducts> {
                 List<Map>? items =
                     documents?.map((e) => e.data() as Map).toList();
 
-                List<Map>? filteredItems = items
-                    ?.where((item) =>
-                        item['cropName']
-                            .toLowerCase()
-                            .contains(_searchText.toLowerCase()) ||
-                        item['location']
-                            .toLowerCase()
-                            .contains(_searchText.toLowerCase()))
-                    .toList();
-
                 return SingleChildScrollView(
                     child: Column(children: [
                   Padding(
@@ -510,49 +464,22 @@ class _PostedProductsState extends State<PostedProducts> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(
-                          'Posted Products',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'Poppins-Bold',
+                        Padding(
+                          padding: EdgeInsets.all(2.0),
+                          child: Text(
+                            'Posted Products',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'Poppins-Bold',
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 175.0),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FarmerArchive(),
-                                  ),
-                                );
-                              },
-                              child: Image.asset(
-                                'assets/archiveicon.png',
-                                width: 30,
-                                height: 30,
-                                color: Color(0xFF5c9348),
-                              ),
-                            ),
-                            Text(
-                              'Archive',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontFamily: 'Poppins-Regular',
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
                         ),
                       ],
                     ),
                   ),
                   SizedBox(height: 10.0),
                   GridView.builder(
-                    itemCount: filteredItems?.length ?? 0,
+                    itemCount: streamSnapshot.data?.docs.length ?? 0,
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     padding: EdgeInsets.all(1),
@@ -563,9 +490,10 @@ class _PostedProductsState extends State<PostedProducts> {
                       childAspectRatio: 2.5 / 3.9,
                     ),
                     itemBuilder: (BuildContext context, int index) {
+                      // Get the item at this index from streamSnapshot
                       final DocumentSnapshot documentSnapshot =
                           streamSnapshot.data!.docs[index];
-                      final Map thisItem = filteredItems![index];
+                      final Map thisItem = items![index];
 
                       return InkWell(
                         onTap: () {
@@ -618,17 +546,16 @@ class _PostedProductsState extends State<PostedProducts> {
                                         Row(
                                           children: [
                                             Text(
-                                              "farmerPagePrice".tr(),
+                                              'Price: ',
                                               style: TextStyle(
                                                 fontSize: 14,
-                                                fontFamily: "Poppins",
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                             Text(
                                               '${thisItem['price']}',
                                               style: TextStyle(
                                                 fontSize: 14,
-                                                fontFamily: 'Poppins-Regular',
                                               ),
                                             ),
                                           ],
@@ -637,10 +564,10 @@ class _PostedProductsState extends State<PostedProducts> {
                                         Row(
                                           children: [
                                             Text(
-                                              "farmerPageQuantity".tr(),
+                                              'Quantity: ',
                                               style: TextStyle(
                                                 fontSize: 14,
-                                                fontFamily: "Poppins",
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                             SizedBox(height: 4),
@@ -648,7 +575,6 @@ class _PostedProductsState extends State<PostedProducts> {
                                               '${thisItem['quantity']}',
                                               style: TextStyle(
                                                 fontSize: 14,
-                                                fontFamily: 'Poppins-Regular',
                                               ),
                                             ),
                                           ],
@@ -657,10 +583,10 @@ class _PostedProductsState extends State<PostedProducts> {
                                         Row(
                                           children: [
                                             Text(
-                                              "farmerPageUnit".tr(),
+                                              'Unit: ',
                                               style: TextStyle(
                                                 fontSize: 14,
-                                                fontFamily: "Poppins",
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                             SizedBox(height: 4),
@@ -701,7 +627,7 @@ class _PostedProductsState extends State<PostedProducts> {
                                           ),
                                           SizedBox(width: 8),
                                           Text(
-                                            "userEdit".tr(),
+                                            'Edit',
                                             style: TextStyle(
                                               fontFamily: 'Poppins-Regular',
                                             ),
@@ -719,25 +645,7 @@ class _PostedProductsState extends State<PostedProducts> {
                                           ),
                                           SizedBox(width: 8),
                                           Text(
-                                            "userDelete".tr(),
-                                            style: TextStyle(
-                                              fontFamily: 'Poppins-Regular',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    PopupMenuItem<String>(
-                                      value: 'archive',
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.archive,
-                                            color: Color(0xFF9DC08B),
-                                          ),
-                                          SizedBox(width: 8),
-                                          Text(
-                                            "farmerArchive".tr(),
+                                            'Delete',
                                             style: TextStyle(
                                               fontFamily: 'Poppins-Regular',
                                             ),
@@ -755,7 +663,7 @@ class _PostedProductsState extends State<PostedProducts> {
                                           builder: (BuildContext context) {
                                             return AlertDialog(
                                               title: Text(
-                                                "farmerDeleteProduct".tr(),
+                                                'Delete Product?',
                                                 style: TextStyle(
                                                     fontFamily:
                                                         'Poppins-Regular',
@@ -763,8 +671,7 @@ class _PostedProductsState extends State<PostedProducts> {
                                                         FontWeight.bold),
                                               ),
                                               content: Text(
-                                                "farmerDeleteProductCantBeUndone"
-                                                    .tr(),
+                                                "This can't be undone and it will be removed in marketplace.",
                                                 style: TextStyle(
                                                   fontFamily: 'Poppins-Regular',
                                                   fontSize: 13.8,
@@ -785,7 +692,7 @@ class _PostedProductsState extends State<PostedProducts> {
                                                   },
                                                 ),
                                                 TextButton(
-                                                  child: Text("userDelete".tr(),
+                                                  child: Text('Delete',
                                                       style: TextStyle(
                                                         fontFamily:
                                                             'Poppins-Regular',

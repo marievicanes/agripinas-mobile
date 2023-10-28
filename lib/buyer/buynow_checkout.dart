@@ -155,6 +155,8 @@ class _BuyNowCheckoutScreenState extends State<BuyNowCheckoutScreen> {
                             int.tryParse(cartItem['boughtQuantity'] ?? '0') ??
                                 0;
 
+                        totalPayment = boughtQuantity * price;
+
                         return _buildCartItem(
                           cartItem['cropName'],
                           price,
@@ -163,9 +165,6 @@ class _BuyNowCheckoutScreenState extends State<BuyNowCheckoutScreen> {
                           'Poppins-Regular',
                         );
                       }).toList();
-
-                      // totalCost now holds the correct total cost, update totalPayment.
-                      totalPayment = totalCost;
 
                       return Column(
                         children: cartItems,

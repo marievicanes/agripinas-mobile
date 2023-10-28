@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'helper.dart';
 
@@ -298,8 +299,10 @@ class Login extends StatelessWidget {
 
                             if (role == "Farmer") {
                               authService.loginFarmer(context);
+                              saveLoginState(true);
                             } else if (role == "Buyer") {
                               authService.loginBuyer(context);
+                              saveLoginState(true);
                             } else {
                               // Handle unknown role or other cases
                               showDialog(
@@ -374,6 +377,16 @@ class Login extends StatelessWidget {
                       ),
                     ]))));
   }
+}
+
+Future<void> saveLoginState(bool isLoggedIn) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('isLoggedIn', isLoggedIn);
+}
+
+Future<bool> checkLoginStatus() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('isLoggedIn') ?? false;
 }
 
 void fpassword() async {
