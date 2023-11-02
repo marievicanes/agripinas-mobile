@@ -35,7 +35,7 @@ class AgriMessage extends StatelessWidget {
             child: ListView.builder(
               itemCount: users.length,
               itemBuilder: (context, index) {
-                User user = users[index];
+                Users user = users[index];
                 return ListTile(
                   leading: CircleAvatar(
                     backgroundImage: AssetImage(user.profile),
@@ -136,13 +136,13 @@ class ChatAgriScreen extends StatelessWidget {
   }
 }
 
-class User {
+class Users {
   final String name;
   final String message;
   final String time;
   final String profile;
 
-  User({
+  Users({
     required this.name,
     required this.message,
     required this.time,
@@ -150,33 +150,33 @@ class User {
   });
 }
 
-List<User> users = [
-  User(
+List<Users> users = [
+  Users(
     name: 'Arriane Gatpo',
     message:
         'Musta? Sample sample qui dolorem ipsum, quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem',
     time: '5:34 PM',
     profile: 'assets/user.png',
   ),
-  User(
+  Users(
     name: 'Daniella Marie Tungol',
     message: 'Nice one! Sample oks',
     time: '7:23 PM',
     profile: 'assets/user2.png',
   ),
-  User(
+  Users(
     name: 'Marievic Anes',
     message: 'Kamusta? Uy!',
     time: '8:45 PM',
     profile: 'assets/user3.png',
   ),
-  User(
+  Users(
     name: 'Jenkins Mesina',
     message: 'Pre',
     time: '9:12 PM',
     profile: 'assets/user4.png',
   ),
-  User(
+  Users(
     name: 'Romeo London',
     message: 'Uy pre!',
     time: '10:56 PM',

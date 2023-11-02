@@ -1,4 +1,8 @@
+import 'package:capstone/buyer/message.dart';
+import 'package:capstone/helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
@@ -11,16 +15,16 @@ void main() async {
       path: 'assets/translations',
       fallbackLocale: Locale('en', 'US'),
       child: MyApp(
-        productData: {},
+        cartItem: {},
       ),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  final Map productData;
+  final Map cartItem;
 
-  MyApp({required this.productData});
+  MyApp({required this.cartItem});
 
   @override
   Widget build(BuildContext context) {
@@ -28,25 +32,227 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      home: BuyerTransactionDetails(),
+      home: BuyerTransactionDetails(
+        cartItem,
+      ),
     );
   }
 }
 
 class BuyerTransactionDetails extends StatefulWidget {
-  final TextEditingController _searchController = TextEditingController();
-  String _searchText = '';
+  final Map cartItem;
+  const BuyerTransactionDetails(this.cartItem);
 
   @override
   _BuyerTransactionDetailsState createState() =>
       _BuyerTransactionDetailsState();
 }
 
+TextEditingController _cropNameController = TextEditingController();
+TextEditingController _contentController = TextEditingController();
+
+final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+final CollectionReference _userCarts =
+    FirebaseFirestore.instance.collection('UserCarts');
+final CollectionReference _transaction =
+    FirebaseFirestore.instance.collection('Transaction');
+final CollectionReference _reports =
+    FirebaseFirestore.instance.collection('Reports');
+
+final currentUser = FirebaseAuth.instance.currentUser;
+AuthService authService = AuthService();
+
 class _BuyerTransactionDetailsState extends State<BuyerTransactionDetails> {
-  String selectedPaymentMethod = 'Cash on Pickup';
+  String paymentMethod = '';
+
+  @override
+  void initState() {
+    super.initState();
+    // Replace 'yourTransactionId' with the actual transaction ID associated with the cartItem
+    final cropID = widget.cartItem['cropID'];
+
+    // Retrieve the payment method from the transaction collection
+    _transaction.doc(cropID).get().then((transactionSnapshot) {
+      if (transactionSnapshot.exists) {
+        setState(() {
+          paymentMethod = transactionSnapshot['paymentMethod'];
+        });
+      }
+    });
+  }
+
+  Future<void> _report([DocumentSnapshot? documentSnapshot]) async {
+    String cropID = widget.cartItem['cropID'];
+    String cropName = widget.cartItem['cropName'];
+    String sellerFullname = widget.cartItem['fullname'];
+    String selleruid = widget.cartItem['uid'];
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          // Use StatefulBuilder to rebuild the widget when the keyboard is displayed
+          builder: (BuildContext context, StateSetter setState) {
+            return SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context)
+                      .viewInsets
+                      .bottom, // Adjust for the keyboard
+                  left: 16.0, // Add left padding
+                  right: 16.0, // Adjust for the keyboard
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
+                  ),
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(height: 16.0),
+                      Center(
+                        child: Text(
+                          'Report Product',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 20.0,
+                          ),
+                        ),
+                      ),
+                      TextFormField(
+                        maxLines: 1,
+                        enabled: false,
+                        controller: TextEditingController(text: cropName),
+                        decoration: InputDecoration(
+                          labelText: "Product",
+                          labelStyle: TextStyle(
+                            fontFamily: 'Poppins-Regular',
+                            fontSize: 15.5,
+                            color: Colors.black,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                          ),
+                        ),
+                      ),
+                      TextFormField(
+                        maxLines: 1,
+                        enabled: false,
+                        controller: TextEditingController(text: sellerFullname),
+                        decoration: InputDecoration(
+                          labelText: "Seller's Full Name",
+                          labelStyle: TextStyle(
+                            fontFamily: 'Poppins-Regular',
+                            fontSize: 15.5,
+                            color: Colors.black,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFFA9AF7E)),
+                          ),
+                        ),
+                      ),
+                      TextFormField(
+                        maxLines: 3,
+                        controller: _contentController,
+                        decoration: InputDecoration(
+                          labelText: "Details",
+                          labelStyle: TextStyle(
+                            fontFamily: 'Poppins-Regular',
+                            fontSize: 15.5,
+                            color: Colors.black,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xFFA9AF7E),
+                            ),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Details is required";
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 16.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: 'Poppins-Regular',
+                                fontSize: 13.5,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          ElevatedButton(
+                            child: Text(
+                              'Add',
+                              style: TextStyle(
+                                fontFamily: 'Poppins-Regular',
+                              ),
+                            ),
+                            onPressed: () async {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                final String content = _contentController.text;
+                                DateTime currentDate = DateTime.now();
+                                String formattedDate = DateFormat('yyyy-MM-dd')
+                                    .format(currentDate);
+
+                                FirebaseAuth auth = FirebaseAuth.instance;
+                                User? user = auth.currentUser;
+                                if (cropName != null) {
+                                  String? buid = user?.uid;
+                                  await _reports.add({
+                                    "buid": buid,
+                                    "uid": selleruid,
+                                    "content": content,
+                                    "timestamp": formattedDate,
+                                    "cropName": cropName,
+                                    "fullname": sellerFullname,
+                                    "cropID": cropID,
+                                  });
+                                  _contentController.text = '';
+
+                                  Navigator.of(context).pop();
+                                }
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color.fromRGBO(157, 192, 139, 1),
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final Map cartItem = widget.cartItem;
+    double price = double.tryParse(cartItem['price']) ?? 0.0;
+    int boughtQuantity = int.tryParse(cartItem['boughtQuantity']) ?? 0;
+    double orderTotal = price * boughtQuantity;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFA9AF7E),
@@ -71,9 +277,6 @@ class _BuyerTransactionDetailsState extends State<BuyerTransactionDetails> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Divider(),
-              Divider(),
-              Divider(),
               Divider(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -106,13 +309,13 @@ class _BuyerTransactionDetailsState extends State<BuyerTransactionDetails> {
                 child: Column(
                   children: [
                     _buildCartShippingInfo(
-                        'Parcel has been delivered', '', 'Poppins-Regular'),
+                        '', 'Item has been received', 'Poppins-Regular'),
                   ],
                 ),
               ),
               Divider(),
               Text(
-                'Seller: Marievic Anes',
+                'Seller: ${cartItem['fullname']}',
                 style: TextStyle(fontFamily: 'Poppins', fontSize: 18),
               ),
               Card(
@@ -120,18 +323,20 @@ class _BuyerTransactionDetailsState extends State<BuyerTransactionDetails> {
                 margin: EdgeInsets.symmetric(vertical: 8.0),
                 child: Column(
                   children: [
-                    _buildCartItem('Pechay', 200.0, 2, 'assets/pechay.png',
-                        'Poppins-Regular'),
-                    _buildCartItem('Tomato', 150.0, 1, 'assets/tomato.png',
-                        'Poppins-Regular'),
+                    _buildCartItem(
+                      cartItem['cropName'],
+                      cartItem['price'],
+                      cartItem['boughtQuantity'],
+                      cartItem['imageUrl'],
+                      'Poppins-Regular',
+                    ),
                   ],
                 ),
               ),
               SizedBox(height: 16.0),
               Divider(),
-              _buildPaymentInfo(
-                  'Payment Method:', 'Cash on Delivery', 'Poppins-Regular'),
-              _buildPaymentInfo('Order Total:', '₱350.00', 'Poppins-Regular'),
+              _buildPaymentInfo('Order Total:',
+                  '₱${orderTotal.toStringAsFixed(2)}', 'Poppins-Regular'),
               SizedBox(height: 16.0),
               Divider(),
               SizedBox(height: 10),
@@ -142,7 +347,13 @@ class _BuyerTransactionDetailsState extends State<BuyerTransactionDetails> {
                     width: MediaQuery.of(context).size.width *
                         0.4, // Adjust the width as needed
                     child: OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Message(),
+                            ));
+                      },
                       style: ButtonStyle(
                         side: MaterialStateProperty.all(
                           BorderSide(color: Color(0xFF9DC08B)),
@@ -163,7 +374,7 @@ class _BuyerTransactionDetailsState extends State<BuyerTransactionDetails> {
                   Container(
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => _report(),
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(
                           Color(0xFF9DC08B),
@@ -192,11 +403,13 @@ class _BuyerTransactionDetailsState extends State<BuyerTransactionDetails> {
     );
   }
 
-  Widget _buildCartItem(String name, double price, int quantity,
-      String productImageAsset, String fontFamily) {
+  Widget _buildCartItem(String name, String price, String boughtQuantity,
+      String imageUrl, String fontFamily) {
+    double parsedPrice = double.tryParse(price) ?? 0.0;
+    int parsedBoughtQuantity = int.tryParse(boughtQuantity) ?? 0;
     return ListTile(
-      leading: Image.asset(
-        productImageAsset,
+      leading: Image.network(
+        imageUrl,
         width: 60,
         height: 60,
         fit: BoxFit.cover,
@@ -209,15 +422,20 @@ class _BuyerTransactionDetailsState extends State<BuyerTransactionDetails> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Price: ₱${price.toStringAsFixed(2)}',
+            'Price: ₱${parsedPrice.toStringAsFixed(2)}', // Display the price as currency
           ),
-          Text('Quantity: $quantity', style: TextStyle(fontFamily: fontFamily)),
+          Text('Quantity: $parsedBoughtQuantity',
+              style: TextStyle(fontFamily: fontFamily)),
         ],
       ),
     );
   }
 
-  Widget _buildPaymentInfo(String label, String value, String fontFamily) {
+  Widget _buildPaymentInfo(
+    String label,
+    String value,
+    String fontFamily,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
@@ -239,14 +457,15 @@ class _BuyerTransactionDetailsState extends State<BuyerTransactionDetails> {
     );
   }
 
-  Widget _buildCartShippingInfo(String label, String value, String fontFamily) {
+  Widget _buildCartShippingInfo(
+      String label, String paymentMethod, String fontFamily) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
-            label,
+            paymentMethod,
             style: TextStyle(
               fontSize: 14,
               fontFamily: fontFamily,
