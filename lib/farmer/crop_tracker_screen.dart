@@ -1075,6 +1075,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                   "location": location,
                                   "description": description,
                                   "image": imageUrl,
+                                  "archived": false,
                                 });
 
                                 await _harvested
@@ -1514,6 +1515,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                   "location": location,
                                   "description": description,
                                   "image": imageUrl,
+                                  "archived": false,
                                 });
 
                                 await _harvested

@@ -1,7 +1,7 @@
+import 'package:capstone/buyer/about_us.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'about_us.dart';
 import 'contact_us.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -76,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AboutUsScreen(),
+                    builder: (context) => BuyerAboutUsScreen(),
                   ),
                 );
               },
@@ -89,7 +89,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ContactUsScreen(),
+                    builder: (context) => BuyerContactUsScreen(),
                   ),
                 );
               },

@@ -1,28 +1,19 @@
 import 'package:flutter/material.dart';
 
-class AboutUsScreen extends StatelessWidget {
+class BuyerAboutUsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFA9AF7E),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        centerTitle: false,
         title: Row(
           children: [
-            Image.asset(
-              'assets/logo.png',
-              height: 32.0,
-            ),
-            SizedBox(width: 7.0),
+            SizedBox(width: 8.0),
             Text(
-              'AgriPinas',
+              'About Us',
               style: TextStyle(
-                fontSize: 17.0,
+                fontSize: 20.0,
                 fontFamily: 'Poppins',
                 color: Colors.white,
               ),
@@ -44,18 +35,63 @@ class AboutUsScreen extends StatelessWidget {
               ),
               SizedBox(height: 16.0),
               Text(
-                'ABOUT US',
-                style: TextStyle(fontSize: 24.0, fontFamily: 'Poppins-Bold'),
+                'VISION',
+                style: TextStyle(fontSize: 24.0, fontFamily: "Poppins"),
               ),
-              SizedBox(height: 12.0),
+              SizedBox(height: 8.0),
               Text(
-                'Farmers are at the center of our culture; they provide us with every single meal. As a result, farmers provide a means of subsistence for everyone in the country. No matter how small or large, it still counts. It is solely because of them that we may live on this world. In addition to a wealth of nutritious food, farmers also generate a wide range of valued commodities. Farmers protect the environment through maintaining healthy soil, preserving water supplies, and protecting animals. In the community, farmers have a big part to play. Despite their huge importance, farmers still do not have a decent way of life. As a result, researchers will develop a market and management system that will allow farmers to post their crop online, making it simple for anyone to buy it.  ',
-                style: TextStyle(fontSize: 16.0, fontFamily: 'Poppins-Regular'),
+                'Layuning may gawa, tapat para sa pangarap ng magsasaka na mabago ang antas ng pamumuhay ng bawat kasapi.',
+                style: TextStyle(fontSize: 16.0, fontFamily: "Poppins-Regular"),
               ),
               SizedBox(height: 16.0),
               Text(
-                '',
-                style: TextStyle(fontSize: 16.0),
+                'MISSION',
+                style: TextStyle(fontSize: 24.0, fontFamily: "Poppins"),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                'Upang matutunan na mapaunlad ang antas ng kabuhayan ng mga magsasaka sa pamamagitan ng pinansyal na tulong at serbisyo.',
+                style: TextStyle(fontSize: 16.0, fontFamily: "Poppins-Regular"),
+              ),
+              SizedBox(height: 16.0),
+              Text(
+                'GOALS',
+                style: TextStyle(fontSize: 24.0, fontFamily: "Poppins"),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                '1. Matulungan ang bawat kasapi o miyembro sa mga pangangailangang pinansyal.',
+                style: TextStyle(fontSize: 16.0, fontFamily: "Poppins-Regular"),
+              ),
+              SizedBox(height: 5.0),
+              Text(
+                '2. Mahikayat ang mga kasapi at mag-impok para may pondong puhunan.',
+                style: TextStyle(fontSize: 16.0, fontFamily: "Poppins-Regular"),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                '3. Pagkakaroon ng sapat nA puhunan para sa iba’t ibang negosyo at proyekto.',
+                style: TextStyle(fontSize: 16.0, fontFamily: "Poppins-Regular"),
+              ),
+              SizedBox(height: 5.0),
+              Text(
+                '4. Mapataas ang ani at kita ng bawat kasapi ng kooperatiba.',
+                style: TextStyle(fontSize: 16.0, fontFamily: "Poppins-Regular"),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                '5. Pagkakaroon ng pasilidad gaya ng bodega,bilaran,makinarya,at sariling lote.',
+                style: TextStyle(fontSize: 16.0, fontFamily: "Poppins-Regular"),
+              ),
+              SizedBox(height: 5.0),
+              Text(
+                '6. Magkaroon ng programa para sa pang-kalusugan,edukasyon at pangkabuhayan.',
+                style: TextStyle(fontSize: 16.0, fontFamily: "Poppins-Regular"),
+              ),
+              SizedBox(height: 5.0),
+              Text(
+                '7. Patuloy na pag-aaral at pagsasanay sa lahat ng kasapi ng kooperatiba.',
+                style: TextStyle(fontSize: 16.0, fontFamily: "Poppins-Regular"),
               ),
             ],
           ),

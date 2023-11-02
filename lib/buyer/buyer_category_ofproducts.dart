@@ -94,8 +94,10 @@ class _BuyerOFProductsScreenState extends State<BuyerOFProductScreen> {
           ],
         ),
         body: StreamBuilder(
-            stream:
-                _marketplace.where('category', isEqualTo: 'Others').snapshots(),
+            stream: _marketplace
+                .where('category', isEqualTo: 'Others')
+                .where('archived', isEqualTo: false)
+                .snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
               if (streamSnapshot.hasError) {
                 return Center(

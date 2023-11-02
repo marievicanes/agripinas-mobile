@@ -94,7 +94,10 @@ class _FruitsScreenState extends State<FruitsScreen> {
         ],
       ),
       body: StreamBuilder(
-        stream: _marketplace.where('category', isEqualTo: 'Fruits').snapshots(),
+        stream: _marketplace
+            .where('category', isEqualTo: 'Fruits')
+            .where('archived', isEqualTo: false)
+            .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
           if (streamSnapshot.hasError) {
             return Center(

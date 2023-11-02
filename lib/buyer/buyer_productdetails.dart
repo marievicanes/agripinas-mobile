@@ -2,24 +2,10 @@ import 'package:capstone/buyer/add_to_cart.dart';
 import 'package:capstone/buyer/buynow_checkout.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await EasyLocalization.ensureInitialized();
-
-  runApp(
-    EasyLocalization(
-      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
-      path: 'assets/translations',
-      fallbackLocale: Locale('en', 'US'),
-      child: MyApp(),
-    ),
-  );
-}
 
 class ProductDetails extends StatelessWidget {
   final TextEditingController _searchController = TextEditingController();
@@ -37,47 +23,76 @@ class ProductDetails extends StatelessWidget {
   final currentUser = FirebaseAuth.instance.currentUser;
   AuthService authService = AuthService();
 
-  Future<void> transferData(DocumentSnapshot documentSnapshot) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user = auth.currentUser;
-    String? uid = user?.uid;
-
+  Future<void> transferData(
+    DocumentSnapshot<Map<String, dynamic>> documentSnapshot,
+  ) async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
     String cropID = productData['cropID'] ?? '';
-    String itemId = const Uuid().v4();
-    String cropName = productData['cropName'] ?? '';
-    String location = productData['location'] ?? '';
-    String category = productData['category'] ?? '';
-    String unit = productData['unit'] ?? '';
-    String price = productData['price'] ?? '';
-    String fullname = productData['fullname'] ?? '';
-    String totalCost = productData['totalCost'] ?? '';
-    String totalAmount = productData['totalAmount'] ?? '';
-    String totalBoughtQuantity = productData['totalBoughtQuantity'] ?? '';
-    String quantity = productData['quantity'] ?? '';
-    String boughtQuantity = productData['boughtQuantity'] ?? '';
-    String imageUrl = productData['image'] ?? '';
 
-    DateTime currentDate = DateTime.now();
-    String formattedDate = DateFormat('yyyy-MM-dd').format(currentDate);
+    if (currentUser != null) {
+      // Reference to your Marketplace collection
+      CollectionReference<Map<String, dynamic>> marketplaceRef =
+          FirebaseFirestore.instance.collection('Marketplace');
 
-    await _userCarts.add({
-      "uid": uid,
-      'cropID': cropID,
-      'itemId': itemId,
-      'cropName': cropName,
-      'location': location,
-      'category': category,
-      'unit': unit,
-      'price': price,
-      'fullname': fullname,
-      'totalCost': totalCost + 0.toString(),
-      'totalAmount': totalAmount + 0.toString(),
-      'boughtQuantity': boughtQuantity + 1.toString(),
-      'totalBoughtQuantity': totalBoughtQuantity + 0.toString(),
-      'quantity': quantity,
-      'image': imageUrl,
-      'dateBought': formattedDate,
-    });
+      // Query the Marketplace collection for documents with the matching cropID
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await marketplaceRef.where('cropID', isEqualTo: cropID).get();
+
+      FirebaseAuth auth = FirebaseAuth.instance;
+      User? user = auth.currentUser;
+      String? buid = user?.uid;
+
+      // Replace productData with the data you want to transfer
+      Map<String, dynamic> productData = documentSnapshot.data() ?? {};
+
+      DateTime currentDate = DateTime.now();
+      String formattedDate = DateFormat('yyyy-MM-dd').format(currentDate);
+
+      // Reference to your UserCarts collection
+      CollectionReference<Map<String, dynamic>> userCartsRef =
+          FirebaseFirestore.instance.collection('UserCarts');
+
+      // Process each document in the querySnapshot
+      for (var marketplaceDoc in querySnapshot.docs) {
+        String itemId = const Uuid().v4();
+        String cropName = marketplaceDoc['cropName'] ?? '';
+        String location = marketplaceDoc['location'] ?? '';
+        String category = marketplaceDoc['category'] ?? '';
+        String unit = marketplaceDoc['unit'] ?? '';
+        String price = marketplaceDoc['price'] ?? '';
+        String fullname = marketplaceDoc['fullname'] ?? '';
+        String quantity = marketplaceDoc['quantity'] ?? '';
+        String imageUrl = marketplaceDoc['image'] ?? '';
+        String uid = marketplaceDoc['uid'] ?? '';
+        bool archived = marketplaceDoc['archived'] ?? false;
+
+        String totalCost = '0';
+        String totalAmount = '0';
+        String totalBoughtQuantity = '0';
+        String boughtQuantity = '1';
+
+        await userCartsRef.add({
+          'uid': uid,
+          'buid': buid,
+          'cropID': cropID,
+          'itemId': itemId,
+          'cropName': cropName,
+          'location': location,
+          'category': category,
+          'unit': unit,
+          'price': price,
+          'fullname': fullname,
+          'totalCost': totalCost,
+          'totalAmount': totalAmount,
+          'boughtQuantity': boughtQuantity,
+          'totalBoughtQuantity': totalBoughtQuantity,
+          'quantity': quantity,
+          'image': imageUrl,
+          'dateBought': formattedDate,
+          'archived': archived,
+        });
+      }
+    }
   }
 
   Future<DocumentSnapshot<Map<String, dynamic>>> fetchProductSnapshot(
@@ -385,8 +400,6 @@ class ProductDetails extends StatelessWidget {
   }
 }
 
-GlobalKey<AnimatedListState> listKey = GlobalKey();
-
 class BuyNowModal extends StatefulWidget {
   final String cropID;
   final String imageUrl;
@@ -590,7 +603,7 @@ class _BuyNowModalState extends State<BuyNowModal> {
     User? currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser != null) {
-      String uid = currentUser.uid; // Get the UID of the current user
+      String buid = currentUser.uid; // Get the UID of the current user
 
       String cropID = widget.cropID;
 
@@ -617,6 +630,8 @@ class _BuyNowModalState extends State<BuyNowModal> {
         String fullname = marketplaceDoc['fullname'];
         String quantity = marketplaceDoc['quantity'];
         String imageUrl = marketplaceDoc['image'];
+        String uid = marketplaceDoc['uid'];
+        bool archived = marketplaceDoc['archived'] as bool;
 
         // Other data you want to extract
 
@@ -627,7 +642,7 @@ class _BuyNowModalState extends State<BuyNowModal> {
             (currentBoughtQuantity * double.parse(marketplaceDoc['price']))
                 .toStringAsFixed(2);
         String totalAmount = double.parse(totalCost).toStringAsFixed(2);
-        String isChecked = 'true';
+        bool isChecked = true;
 
         // Reference to your UserCarts collection
         CollectionReference<Map<String, dynamic>> buyNowRef =
@@ -635,7 +650,8 @@ class _BuyNowModalState extends State<BuyNowModal> {
 
         // Create a new document in UserCarts collection with the extracted data
         await buyNowRef.add({
-          'uid': uid, // Use the current user's UID
+          'uid': uid,
+          'buid': buid,
           'cropID': cropID,
           'cropName': cropName,
           'location': location,
@@ -650,6 +666,7 @@ class _BuyNowModalState extends State<BuyNowModal> {
           'totalCost': totalCost,
           'totalAmount': totalAmount,
           'isChecked': isChecked,
+          'archived': archived,
           // Add other data you want to transfer
         });
       }

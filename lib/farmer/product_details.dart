@@ -128,7 +128,7 @@ class ProductDetails extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '${productData['farmer']}',
+                            '${productData['fullname']}',
                             style: TextStyle(
                               fontSize: 17,
                               fontFamily: 'Poppins-Regular',

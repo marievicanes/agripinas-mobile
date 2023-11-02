@@ -95,6 +95,7 @@ class _BuyerVegetablesScreenState extends State<BuyerVegetablesScreen> {
         body: StreamBuilder(
             stream: _marketplace
                 .where('category', isEqualTo: 'Vegetables')
+                .where('archived', isEqualTo: false)
                 .snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
               if (streamSnapshot.hasError) {

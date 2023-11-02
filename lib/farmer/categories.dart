@@ -218,7 +218,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   Widget buildMarketplaceSection() {
     return StreamBuilder(
-      stream: _marketplace.snapshots(),
+      stream: _marketplace.where('archived', isEqualTo: false).snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
         if (streamSnapshot.hasError) {
           return Center(
@@ -320,46 +320,18 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                 SizedBox(height: 4),
                                 Row(
                                   children: [
-                                    StreamBuilder<QuerySnapshot>(
-                                      stream: FirebaseFirestore.instance
-                                          .collection('Users')
-                                          .where('uid',
-                                              isEqualTo: currentUser?.uid)
-                                          .snapshots(),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData &&
-                                            snapshot.data!.docs.isNotEmpty) {
-                                          QueryDocumentSnapshot userData =
-                                              snapshot.data!.docs.first;
-                                          String fullName = userData
-                                              .get('fullname')
-                                              .toString();
-
-                                          return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Farmer: ',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontFamily: 'Poppins',
-                                                ),
-                                              ),
-                                              Text(
-                                                fullName,
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontFamily: 'Poppins-Regular',
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        } else {
-                                          // Handle the case when there is no data or the document is empty
-                                          return Text("No data available");
-                                        }
-                                      },
+                                    Text(
+                                      'Farmer: ',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      '${thisItem['fullname']}',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                      ),
                                     ),
                                   ],
                                 ),

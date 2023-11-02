@@ -424,6 +424,26 @@ class _FarmerArchiveState extends State<FarmerArchive> {
         content: Text("You have successfully deleted a product")));
   }
 
+  Future<void> restoreProduct(DocumentSnapshot documentSnapshot) async {
+    // Get the reference to the document
+    final documentReference = _marketplace.doc(documentSnapshot.id);
+
+    try {
+      // Update the "archived" field to true
+      await documentReference.update({'archived': false});
+      print('The product is restores successfully.');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('The product is restored successfully.'),
+          duration: Duration(seconds: 2), // Adjust the duration as needed
+        ),
+      );
+    } catch (error) {
+      print('Error archiving document: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -479,6 +499,7 @@ class _FarmerArchiveState extends State<FarmerArchive> {
         body: StreamBuilder(
             stream: _marketplace
                 .where('uid', isEqualTo: currentUser?.uid)
+                .where('archived', isEqualTo: true)
                 .snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
               if (streamSnapshot.hasError) {
@@ -743,7 +764,11 @@ class _FarmerArchiveState extends State<FarmerArchive> {
                                                         color: Color(0xFF9DC08B)
                                                             .withAlpha(180),
                                                       )),
-                                                  onPressed: () {},
+                                                  onPressed: () {
+                                                    restoreProduct(
+                                                        documentSnapshot);
+                                                    Navigator.of(context).pop();
+                                                  },
                                                 ),
                                               ],
                                             );

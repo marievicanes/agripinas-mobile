@@ -45,6 +45,7 @@ class _AddToCartState extends State<AddToCart>
   @override
   void dispose() {
     _tabController.dispose();
+    resetIsCheckedForAllItems();
     super.dispose();
   }
 
@@ -56,6 +57,14 @@ class _AddToCartState extends State<AddToCart>
 
   bool isAnyItemSelected() {
     return selectedItems.isNotEmpty;
+  }
+
+  void resetIsCheckedForAllItems() async {
+    final querySnapshot =
+        await _userCarts.where('buid', isEqualTo: currentUser?.uid).get();
+    for (final doc in querySnapshot.docs) {
+      await _userCarts.doc(doc.id).update({'isChecked': false});
+    }
   }
 
   void toggleItemSelection(String itemId) {
@@ -236,7 +245,7 @@ class _AddToCartState extends State<AddToCart>
       ),
       body: StreamBuilder(
         stream:
-            _userCarts.where('uid', isEqualTo: currentUser?.uid).snapshots(),
+            _userCarts.where('buid', isEqualTo: currentUser?.uid).snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
           if (streamSnapshot.hasError) {
             return Center(

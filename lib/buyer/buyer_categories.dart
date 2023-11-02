@@ -252,7 +252,7 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
 
   Widget buildMarketplaceSection() {
     return StreamBuilder(
-      stream: _marketplace.snapshots(),
+      stream: _marketplace.where('archived', isEqualTo: false).snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
         if (streamSnapshot.hasError) {
           return Center(

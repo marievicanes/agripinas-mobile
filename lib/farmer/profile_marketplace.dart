@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:capstone/farmer/farmer_archive.dart';
 import 'package:capstone/farmer/product_details.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -397,6 +398,26 @@ class _PostedProductsState extends State<PostedProducts> {
         content: Text('You have successfully deleted a product')));
   }
 
+  Future<void> archiveProduct(DocumentSnapshot documentSnapshot) async {
+    // Get the reference to the document
+    final documentReference = _marketplace.doc(documentSnapshot.id);
+
+    try {
+      // Update the "archived" field to true
+      await documentReference.update({'archived': true});
+      print('The product is archived successfully.');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('The product is archived successfully.'),
+          duration: Duration(seconds: 2), // Adjust the duration as needed
+        ),
+      );
+    } catch (error) {
+      print('Error archiving document: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -444,6 +465,7 @@ class _PostedProductsState extends State<PostedProducts> {
         body: StreamBuilder(
             stream: _marketplace
                 .where('uid', isEqualTo: currentUser?.uid)
+                .where('archived', isEqualTo: false)
                 .snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
               if (streamSnapshot.hasError) {
@@ -473,6 +495,36 @@ class _PostedProductsState extends State<PostedProducts> {
                               fontFamily: 'Poppins-Bold',
                             ),
                           ),
+                        ),
+                        SizedBox(width: 165.0),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FarmerArchive(),
+                                  ),
+                                );
+                              },
+                              child: Image.asset(
+                                'assets/archiveicon.png',
+                                width: 30,
+                                height: 30,
+                                color: Color(0xFF5c9348),
+                              ),
+                            ),
+                            Text(
+                              'Archive',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontFamily: 'Poppins-Regular',
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -653,6 +705,24 @@ class _PostedProductsState extends State<PostedProducts> {
                                         ],
                                       ),
                                     ),
+                                    PopupMenuItem<String>(
+                                      value: 'archive',
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.archive,
+                                            color: Color(0xFF9DC08B),
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            "Archive Product",
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins-Regular',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                   onSelected: (String value) {
                                     if (value == 'edit') {
@@ -710,6 +780,8 @@ class _PostedProductsState extends State<PostedProducts> {
                                               ],
                                             );
                                           });
+                                    } else if (value == 'archive') {
+                                      archiveProduct(documentSnapshot);
                                     }
                                   },
                                 ),
