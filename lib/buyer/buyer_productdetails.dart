@@ -113,6 +113,15 @@ class ProductDetails extends StatelessWidget {
     return currentProductSnapshot;
   }
 
+  String generateRoomName(String currentUserUID, String selectedUserUID) {
+    String roomName = currentUserUID.compareTo(selectedUserUID) < 0
+        ? '$currentUserUID and $selectedUserUID'
+        : '$selectedUserUID and $currentUserUID';
+    print("Room Name: $roomName"); // Print the room name to the console
+    return roomName;
+  }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance; // Define _auth here
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -277,12 +286,30 @@ class ProductDetails extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 OutlinedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => Message(),
-                                      ),
-                                    );
+                                  onPressed: () async {
+                                    // Ensure that the user is authenticated
+                                    if (_auth.currentUser != null) {
+                                      String roomName = generateRoomName(
+                                        _auth.currentUser!
+                                            .uid, // Use _auth.currentUser!
+                                        '${productData['uid']}', // Farmer's UID from product data
+                                      );
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => ChatAgriScreen(
+                                            fullname:
+                                                '${productData['fullname']}',
+                                            roomName:
+                                                roomName, // Pass the generated roomName
+                                            currentUserUid: _auth.currentUser!
+                                                .uid, // Use _auth.currentUser!
+                                            farmerUid: '${productData['uid']}',
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      // Handle the case when the user is not authenticated (show an error or redirect to the login screen)
+                                    }
                                   },
                                   style: ButtonStyle(
                                     side: MaterialStateProperty.all(

@@ -376,7 +376,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             'imageUrl': cartItem['image'],
             'cropID': cartItem['cropID'],
             'buid': cartItem['buid'],
-            'dateBought': currentDate,
             'status': 'Pending',
             // Add other item properties here
           };
@@ -389,6 +388,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'buid': currentUser.uid,
         'paymentMethod': selectedPaymentMethod,
         'totalPayment': totalPayment,
+        'dateBought': currentDate,
         'cartItems': cartItemsToSave,
       });
     }
