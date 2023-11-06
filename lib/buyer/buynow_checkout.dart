@@ -254,6 +254,7 @@ class _BuyNowCheckoutScreenState extends State<BuyNowCheckoutScreen> {
             Divider(),
             ElevatedButton(
               onPressed: () {
+                saveOrderToFirestore();
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => TransactionBuyer(),
@@ -369,61 +370,45 @@ class _BuyNowCheckoutScreenState extends State<BuyNowCheckoutScreen> {
     List<Map<String, dynamic>> cartItemsToSave = [];
 
     // Create a batch to perform a batched write
-    WriteBatch batch = FirebaseFirestore.instance.batch();
 
-    final cartItemsQuery = await _buyNow
+    final cartItems = await _buyNow
         .where('buid', isEqualTo: currentUser.uid)
-        .where('cropID', isEqualTo: 'cropID')
+        .where('cartItems')
         .get();
 
-    if (cartItemsQuery.docs.isNotEmpty) {
-      cartItemsQuery.docs.forEach((cartItem) {
+    if (cartItems.docs.isNotEmpty) {
+      cartItems.docs.forEach((cartItem) {
         if (cartItem['isChecked']) {
-          final cartItemData = cartItem.data() as Map<String, dynamic>;
-
-          // Check if the cartItem's cropID matches the desired cropID
-          if (cartItemData['cropID'] == cartItemData['cropID']) {
-            // Create a map for the item
-            Map<String, dynamic> item = {
-              'cropName': cartItemData['cropName'],
-              'uid': cartItemData['uid'],
-              'boughtQuantity': cartItemData['boughtQuantity'],
-              'price': cartItemData['price'],
-              'unit': cartItemData['unit'],
-              'quantity': cartItemData['quantity'],
-              'location': cartItemData['location'],
-              'fullname': cartItemData['fullname'],
-              'totalCost': cartItemData['totalCost'],
-              'image': cartItemData['imageUrl'],
-              'cropID': cartItemData['cropID'],
-              'buid': cartItemData['buid'],
-              'status': 'pending',
-              // Add other item properties here
-            };
-            cartItemsToSave.add(item);
-
-            // Delete the item from the userCarts collection
-            batch.delete(cartItem.reference);
-          }
+          // Create a map for the item
+          Map<String, dynamic> item = {
+            'cropName': cartItem['cropName'],
+            'category': cartItem['category'],
+            'uid': cartItem['uid'],
+            'boughtQuantity': cartItem['boughtQuantity'],
+            'price': cartItem['price'],
+            'unit': cartItem['unit'],
+            'quantity': cartItem['quantity'],
+            'location': cartItem['location'],
+            'fullname': cartItem['fullname'],
+            'imageUrl': cartItem['image'],
+            'cropID': cartItem['cropID'],
+            'buid': cartItem['buid'],
+            'status': 'Pending',
+            'dateBought': currentDate,
+            // Add other item properties here
+          };
+          cartItemsToSave.add(item);
         }
       });
 
       // Create an order document
-      final transactionDoc = _transaction.doc();
 
-      batch.set(
-        transactionDoc,
-        {
-          'buid': currentUser.uid,
-          'paymentMethod': selectedPaymentMethod,
-          'totalPayment': totalPayment,
-          'timestamp': currentDate,
-          'cartItems': cartItemsToSave,
-        },
-      );
-
-      // Commit the batched write to Firestore
-      await batch.commit();
+      await _transaction.add({
+        'buid': currentUser.uid,
+        'paymentMethod': selectedPaymentMethod,
+        'totalPayment': totalPayment,
+        'cartItems': cartItemsToSave,
+      });
     }
   }
 }

@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'helper.dart';
 
 void main() async {
@@ -30,7 +28,51 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      home: WelcomePage(),
+      home: SplashScreen(), // Use SplashScreen as the initial screen
+    );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => WelcomePage(),
+        ),
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Image.asset(
+          'assets/logo.png',
+          width: 200,
+          height: 200,
+        ),
+      ),
     );
   }
 }
@@ -163,6 +205,18 @@ void login() async {
   );
 }
 
+class MyLogin extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: Login(),
+    );
+  }
+}
+
 class Login extends StatelessWidget {
   final currentUser = FirebaseAuth.instance;
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
@@ -183,7 +237,7 @@ class Login extends StatelessWidget {
       return 'Please enter your password.';
     }
     if (value.length < 8) {
-      return 'Please enter your correct password';
+      return 'Password must have at least 8 characters.';
     }
     return null;
   }
@@ -217,9 +271,9 @@ class Login extends StatelessWidget {
                             Text(
                               "AgriPinas",
                               style: TextStyle(
-                                fontSize: 35,
+                                fontSize: 40,
                                 fontFamily: 'Poppins',
-                                letterSpacing: 6,
+                                letterSpacing: 8,
                                 color: Color.fromARGB(255, 85, 113, 83),
                               ),
                             ),
@@ -287,31 +341,68 @@ class Login extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () async {
                           if (_formkey.currentState!.validate()) {
-                            UserCredential userCredential =
-                                await AuthHelper.loginUser(
-                                    authService.email.text,
-                                    authService.password.text);
-                            String uid = userCredential.user!.uid;
+                            try {
+                              UserCredential userCredential =
+                                  await AuthHelper.loginUser(
+                                      authService.email.text,
+                                      authService.password.text);
+                              String uid = userCredential.user!.uid;
 
-                            DocumentSnapshot userSnapshot =
-                                await AuthHelper.getUserDocument(uid);
-                            String role = userSnapshot.get('role');
+                              DocumentSnapshot userSnapshot =
+                                  await AuthHelper.getUserDocument(uid);
+                              String role = userSnapshot.get('role');
 
-                            if (role == "Farmer") {
-                              authService.loginFarmer(context);
-                              saveLoginState(true);
-                            } else if (role == "Buyer") {
-                              authService.loginBuyer(context);
-                              saveLoginState(true);
-                            } else {
-                              // Handle unknown role or other cases
+                              if (role == "Farmer") {
+                                authService.loginFarmer(context);
+                              } else if (role == "Buyer") {
+                                authService.loginBuyer(context);
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Invalid Role'),
+                                      content: Text(
+                                          'The role of the user is invalid.'),
+                                      actions: [
+                                        TextButton(
+                                          child: Text('OK'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
+                            } catch (e) {
+                              // Handle login errors here
+                              String errorMessage =
+                                  'An error occurred during login. Please try again.';
+
+                              if (e is FirebaseAuthException) {
+                                if (e.code == 'user-not-found') {
+                                  errorMessage =
+                                      'Incorrect email. Please try again.';
+                                } else if (e.code == 'wrong-password') {
+                                  errorMessage =
+                                      'Incorrect password. Please try again.';
+                                } else if (e.code == 'wrong-password' &&
+                                    e.code == 'user-not-found') {
+                                  errorMessage =
+                                      'Incorrect email and password. Please try again.';
+                                }
+                              }
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: Text('Invalid Role'),
-                                    content: Text(
-                                        'The role of the user is invalid.'),
+                                    title: Text(
+                                      'Login Failed',
+                                      style: TextStyle(fontFamily: "Poppins"),
+                                    ),
+                                    content: Text(errorMessage),
                                     actions: [
                                       TextButton(
                                         child: Text('OK'),
@@ -332,6 +423,7 @@ class Login extends StatelessWidget {
                           textStyle: TextStyle(fontFamily: 'Poppins'),
                         ),
                       ),
+                      SizedBox(height: 10),
                       TextButton(
                         onPressed: () {
                           Navigator.push(
@@ -348,7 +440,6 @@ class Login extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 1),
                       TextButton(
                         onPressed: () {
                           Navigator.push(
@@ -379,16 +470,6 @@ class Login extends StatelessWidget {
   }
 }
 
-Future<void> saveLoginState(bool isLoggedIn) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setBool('isLoggedIn', isLoggedIn);
-}
-
-Future<bool> checkLoginStatus() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getBool('isLoggedIn') ?? false;
-}
-
 void fpassword() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
@@ -416,15 +497,9 @@ class ForgotPw extends StatelessWidget {
   }
 }
 
-class ForgotPassword extends StatefulWidget {
-  @override
-  _ForgotPasswordState createState() => _ForgotPasswordState();
-}
-
-class _ForgotPasswordState extends State<ForgotPassword> {
+class ForgotPassword extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  bool loading = false;
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
@@ -436,12 +511,27 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     return null;
   }
 
-  Future<void> resetPassword(String email) async {
-    try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-    } catch (e) {
-      print("Error sending password reset email: $e");
-      rethrow;
+  Future<void> _sendResetCode(BuildContext context) async {
+    final email = _emailController.text.trim();
+
+    if (_formKey.currentState?.validate() ?? false) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Success'),
+            content: Text('Password reset email sent successfully.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -504,84 +594,49 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   height: 250,
                 ),
                 SizedBox(height: 10),
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 350,
-                        child: TextFormField(
-                          controller: _emailController,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.email,
-                              color: Color(0xFF9DC08B),
-                            ),
-                            labelText: "E-mail",
-                            labelStyle: TextStyle(
-                              color: Colors.black,
-                              fontFamily: 'Poppins-Regular',
-                              fontSize: 13,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Color.fromARGB(255, 208, 216, 144),
-                              ),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                          validator: _validateEmail,
-                        ),
+                Container(
+                  width: 350,
+                  child: TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.email,
+                        color: Color(0xFF9DC08B),
                       ),
-                      SizedBox(height: 20),
-                      Container(
-                        width: 200,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if (_formKey.currentState?.validate() ?? false) {
-                              setState(() {
-                                loading = true;
-                              });
-
-                              try {
-                                await resetPassword(_emailController.text);
-                                // Show success message or navigate to a success screen
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => VerifyEmail(),
-                                  ),
-                                );
-                              } catch (e) {
-                                print("Error: $e");
-                              } finally {
-                                setState(() {
-                                  loading = false;
-                                });
-                              }
-                            }
-                          },
-                          child: Text(
-                            "userSendCode".tr(),
-                            style: TextStyle(fontFamily: 'Poppins'),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            primary: Color(0xFF27AE60),
-                            minimumSize: Size(5, 50),
-                          ),
-                        ),
+                      labelText: "E-mail",
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 13,
                       ),
-                    ],
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(255, 208, 216, 144),
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    validator: _validateEmail,
                   ),
                 ),
-                if (loading)
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: CircularProgressIndicator(),
+                SizedBox(height: 20),
+                Container(
+                  width: 200,
+                  child: ElevatedButton(
+                    onPressed: () => _sendResetCode(context),
+                    child: Text(
+                      "userSendCode".tr(),
+                      style: TextStyle(fontFamily: 'Poppins'),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      primary: Color(0xFF27AE60),
+                      minimumSize: Size(5, 50),
+                    ),
                   ),
+                ),
               ],
             ),
           ),
@@ -594,8 +649,178 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 class VerifyEmail extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  String? _codeNumber;
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email.';
+    }
+    if (!value.contains('@')) {
+      return 'Please enter a valid email address.';
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned(
+            left: 0,
+            top: 0,
+            child: PreferredSize(
+              preferredSize: Size.fromHeight(kToolbarHeight),
+              child: Container(
+                color: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                  ),
+                  child: Row(
+                    children: [
+                      SizedBox(height: 190.0),
+                      IconButton(
+                        icon: Icon(Icons.chevron_left),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      Text(
+                        'Confirm your account',
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontFamily: 'Poppins',
+                          color: Color.fromARGB(255, 85, 113, 83),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '   We sent a code to your email. Please enter the \n           digit code sent to confirm your account',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins-Medium',
+                    color: Colors.black54,
+                  ),
+                ),
+                SizedBox(height: 40),
+                Image.asset(
+                  'assets/email.png',
+                  width: 700,
+                  height: 150,
+                ),
+                SizedBox(height: 40),
+                Container(
+                  width: 350,
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      labelText: "Enter Code",
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 13,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(255, 208, 216, 144),
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your contact number';
+                      } else if (value.length != 11) {
+                        return 'Contact number must be exactly 11 digits';
+                      }
+                      return null;
+                    },
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    keyboardType: TextInputType.phone,
+                    onSaved: (value) {
+                      _codeNumber = value;
+                    },
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ForgotPassword()),
+                    );
+                  },
+                  child: Text(
+                    'Resend Code',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      color: Color(0xFF9DC08B),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  width: 200,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => NewPassword()));
+                    },
+                    child: Text(
+                      'Verify',
+                      style: TextStyle(fontFamily: 'Poppins'),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      primary: Color(0xFF27AE60),
+                      minimumSize: Size(5, 50),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class NewPassword extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
   String? _confirmPassword;
   String? _password;
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email.';
+    }
+    if (!value.contains('@')) {
+      return 'Please enter a valid email address.';
+    }
+    return null;
+  }
+
+  bool _isPasswordValid(String password) {
+    return password.length >= 8 &&
+        password.contains(RegExp(r'[a-zA-Z]')) &&
+        password.contains(RegExp(r'[0-9]')) &&
+        password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -623,7 +848,7 @@ class VerifyEmail extends StatelessWidget {
                         },
                       ),
                       Text(
-                        'Reset Password Successful',
+                        'Create new password',
                         style: TextStyle(
                           fontSize: 25,
                           fontFamily: 'Poppins',
@@ -653,6 +878,106 @@ class VerifyEmail extends StatelessWidget {
                   'assets/cnpassword.png',
                   width: 500,
                   height: 250,
+                ),
+                Container(
+                  width: 350,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: Color(0xFF9DC08B),
+                          ),
+                          labelText: "New Password",
+                          labelStyle: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Poppins-Regular',
+                            fontSize: 13,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 208, 216, 144),
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          if (!_isPasswordValid(value)) {
+                            return 'Password must be at least 8 characters long and contain a combination of letters, numbers, and symbols';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          _password = value;
+                        },
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Password must be at least 8 characters long and contain a combination of letters, numbers, and symbols',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      TextFormField(
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: Color(0xFF9DC08B),
+                          ),
+                          labelText: "Confirm Password",
+                          labelStyle: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Poppins-Regular',
+                            fontSize: 13,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 208, 216, 144),
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please confirm your password';
+                          } else if (value != _password) {
+                            return 'Passwords do not match';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          _confirmPassword = value;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  width: 200,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Save',
+                      style: TextStyle(fontFamily: 'Poppins'),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      primary: Color(0xFF27AE60),
+                      minimumSize: Size(5, 50),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -695,12 +1020,15 @@ class Register extends StatefulWidget {
 }
 
 bool _isChecked = false;
+String? _contactNumber;
 
 class _RegisterState extends State<Register> {
   final AuthService authService = AuthService();
   final _formKey = GlobalKey<FormState>();
   DateTime? _selectedDate;
-  String? _codeNumber;
+  String _password = '';
+  String _confirmPassword = '';
+  bool _passwordsMatch = true;
 
   bool _isPasswordValid(String password) {
     return password.length >= 8 &&
@@ -771,7 +1099,7 @@ class _RegisterState extends State<Register> {
                         style: TextStyle(
                           fontSize: 28,
                           fontFamily: 'Poppins',
-                          color: Color.fromARGB(255, 85, 113, 83),
+                          color: Color.fromARGB(255, 113, 121, 112),
                         ),
                       ),
                     ),
@@ -826,17 +1154,13 @@ class _RegisterState extends State<Register> {
                         ),
                       ),
                       onChanged: (value) {},
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(11),
-                      ],
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       keyboardType: TextInputType.phone,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your contact number';
-                        } else if (value.length != 11 ||
-                            !value.startsWith('09')) {
-                          return 'Invalid contact number';
+                        } else if (value.length != 11) {
+                          return 'Contact number must be exactly 11 digits';
                         }
                         return null;
                       },
@@ -1030,9 +1354,12 @@ class _RegisterState extends State<Register> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your password';
-                        }
-                        if (!_isPasswordValid(value)) {
-                          return 'Password must be at least 8 characters long and contain a combination of letters, numbers, and symbols';
+                        } else if (value.length < 8) {
+                          return 'Password must be at least 8 characters long';
+                        } else if (!RegExp(
+                                r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$%\^&\*])')
+                            .hasMatch(value)) {
+                          return 'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character';
                         }
                         return null;
                       },
@@ -1096,7 +1423,30 @@ class _RegisterState extends State<Register> {
                               builder:
                                   (BuildContext context, StateSetter setState) {
                                 return AlertDialog(
-                                  title: Text("Terms and Conditions"),
+                                  title: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Terms and Condition",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontFamily: 'Poppins',
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Icon(
+                                          Icons.close,
+                                          color:
+                                              Color.fromARGB(255, 85, 113, 83),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                   content: SingleChildScrollView(
                                     child: Column(
                                       crossAxisAlignment:
@@ -1105,92 +1455,101 @@ class _RegisterState extends State<Register> {
                                       children: [
                                         Text(
                                           "Welcome to the AgriPinas! These terms and conditions outline the rules and regulations for the use of our mobile application.",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Regular',
+                                            color: Colors.black,
+                                          ),
                                         ),
-                                        SizedBox(height: 10),
+                                        SizedBox(height: 5),
                                         Text(
                                           "By accessing this app, we assume you accept these terms and conditions. Do not continue to use the AgriApp if you do not agree to all of the terms and conditions stated on this page.",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Regular',
+                                            color: Colors.black,
+                                          ),
                                         ),
-                                        SizedBox(height: 10),
+                                        SizedBox(height: 5),
                                         Text(
                                           "The following terminology applies to these Terms and Conditions, Privacy Statement, and Disclaimer Notice and all Agreements: 'Client', 'You' and 'Your' refer to you, the person log in to this app and compliant to the Company’s terms and conditions. 'The Company', 'Ourselves', 'We', 'Our' and 'Us', refer to our Company. 'Party', 'Parties', or 'Us', refers to both the Client and ourselves.",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Regular',
+                                            color: Colors.black,
+                                          ),
                                         ),
                                         SizedBox(height: 10),
                                         Text(
                                           "1. INTELLECTUAL PROPERTY RIGHTS",
                                           style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17,
+                                            fontFamily: 'Poppins',
+                                            color: Colors.black,
                                           ),
                                         ),
                                         Text(
                                           "Unless otherwise indicated, we retain all right, title, and interest in and to the Software and the Website, including without limitation all graphics, user interfaces, databases, functionality, software, website designs, audio, video, text, photographs, graphics, logos, and trademarks or service marks reproduced through the System. These Terms of Use do not grant you any intellectual property license or rights in or to the Software and the Website or any of its components, except to the limited extent that these Terms of Use specifically sets forth your license rights to it. You recognize that the Software and the Website and their components are protected by copyright and other laws.",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Regular',
+                                            color: Colors.black,
+                                          ),
                                         ),
                                         SizedBox(height: 10),
                                         Text(
                                           "2. USER REPRESENTATIONS",
                                           style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17,
+                                            fontFamily: 'Poppins',
+                                            color: Colors.black,
                                           ),
                                         ),
                                         Text(
                                           "By using the AgriPinas, you represent and warrant that: (1) all registration information you submit will be true, accurate, current, and complete; (2) you will maintain the accuracy of such information and promptly update such registration information as necessary; (3) you have the legal capacity and you agree to comply with these Terms of Use; (4) you are not a minor in the jurisdiction in which you reside; (5) you will not access the AgriPinas through automated or non-human means, whether through a bot, script or otherwise; (6) you will not use the Services for any illegal or unauthorized purpose; and (7) your use of the AgriPinas will not violate any applicable law or regulation.",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Regular',
+                                            color: Colors.black,
+                                          ),
                                         ),
                                         SizedBox(height: 10),
                                         Text(
                                           "3. USER REGISTRATION",
                                           style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17,
+                                            fontFamily: 'Poppins',
+                                            color: Colors.black,
                                           ),
                                         ),
                                         Text(
                                           "You may be required to register with the Services. You agree to keep your password confidential and will be responsible for all use of your account and password. We reserve the right to remove, reclaim, or change a username you select if we determine, in our sole discretion, that such username is inappropriate, obscene, or otherwise objectionable.",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Regular',
+                                            color: Colors.black,
+                                          ),
                                         ),
                                         SizedBox(height: 10),
                                         Text(
                                           "4. PRIVACY NOTICE",
                                           style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17,
+                                            fontFamily: 'Poppins',
+                                            color: Colors.black,
                                           ),
                                         ),
                                         Text(
                                           "This Privacy Notice applies to personal information we collect and process on all AgriPinas forms, website and online services. Personal information refers to any information, whether recorded in material form or not, that will directly ascertain your identity. This includes your address and contact information. Sensitive personal information is personal information that includes your age, date of birth, email, password, and name.",
-                                        ),
-                                        SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            Checkbox(
-                                              value: _isChecked,
-                                              onChanged: (bool? value) {
-                                                setState(() {
-                                                  _isChecked = value ?? false;
-                                                });
-                                              },
-                                            ),
-                                            Flexible(
-                                              child: Text(
-                                                "I agree to the Terms and Conditions",
-                                              ),
-                                            ),
-                                          ],
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'Poppins-Regular',
+                                            color: Colors.black,
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text("Decline"),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        if (_isChecked) {
-                                          Navigator.of(context).pop();
-                                        } else {}
-                                      },
-                                      child: Text("Accept"),
-                                    ),
-                                  ],
                                 );
                               },
                             );
@@ -1198,13 +1557,16 @@ class _RegisterState extends State<Register> {
                         );
                       },
                       child: Text(
-                        "Terms and Conditions",
+                        "registerTermsCondi".tr(),
                         style: TextStyle(
                           fontSize: 13,
                           fontFamily: 'Poppins',
                           color: Color.fromARGB(255, 85, 113, 83),
                         ),
                       ),
+                    ),
+                    SizedBox(
+                      height: 10,
                     ),
                     ElevatedButton(
                       onPressed: () {
@@ -1216,29 +1578,12 @@ class _RegisterState extends State<Register> {
                         authService.Register(context);
                       },
                       child: Text(
-                        'Register',
+                        "rehisteroComponentText1".tr(),
                         style: TextStyle(fontFamily: 'Poppins'),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF27AE60),
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Login()));
-                      },
-                      child: Text("Already have an account? Login",
-                          style: TextStyle(
-                              color: Color.fromARGB(
-                            255,
-                            85,
-                            113,
-                            83,
-                          ))),
                     ),
                   ],
                 ),

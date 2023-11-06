@@ -10,19 +10,20 @@ class _MessageState extends State<Message> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
         backgroundColor: Color(0xFFA9AF7E),
-        title: Text(
-          'Messages',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 20.0,
-          ),
+        centerTitle: false,
+        title: Row(
+          children: [
+            SizedBox(width: 8.0),
+            Text(
+              'Messages',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontFamily: 'Poppins',
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
       ),
       body: Column(

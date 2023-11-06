@@ -1,5 +1,6 @@
 import 'package:capstone/buyer/add_to_cart.dart';
 import 'package:capstone/buyer/buynow_checkout.dart';
+import 'package:capstone/buyer/message.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -276,7 +277,13 @@ class ProductDetails extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 OutlinedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => Message(),
+                                      ),
+                                    );
+                                  },
                                   style: ButtonStyle(
                                     side: MaterialStateProperty.all(
                                       BorderSide(
@@ -638,10 +645,6 @@ class _BuyNowModalState extends State<BuyNowModal> {
         DateTime currentDate = DateTime.now();
         String formattedDate = DateFormat('yyyy-MM-dd').format(currentDate);
         String boughtQuantity = currentBoughtQuantity.toString();
-        String totalCost =
-            (currentBoughtQuantity * double.parse(marketplaceDoc['price']))
-                .toStringAsFixed(2);
-        String totalAmount = double.parse(totalCost).toStringAsFixed(2);
         bool isChecked = true;
 
         // Reference to your UserCarts collection
@@ -663,8 +666,6 @@ class _BuyNowModalState extends State<BuyNowModal> {
           'image': imageUrl,
           'dateBought': formattedDate,
           'boughtQuantity': boughtQuantity,
-          'totalCost': totalCost,
-          'totalAmount': totalAmount,
           'isChecked': isChecked,
           'archived': archived,
           // Add other data you want to transfer

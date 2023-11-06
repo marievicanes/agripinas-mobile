@@ -182,39 +182,6 @@ class AuthService {
         },
       );
 
-      if (password.text.trim() != confirmpassword.text.trim()) {
-        Navigator.pop(context);
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text(
-                '',
-                style: TextStyle(fontFamily: "Poppins", fontSize: 10),
-              ),
-              content: Text(
-                'Password and Confirm Password do not match.',
-                style: TextStyle(fontFamily: "Poppins-Regular", fontSize: 14),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    'OK',
-                    style:
-                        TextStyle(fontFamily: "Poppins-Regular", fontSize: 17),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-
-        return;
-      }
-
       await auth
           .createUserWithEmailAndPassword(
         email: email.text,
