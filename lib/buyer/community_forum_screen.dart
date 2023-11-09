@@ -326,7 +326,7 @@ class _BuyerCommunityForumScreenState extends State<BuyerCommunityForumScreen> {
         ],
       ),
       body: StreamBuilder(
-        stream: _forum.snapshots(),
+        stream: _forum.where('archived', isEqualTo: false).snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
           if (streamSnapshot.hasError) {
             return Center(

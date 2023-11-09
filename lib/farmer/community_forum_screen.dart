@@ -198,7 +198,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                 "fullname": fullname,
                                 "timestamp": formattedDate,
                                 "image": imageUrl,
-                                "comment": [],
+                                "comments": [],
                               });
                               _titleController.text = '';
                               _contentController.text = '';
@@ -325,7 +325,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
         ],
       ),
       body: StreamBuilder(
-        stream: _forum.snapshots(),
+        stream: _forum.where('archived', isEqualTo: false).snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
           if (streamSnapshot.hasError) {
             return Center(

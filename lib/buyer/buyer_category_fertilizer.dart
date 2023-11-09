@@ -95,8 +95,8 @@ class _BuyerFertilizersScreenState extends State<BuyerFertilizersScreen> {
       ),
       body: StreamBuilder(
         stream: _marketplace
-            .where('category', isEqualTo: 'Fertilizer')
             .where('archived', isEqualTo: false)
+            .where('category', isEqualTo: 'Fertilizer')
             .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
           if (streamSnapshot.hasError) {
@@ -111,7 +111,23 @@ class _BuyerFertilizersScreenState extends State<BuyerFertilizersScreen> {
           }
           if (!streamSnapshot.hasData || streamSnapshot.data!.docs.isEmpty) {
             return Center(
-              child: Text('No data available'),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    'assets/browseproduct.png', // Add your image path
+                    width: 150,
+                    height: 150,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'No fertilizers available.',
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
             );
           }
 

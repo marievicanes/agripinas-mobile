@@ -15,9 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'about_us.dart';
-import 'announcement.dart';
 import 'contact_us.dart';
-import 'notification.dart';
 
 class MarketplaceItem {
   final String title;
@@ -202,7 +200,14 @@ class _ProfileWallState extends State<ProfileWall> {
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                var data = snapshot.data!.docs[0];
+                var document = snapshot.data!.docs[0];
+
+                // Check if the 'profileImageUrl' field exists in the document
+                var data = document.data() as Map<String, dynamic>;
+                var profileImageUrl = data.containsKey('profileImageUrl')
+                    ? data['profileImageUrl']
+                    : null;
+
                 return ListView(
                   padding: EdgeInsets.zero,
                   children: <Widget>[
@@ -215,24 +220,17 @@ class _ProfileWallState extends State<ProfileWall> {
                         },
                         child: CircleAvatar(
                           radius: 10.0,
-                          backgroundImage: AssetImage('assets/user.png'),
+                          backgroundImage: data['profileImageUrl'] != null
+                              ? NetworkImage(profileImageUrl)
+                                  as ImageProvider<Object>?
+                              : AssetImage('assets/user.png')
+                                  as ImageProvider<Object>?,
                         ),
                       ),
                       decoration: BoxDecoration(
                         color: Color(0xFFA9AF7E),
                       ),
                       otherAccountsPictures: [
-                        IconButton(
-                          icon: Icon(Icons.notifications),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AgriNotif(),
-                              ),
-                            );
-                          },
-                        ),
                         IconButton(
                           icon: Icon(Icons.message),
                           onPressed: () {
@@ -257,21 +255,6 @@ class _ProfileWallState extends State<ProfileWall> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ProfileScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.announcement_outlined),
-                      title: Text(
-                        'Announcement',
-                        style: TextStyle(fontFamily: 'Poppins-Medium'),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AnnouncementScreen(),
                           ),
                         );
                       },

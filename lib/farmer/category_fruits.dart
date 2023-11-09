@@ -95,8 +95,8 @@ class _FruitsScreenState extends State<FruitsScreen> {
       ),
       body: StreamBuilder(
         stream: _marketplace
-            .where('category', isEqualTo: 'Fruits')
             .where('archived', isEqualTo: false)
+            .where('category', isEqualTo: 'Fruits')
             .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
           if (streamSnapshot.hasError) {
@@ -111,7 +111,23 @@ class _FruitsScreenState extends State<FruitsScreen> {
           }
           if (!streamSnapshot.hasData || streamSnapshot.data!.docs.isEmpty) {
             return Center(
-              child: Text('No data available'),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    'assets/browseproduct.png', // Add your image path
+                    width: 150,
+                    height: 150,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'No fruits available.',
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
             );
           }
 
@@ -129,7 +145,7 @@ class _FruitsScreenState extends State<FruitsScreen> {
                       .contains(_searchText.toLowerCase()))
               .toList();
 
-          return Column(
+          return ListView(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -217,31 +233,35 @@ class _FruitsScreenState extends State<FruitsScreen> {
                                           ),
                                         ),
                                         Text(
-                                          '${thisItem['price']}',
+                                          '₱${thisItem['price']}',
                                           style: TextStyle(
                                             fontSize: 14,
                                           ),
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 4),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "farmerPageUserRole".tr(),
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'Poppins',
+                                    Padding(
+                                      padding: const EdgeInsets.all(1.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "farmerPageUserRole".tr(),
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: 'Poppins',
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          '${thisItem['fullname']}',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontFamily: 'Poppins-Regular',
+                                          Text(
+                                            '${thisItem['fullname']}',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontFamily: 'Poppins-Regular',
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(1.0),

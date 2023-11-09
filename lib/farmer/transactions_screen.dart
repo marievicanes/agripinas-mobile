@@ -30,9 +30,11 @@ class _TransactionsScreenState extends State<TransactionsScreen>
 
   final CollectionReference _transaction =
       FirebaseFirestore.instance.collection('Transaction');
+  final CollectionReference _marketplace =
+      FirebaseFirestore.instance.collection('Marketplace');
 
   Future<void> _updateStatus(
-      DocumentSnapshot? documentSnapshot, String cropID) async {
+      DocumentSnapshot? documentSnapshot, String cropID, String uid) async {
     if (documentSnapshot == null) {
       print('DocumentSnapshot is null. Cannot update status.');
       return;
@@ -46,10 +48,15 @@ class _TransactionsScreenState extends State<TransactionsScreen>
       final List<dynamic> orders = document['orders'] as List;
 
       final updatedCartItems = orders.map((cartItem) {
-        if (cartItem['uid'] == currentUser.currentUser!.uid) {
-          if (cartItem['cropID'] == cropID) {
-            // Update the status for this specific cart item
-            cartItem['status'] = selectedStatus;
+        if (cartItem['uid'] == currentUser.currentUser!.uid &&
+            cartItem['cropID'] == cropID) {
+          // Update the status for this specific cart item
+          cartItem['status'] = selectedStatus;
+
+          // If status is "Completed," update quantities in marketplace collection
+          if (selectedStatus == 'Completed') {
+            _updateMarketplaceQuantity(cartItem['cropID'],
+                cartItem['boughtQuantity'], cartItem['uid']);
           }
         }
         return cartItem;
@@ -66,6 +73,56 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     } else {
       print('Document does not exist.');
     }
+  }
+
+  Future<void> _updateMarketplaceQuantity(
+      String cropID, String boughtQuantity, String uid) async {
+    try {
+      // Query the marketplace collection for documents matching both cropID and uid
+      QuerySnapshot marketplaceSnapshot = await _marketplace
+          .where('cropID', isEqualTo: cropID)
+          .where('uid', isEqualTo: uid)
+          .get();
+
+      // Check if any matching documents were found
+      if (marketplaceSnapshot.docs.isNotEmpty) {
+        // Assume there is only one matching document, get its reference
+        final DocumentReference cropRef =
+            marketplaceSnapshot.docs.first.reference;
+
+        // Get the current data in the marketplace
+        final DocumentSnapshot cropDocument = await cropRef.get();
+
+        // Check if the document exists
+        if (cropDocument.exists) {
+          // Update the quantity by subtracting the boughtQuantity
+          String currentQuantity = cropDocument['quantity'];
+          int updatedQuantity =
+              int.parse(currentQuantity) - int.parse(boughtQuantity);
+
+          // Update the quantity in the marketplace collection
+          await cropRef.update({
+            'quantity': updatedQuantity.toString(),
+          });
+
+          print('Marketplace quantity updated successfully');
+        } else {
+          print('Document does not exist for cropID: $cropID and uid: $uid');
+        }
+      } else {
+        print('No matching documents found in the marketplace collection.');
+      }
+    } catch (e) {
+      print('Error updating marketplace quantity: $e');
+    }
+  }
+
+  Future<void> _deleteTransac(
+    String cropID,
+  ) async {
+    await _transaction.doc(cropID).delete();
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('You have successfully deleted the transaction')));
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -264,6 +321,23 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       fit: BoxFit.cover,
                                                       width: 80,
                                                       height: 80,
+                                                      errorBuilder: (context,
+                                                          error, stackTrace) {
+                                                        return Container(
+                                                          color: Colors
+                                                              .grey, // Customize the color
+                                                          width: 80,
+                                                          height: 80,
+                                                          child: Center(
+                                                            child: Text(
+                                                              'Image Error',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
                                                     ),
                                                   ),
                                                 ],
@@ -352,7 +426,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         ),
                                                       ),
                                                       Text(
-                                                        '${cartItem['price']}',
+                                                        '₱${cartItem['price']}',
                                                         style: TextStyle(
                                                           fontSize: 14.5,
                                                         ),
@@ -406,7 +480,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         ),
                                                       ),
                                                       Text(
-                                                        '${cartItem['totalCost']}',
+                                                        '₱${cartItem['totalCost']}',
                                                         style: TextStyle(
                                                           fontSize: 14.5,
                                                         ),
@@ -582,8 +656,12 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                       onPressed:
                                                                           () async {
                                                                         _updateStatus(
-                                                                            documentSnapshot,
-                                                                            cartItem['cropID']);
+                                                                          documentSnapshot,
+                                                                          cartItem[
+                                                                              'cropID'],
+                                                                          cartItem[
+                                                                              'uid'],
+                                                                        );
 
                                                                         Navigator.of(context)
                                                                             .pop();
@@ -672,6 +750,9 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                             180),
                                                                   )),
                                                               onPressed: () {
+                                                                _deleteTransac(
+                                                                    documentSnapshot
+                                                                        .id);
                                                                 Navigator.of(
                                                                         context)
                                                                     .pop();
@@ -767,6 +848,23 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       fit: BoxFit.cover,
                                                       width: 80,
                                                       height: 80,
+                                                      errorBuilder: (context,
+                                                          error, stackTrace) {
+                                                        return Container(
+                                                          color: Colors
+                                                              .grey, // Customize the color
+                                                          width: 80,
+                                                          height: 80,
+                                                          child: Center(
+                                                            child: Text(
+                                                              'Image Error',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
                                                     ),
                                                   ),
                                                 ],
@@ -855,7 +953,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         ),
                                                       ),
                                                       Text(
-                                                        '${cartItem['price']}',
+                                                        '₱${cartItem['price']}',
                                                         style: TextStyle(
                                                           fontSize: 14.5,
                                                         ),
@@ -909,7 +1007,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         ),
                                                       ),
                                                       Text(
-                                                        '${cartItem['totalCost']}',
+                                                        '₱${cartItem['totalCost']}',
                                                         style: TextStyle(
                                                           fontSize: 14.5,
                                                         ),
@@ -1003,6 +1101,23 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         fit: BoxFit.cover,
                                                         width: 80,
                                                         height: 80,
+                                                        errorBuilder: (context,
+                                                            error, stackTrace) {
+                                                          return Container(
+                                                            color: Colors
+                                                                .grey, // Customize the color
+                                                            width: 80,
+                                                            height: 80,
+                                                            child: Center(
+                                                              child: Text(
+                                                                'Image Error',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
                                                       ),
                                                     ),
                                                   ],
@@ -1076,7 +1191,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                           ),
                                                         ),
                                                         Text(
-                                                          '${cartItem['price']}',
+                                                          '₱${cartItem['price']}',
                                                           style: TextStyle(
                                                             fontSize: 14.5,
                                                           ),
@@ -1130,7 +1245,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                           ),
                                                         ),
                                                         Text(
-                                                          '${cartItem['totalCost']}',
+                                                          '₱${cartItem['totalCost']}',
                                                           style: TextStyle(
                                                             fontSize: 14.5,
                                                           ),
@@ -1157,27 +1272,6 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       (BuildContext context) =>
                                                           [
                                                     PopupMenuItem<String>(
-                                                      value: 'edit',
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            Icons.edit,
-                                                            color: Color(
-                                                                    0xFF9DC08B)
-                                                                .withAlpha(180),
-                                                          ),
-                                                          SizedBox(width: 8),
-                                                          Text(
-                                                            'Edit',
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'Poppins-Regular',
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    PopupMenuItem<String>(
                                                       value: 'delete',
                                                       child: Row(
                                                         children: [
@@ -1199,147 +1293,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                     ),
                                                   ],
                                                   onSelected: (String value) {
-                                                    if (value == 'edit') {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                              title: Center(
-                                                                child: Text(
-                                                                  'Edit Details',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          20.0,
-                                                                      fontFamily:
-                                                                          'Poppins'),
-                                                                ),
-                                                              ),
-                                                              content: Column(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
-                                                                children: [
-                                                                  Row(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [],
-                                                                  ),
-                                                                  SizedBox(
-                                                                      height:
-                                                                          16.0),
-                                                                  DropdownButtonFormField<
-                                                                      String>(
-                                                                    decoration:
-                                                                        InputDecoration(
-                                                                      labelText:
-                                                                          'Status',
-                                                                      labelStyle:
-                                                                          TextStyle(
-                                                                              color: Colors.black),
-                                                                      focusedBorder:
-                                                                          OutlineInputBorder(
-                                                                        borderSide:
-                                                                            BorderSide(color: Color(0xFFA9AF7E)),
-                                                                      ),
-                                                                    ),
-                                                                    value:
-                                                                        selectedStatus,
-                                                                    onChanged:
-                                                                        (String?
-                                                                            newValue) {
-                                                                      setState(
-                                                                          () {
-                                                                        selectedStatus =
-                                                                            newValue;
-                                                                      });
-                                                                    },
-                                                                    items: <String>[
-                                                                      'Pending',
-                                                                      'Cancelled',
-                                                                      'Completed'
-                                                                    ].map<
-                                                                        DropdownMenuItem<
-                                                                            String>>((String
-                                                                        value) {
-                                                                      return DropdownMenuItem<
-                                                                          String>(
-                                                                        value:
-                                                                            value,
-                                                                        child:
-                                                                            Text(
-                                                                          value,
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontFamily:
-                                                                                'Poppins-Regular',
-                                                                          ),
-                                                                        ),
-                                                                      );
-                                                                    }).toList(),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      height:
-                                                                          16.0),
-                                                                  Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .end,
-                                                                    children: [
-                                                                      TextButton(
-                                                                        onPressed:
-                                                                            () {
-                                                                          Navigator.of(context)
-                                                                              .pop();
-                                                                        },
-                                                                        child:
-                                                                            Text(
-                                                                          'Cancel',
-                                                                          style: TextStyle(
-                                                                              color: Colors.black,
-                                                                              fontFamily: 'Poppins-Regular'),
-                                                                        ),
-                                                                      ),
-                                                                      TextButton(
-                                                                        onPressed:
-                                                                            () {
-                                                                          String
-                                                                              postContent =
-                                                                              _postController.text;
-                                                                          print(
-                                                                              postContent);
-                                                                          Navigator.of(context)
-                                                                              .pop();
-                                                                        },
-                                                                        child:
-                                                                            Text(
-                                                                          'Save',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontFamily:
-                                                                                'Poppins-Regular',
-                                                                          ),
-                                                                        ),
-                                                                        style: TextButton
-                                                                            .styleFrom(
-                                                                          backgroundColor: Color.fromRGBO(
-                                                                              157,
-                                                                              192,
-                                                                              139,
-                                                                              1),
-                                                                          primary:
-                                                                              Colors.white,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ],
-                                                              ));
-                                                        },
-                                                      );
-                                                    } else if (value ==
-                                                        'delete') {
+                                                    if (value == 'delete') {
                                                       showDialog(
                                                         context: context,
                                                         builder: (BuildContext
@@ -1396,6 +1350,9 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                               180),
                                                                     )),
                                                                 onPressed: () {
+                                                                  _deleteTransac(
+                                                                      documentSnapshot
+                                                                          .id);
                                                                   Navigator.of(
                                                                           context)
                                                                       .pop();

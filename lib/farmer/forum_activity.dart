@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:capstone/farmer/forum_archive.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -226,6 +227,8 @@ class _ForumActivityState extends State<ForumActivity> {
                                 "fullname": fullname,
                                 "timestamp": formattedDate,
                                 "image": imageUrl,
+                                "comments": [],
+                                "archived": false,
                               });
                               _titleController.text = '';
                               _contentController.text = '';
@@ -438,6 +441,26 @@ class _ForumActivityState extends State<ForumActivity> {
     ScaffoldMessenger.of(context);
   }
 
+  Future<void> archivePost(DocumentSnapshot documentSnapshot) async {
+    // Get the reference to the document
+    final documentReference = _forum.doc(documentSnapshot.id);
+
+    try {
+      // Update the "archived" field to true
+      await documentReference.update({'archived': true});
+      print('Your post is archived successfully.');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Your post is archived successfully.'),
+          duration: Duration(seconds: 2), // Adjust the duration as needed
+        ),
+      );
+    } catch (error) {
+      print('Error archiving document: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -483,11 +506,15 @@ class _ForumActivityState extends State<ForumActivity> {
         ],
       ),
       body: StreamBuilder(
-        stream: _forum.where('uid', isEqualTo: currentUser?.uid).snapshots(),
+        stream: _forum
+            .where('uid', isEqualTo: currentUser?.uid)
+            .where('archived', isEqualTo: false)
+            .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
           if (streamSnapshot.hasError) {
             return Center(
-                child: Text('Some error occurred ${streamSnapshot.error}'));
+              child: Text('Some error occurred ${streamSnapshot.error}'),
+            );
           }
           if (streamSnapshot.hasData) {
             QuerySnapshot<Object?>? querySnapshot = streamSnapshot.data;
@@ -496,333 +523,408 @@ class _ForumActivityState extends State<ForumActivity> {
             List<Map>? items = documents?.map((e) => e.data() as Map).toList();
 
             return Container(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Forum Activity',
-                    style:
-                        TextStyle(fontSize: 20.0, fontFamily: 'Poppins-Bold'),
-                  ),
-                  SizedBox(height: 16.0),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: streamSnapshot.data?.docs.length ?? 0,
-                      itemBuilder: (BuildContext context, int index) {
-                        final DocumentSnapshot documentSnapshot =
-                            streamSnapshot.data!.docs[index];
-                        final Map thisItem = items![index];
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(2.0),
+                            child: Text(
+                              'Forum Activity',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'Poppins-Bold',
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 165.0),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ForumActivityArchive(),
+                                    ),
+                                  );
+                                },
+                                child: Image.asset(
+                                  'assets/archiveicon.png',
+                                  width: 30,
+                                  height: 30,
+                                  color: Color(0xFF5c9348),
+                                ),
+                              ),
+                              Text(
+                                'Archive',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontFamily: 'Poppins-Regular',
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16.0),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: streamSnapshot.data?.docs.length ?? 0,
+                          itemBuilder: (BuildContext context, int index) {
+                            final DocumentSnapshot documentSnapshot =
+                                streamSnapshot.data!.docs[index];
+                            final Map thisItem = items![index];
 
-                        int likesCount = thisItem['likes'] != null
-                            ? thisItem['likes'].length
-                            : 0;
-
-                        return InkWell(
-                          onTap: () {},
-                          child: Card(
-                            child: Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
+                            int likesCount = thisItem['likes'] != null
+                                ? thisItem['likes'].length
+                                : 0;
+                            return InkWell(
+                              onTap: () {},
+                              child: Card(
+                                child: Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      CircleAvatar(
-                                        radius: 15.0,
-                                        backgroundImage:
-                                            AssetImage('assets/user.png'),
-                                      ),
-                                      SizedBox(width: 8.0),
-                                      Column(
+                                      Row(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                            CrossAxisAlignment.end,
                                         children: [
-                                          Text(
-                                            '${thisItem['fullname']}',
-                                            style: TextStyle(
-                                              fontSize: 12.0,
-                                              color: Colors.grey,
-                                            ),
+                                          CircleAvatar(
+                                            radius: 15.0,
+                                            backgroundImage:
+                                                AssetImage('assets/user.png'),
                                           ),
-                                          Text(
-                                            '${thisItem['timestamp']}',
-                                            style: TextStyle(
-                                              fontSize: 12.0,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Spacer(),
-                                      Positioned(
-                                        top: 0,
-                                        right: 0,
-                                        child: PopupMenuButton<String>(
-                                          icon: Icon(
-                                            Icons.more_vert,
-                                            color: Color(0xFF9DC08B),
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          itemBuilder: (BuildContext context) =>
-                                              [
-                                            PopupMenuItem<String>(
-                                              value: 'edit',
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.edit,
-                                                    color: Color(0xFF9DC08B)
-                                                        .withAlpha(180),
-                                                  ),
-                                                  SizedBox(width: 8),
-                                                  Text(
-                                                    'Edit',
-                                                    style: TextStyle(
-                                                      fontFamily:
-                                                          'Poppins-Regular',
-                                                    ),
-                                                  ),
-                                                ],
+                                          SizedBox(width: 8.0),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                '${thisItem['fullname']}',
+                                                style: TextStyle(
+                                                  fontSize: 12.0,
+                                                  color: Colors.grey,
+                                                ),
                                               ),
-                                            ),
-                                            PopupMenuItem<String>(
-                                              value: 'delete',
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.delete,
-                                                    color: Color(0xFF9DC08B),
-                                                  ),
-                                                  SizedBox(width: 8),
-                                                  Text(
-                                                    'Delete',
-                                                    style: TextStyle(
-                                                      fontFamily:
-                                                          'Poppins-Regular',
-                                                    ),
-                                                  ),
-                                                ],
+                                              Text(
+                                                '${thisItem['timestamp']}',
+                                                style: TextStyle(
+                                                  fontSize: 12.0,
+                                                  color: Colors.grey,
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                          onSelected: (String value) {
-                                            if (value == 'edit') {
-                                              _updatePost(documentSnapshot);
-                                            } else if (value == 'delete') {
-                                              showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return AlertDialog(
-                                                    title: Text(
-                                                      "CommunityForumDeletePost"
-                                                          .tr(),
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Poppins-Regular',
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                            ],
+                                          ),
+                                          Spacer(),
+                                          Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: PopupMenuButton<String>(
+                                              icon: Icon(
+                                                Icons.more_vert,
+                                                color: Color(0xFF9DC08B),
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              itemBuilder:
+                                                  (BuildContext context) => [
+                                                PopupMenuItem<String>(
+                                                  value: 'edit',
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.edit,
+                                                        color: Color(0xFF9DC08B)
+                                                            .withAlpha(180),
                                                       ),
-                                                    ),
-                                                    content: Text(
-                                                      "CommunityForumCantBeUndonePost"
-                                                          .tr(),
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Poppins-Regular',
-                                                        fontSize: 13.8,
-                                                      ),
-                                                    ),
-                                                    actions: [
-                                                      TextButton(
-                                                        child: Text(
-                                                          'Cancel',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Poppins-Regular',
-                                                            color: Colors.black,
-                                                          ),
+                                                      SizedBox(width: 8),
+                                                      Text(
+                                                        'Edit',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Poppins-Regular',
                                                         ),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
                                                       ),
-                                                      TextButton(
-                                                        child: Text(
-                                                          'Delete',
+                                                    ],
+                                                  ),
+                                                ),
+                                                PopupMenuItem<String>(
+                                                  value: 'delete',
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.delete,
+                                                        color:
+                                                            Color(0xFF9DC08B),
+                                                      ),
+                                                      SizedBox(width: 8),
+                                                      Text(
+                                                        'Delete',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Poppins-Regular',
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                PopupMenuItem<String>(
+                                                  value: 'archive',
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.archive,
+                                                        color:
+                                                            Color(0xFF9DC08B),
+                                                      ),
+                                                      SizedBox(width: 8),
+                                                      Text(
+                                                        "Archive Post",
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Poppins-Regular',
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                              onSelected: (String value) {
+                                                if (value == 'edit') {
+                                                  _updatePost(documentSnapshot);
+                                                } else if (value == 'delete') {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: Text(
+                                                          "CommunityForumDeletePost"
+                                                              .tr(),
                                                           style: TextStyle(
                                                             fontFamily:
                                                                 'Poppins-Regular',
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            color: Color(
-                                                                    0xFF9DC08B)
-                                                                .withAlpha(180),
                                                           ),
                                                         ),
-                                                        onPressed: () {
-                                                          _delete(
-                                                              documentSnapshot
-                                                                  .id);
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ),
-                                                    ],
+                                                        content: Text(
+                                                          "CommunityForumCantBeUndonePost"
+                                                              .tr(),
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                                'Poppins-Regular',
+                                                            fontSize: 13.8,
+                                                          ),
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            child: Text(
+                                                              'Cancel',
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'Poppins-Regular',
+                                                                color: Colors
+                                                                    .black,
+                                                              ),
+                                                            ),
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                          TextButton(
+                                                            child: Text(
+                                                              'Delete',
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'Poppins-Regular',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Color(
+                                                                        0xFF9DC08B)
+                                                                    .withAlpha(
+                                                                        180),
+                                                              ),
+                                                            ),
+                                                            onPressed: () {
+                                                              _delete(
+                                                                  documentSnapshot
+                                                                      .id);
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
                                                   );
-                                                },
-                                              );
-                                            }
-                                          },
+                                                } else if (value == 'archive') {
+                                                  archivePost(documentSnapshot);
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 8.0),
+                                      Text(
+                                        '${thisItem['title']}',
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontFamily: 'Poppins',
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 8.0),
-                                  Text(
-                                    '${thisItem['title']}',
-                                    style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontFamily: 'Poppins',
-                                    ),
-                                  ),
-                                  SizedBox(height: 8.0),
-                                  Text(
-                                    '${thisItem['content']}',
-                                    style: TextStyle(
-                                      fontSize: 15.0,
-                                      fontFamily: 'Poppins-Regular',
-                                    ),
-                                  ),
-                                  SizedBox(height: 0.0),
-                                  Image.network(
-                                    '${thisItem['image']}',
-                                    height: 200.0,
-                                    width: 350.0,
-                                  ),
-                                  SizedBox(height: 0.0),
-                                  Row(
-                                    children: [
+                                      SizedBox(height: 8.0),
+                                      Text(
+                                        '${thisItem['content']}',
+                                        style: TextStyle(
+                                          fontSize: 15.0,
+                                          fontFamily: 'Poppins-Regular',
+                                        ),
+                                      ),
+                                      SizedBox(height: 0.0),
+                                      Image.network(
+                                        '${thisItem['image']}',
+                                        height: 200.0,
+                                        width: 350.0,
+                                      ),
+                                      SizedBox(height: 0.0),
                                       Row(
                                         children: [
-                                          IconButton(
-                                            icon: Icon(
-                                              thisItem['isLiked'] == true
-                                                  ? Icons.thumb_up
-                                                  : Icons.thumb_up_outlined,
-                                              color: thisItem['isLiked'] == true
-                                                  ? Color.fromARGB(
-                                                      255, 184, 192, 125)
-                                                  : null,
-                                            ),
-                                            onPressed: () async {
-                                              final FirebaseAuth auth =
-                                                  FirebaseAuth.instance;
-                                              final User? user =
-                                                  auth.currentUser;
+                                          Row(
+                                            children: [
+                                              IconButton(
+                                                icon: Icon(
+                                                  thisItem['isLiked'] == true
+                                                      ? Icons.thumb_up
+                                                      : Icons.thumb_up_outlined,
+                                                  color: thisItem['isLiked'] ==
+                                                          true
+                                                      ? Color.fromARGB(
+                                                          255, 184, 192, 125)
+                                                      : null,
+                                                ),
+                                                onPressed: () async {
+                                                  final FirebaseAuth auth =
+                                                      FirebaseAuth.instance;
+                                                  final User? user =
+                                                      auth.currentUser;
 
-                                              if (user != null) {
-                                                final String uid = user.uid;
-                                                final String postId =
-                                                    documentSnapshot.id;
+                                                  if (user != null) {
+                                                    final String uid = user.uid;
+                                                    final String postId =
+                                                        documentSnapshot.id;
 
-                                                // Check if the user has already liked the post
-                                                if (thisItem['isLiked'] ==
-                                                    true) {
-                                                  // If already liked, remove like
-                                                  thisItem['isLiked'] = false;
-                                                  likesCount--;
+                                                    // Check if the user has already liked the post
+                                                    if (thisItem['isLiked'] ==
+                                                        true) {
+                                                      // If already liked, remove like
+                                                      thisItem['isLiked'] =
+                                                          false;
+                                                      likesCount--;
 
-                                                  // Remove the user's ID from the 'likes' array in the forum document
-                                                  if (thisItem['likes'] !=
-                                                      null) {
-                                                    thisItem['likes']
-                                                        .remove(uid);
+                                                      // Remove the user's ID from the 'likes' array in the forum document
+                                                      if (thisItem['likes'] !=
+                                                          null) {
+                                                        thisItem['likes']
+                                                            .remove(uid);
+                                                      }
+                                                    } else {
+                                                      // If not liked, add like
+                                                      thisItem['isLiked'] =
+                                                          true;
+                                                      likesCount++;
+
+                                                      // Add the user's ID to the 'likes' array in the forum document
+                                                      if (thisItem['likes'] ==
+                                                          null) {
+                                                        thisItem['likes'] = [
+                                                          uid
+                                                        ];
+                                                      } else {
+                                                        thisItem['likes']
+                                                            .add(uid);
+                                                      }
+                                                    }
+
+                                                    // Update the forum post with the new like status and 'likes' array
+                                                    _forum.doc(postId).update({
+                                                      'isLiked':
+                                                          thisItem['isLiked'],
+                                                      'likes':
+                                                          thisItem['likes'],
+                                                    }).then((value) {
+                                                      print(
+                                                          "Like status and 'likes' array updated successfully");
+                                                    }).catchError((error) {
+                                                      print(
+                                                          "Error updating like status and 'likes' array: $error");
+                                                    });
+
+                                                    // Update the UI
+                                                    setState(() {});
                                                   }
-                                                } else {
-                                                  // If not liked, add like
-                                                  thisItem['isLiked'] = true;
-                                                  likesCount++;
-
-                                                  // Add the user's ID to the 'likes' array in the forum document
-                                                  if (thisItem['likes'] ==
-                                                      null) {
-                                                    thisItem['likes'] = [uid];
-                                                  } else {
-                                                    thisItem['likes'].add(uid);
-                                                  }
-                                                }
-
-                                                // Update the forum post with the new like status and 'likes' array
-                                                _forum.doc(postId).update({
-                                                  'isLiked':
-                                                      thisItem['isLiked'],
-                                                  'likes': thisItem['likes'],
-                                                }).then((value) {
-                                                  print(
-                                                      "Like status and 'likes' array updated successfully");
-                                                }).catchError((error) {
-                                                  print(
-                                                      "Error updating like status and 'likes' array: $error");
-                                                });
-
-                                                // Update the UI
-                                                setState(() {});
-                                              }
-                                            },
-                                          ),
-                                          Text(
-                                            likesCount
-                                                .toString(), // Display the number of likes
-                                            style: TextStyle(
-                                              fontSize: 14.0,
-                                              fontFamily: 'Poppins-Regular',
-                                            ),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ForumActivityPostDetail(
-                                                            postID:
-                                                                documentSnapshot
-                                                                    .id,
-                                                            thisItem: {},
-                                                          ) // Pass the document ID to the widget
-                                                      ));
-                                            },
-                                            style: ButtonStyle(
-                                              foregroundColor:
-                                                  MaterialStateProperty.all<
-                                                      Color>(
-                                                Colors.black,
+                                                },
                                               ),
-                                            ),
-                                            child: Icon(Icons.comment),
+                                              Text(
+                                                likesCount
+                                                    .toString(), // Display the number of likes
+                                                style: TextStyle(
+                                                  fontSize: 14.0,
+                                                  fontFamily: 'Poppins-Regular',
+                                                ),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ForumActivityPostDetail(
+                                                                postID:
+                                                                    documentSnapshot
+                                                                        .id,
+                                                                thisItem: {},
+                                                              ) // Pass the document ID to the widget
+                                                          ));
+                                                },
+                                                style: ButtonStyle(
+                                                  foregroundColor:
+                                                      MaterialStateProperty.all<
+                                                          Color>(
+                                                    Colors.black,
+                                                  ),
+                                                ),
+                                                child: Icon(Icons.comment),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
                                     ],
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
+                            );
+                          },
+                        ),
+                      ),
+                    ]));
           }
           return CircularProgressIndicator(); // Return loading indicator while data is loading
         },
@@ -1013,262 +1115,277 @@ class _ForumActivityPostDetailState extends State<ForumActivityPostDetail> {
             ],
           ),
         ),
-        body: StreamBuilder(
-            stream:
-                _forum.where('postID', isEqualTo: widget.postID).snapshots(),
-            builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-              if (streamSnapshot.hasError) {
-                return Center(
-                    child: Text('Some error occurred ${streamSnapshot.error}'));
-              }
-              if (streamSnapshot.hasData) {
-                QuerySnapshot<Object?>? querySnapshot = streamSnapshot.data;
-                List<QueryDocumentSnapshot<Object?>>? documents =
-                    querySnapshot?.docs;
-                List<Map>? items =
-                    documents?.map((e) => e.data() as Map).toList();
+        body: SingleChildScrollView(
+            child: StreamBuilder(
+                stream: _forum
+                    .where('postID', isEqualTo: widget.postID)
+                    .snapshots(),
+                builder:
+                    (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+                  if (streamSnapshot.hasError) {
+                    return Center(
+                        child: Text(
+                            'Some error occurred ${streamSnapshot.error}'));
+                  }
+                  if (streamSnapshot.hasData) {
+                    QuerySnapshot<Object?>? querySnapshot = streamSnapshot.data;
+                    List<QueryDocumentSnapshot<Object?>>? documents =
+                        querySnapshot?.docs;
+                    List<Map>? items =
+                        documents?.map((e) => e.data() as Map).toList();
 
-                return ListView.builder(
-                    itemCount: streamSnapshot.data?.docs.length ?? 0,
-                    itemBuilder: (BuildContext context, int index) {
-                      final DocumentSnapshot documentSnapshot =
-                          streamSnapshot.data!.docs[index];
-                      final Map thisItem = items![index];
+                    return ListView.builder(
+                        itemCount: streamSnapshot.data?.docs.length ?? 0,
+                        itemBuilder: (BuildContext context, int index) {
+                          final DocumentSnapshot documentSnapshot =
+                              streamSnapshot.data!.docs[index];
+                          final Map thisItem = items![index];
 
-                      int likesCount = thisItem['likes'] != null
-                          ? thisItem['likes'].length
-                          : 0;
+                          int likesCount = thisItem['likes'] != null
+                              ? thisItem['likes'].length
+                              : 0;
 
-                      SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
+                          SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(height: 30.0),
-                                      CircleAvatar(
-                                        radius: 15.0,
-                                        backgroundImage:
-                                            AssetImage('assets/user.png'),
-                                      ),
-                                      SizedBox(width: 8.0),
-                                      Column(
+                                      Row(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                            CrossAxisAlignment.end,
                                         children: [
-                                          Text(
-                                            '',
-                                            style: TextStyle(
-                                              fontSize: 16.5,
-                                              fontFamily: 'Poppins',
+                                          SizedBox(height: 30.0),
+                                          CircleAvatar(
+                                            radius: 15.0,
+                                            backgroundImage:
+                                                AssetImage('assets/user.png'),
+                                          ),
+                                          SizedBox(width: 8.0),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                '',
+                                                style: TextStyle(
+                                                  fontSize: 16.5,
+                                                  fontFamily: 'Poppins',
+                                                ),
+                                              ),
+                                              Text(
+                                                '',
+                                                style: TextStyle(
+                                                  fontSize: 12.0,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 10.0),
+                                      Text(
+                                        '${thisItem['title']}',
+                                        style: TextStyle(
+                                          fontSize: 20.0,
+                                          fontFamily: 'Poppins-Bold',
+                                        ),
+                                      ),
+                                      SizedBox(height: 8.0),
+                                      Text(
+                                        '${thisItem['content']}',
+                                        style: TextStyle(
+                                          fontSize: 15.0,
+                                          fontFamily: 'Poppins-Regular',
+                                        ),
+                                      ),
+                                      SizedBox(height: 5.0),
+                                      Image.network(
+                                        '${thisItem['image']}',
+                                        height: 200.0,
+                                        width: 350.0,
+                                      ),
+                                      SizedBox(height: 16.0),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(
+                                              thisItem['isLiked'] == true
+                                                  ? Icons.thumb_up
+                                                  : Icons.thumb_up_outlined,
+                                              color: thisItem['isLiked'] == true
+                                                  ? Color.fromARGB(
+                                                      255, 184, 192, 125)
+                                                  : null,
                                             ),
+                                            onPressed: () async {
+                                              final FirebaseAuth auth =
+                                                  FirebaseAuth.instance;
+                                              final User? user =
+                                                  auth.currentUser;
+
+                                              if (user != null) {
+                                                final String uid = user.uid;
+                                                final String postId =
+                                                    documentSnapshot.id;
+
+                                                // Check if the user has already liked the post
+                                                if (thisItem['isLiked'] ==
+                                                    true) {
+                                                  // If already liked, remove like
+                                                  thisItem['isLiked'] = false;
+                                                  likesCount--;
+
+                                                  // Remove the user's ID from the 'likes' array in the forum document
+                                                  if (thisItem['likes'] !=
+                                                      null) {
+                                                    thisItem['likes']
+                                                        .remove(uid);
+                                                  }
+                                                } else {
+                                                  // If not liked, add like
+                                                  thisItem['isLiked'] = true;
+                                                  likesCount++;
+
+                                                  // Add the user's ID to the 'likes' array in the forum document
+                                                  if (thisItem['likes'] ==
+                                                      null) {
+                                                    thisItem['likes'] = [uid];
+                                                  } else {
+                                                    thisItem['likes'].add(uid);
+                                                  }
+                                                }
+
+                                                // Update the forum post with the new like status and 'likes' array
+                                                _forum.doc(postId).update({
+                                                  'isLiked':
+                                                      thisItem['isLiked'],
+                                                  'likes': thisItem['likes'],
+                                                }).then((value) {
+                                                  print(
+                                                      "Like status and 'likes' array updated successfully");
+                                                }).catchError((error) {
+                                                  print(
+                                                      "Error updating like status and 'likes' array: $error");
+                                                });
+
+                                                // Update the UI
+                                                setState(() {});
+                                              }
+                                            },
                                           ),
                                           Text(
-                                            '',
+                                            likesCount
+                                                .toString(), // Display the number of likes
                                             style: TextStyle(
-                                              fontSize: 12.0,
-                                              color: Colors.grey,
+                                              fontSize: 14.0,
+                                              fontFamily: 'Poppins-Regular',
                                             ),
                                           ),
                                         ],
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 10.0),
-                                  Text(
-                                    '${thisItem['title']}',
-                                    style: TextStyle(
-                                      fontSize: 20.0,
-                                      fontFamily: 'Poppins-Bold',
-                                    ),
-                                  ),
-                                  SizedBox(height: 8.0),
-                                  Text(
-                                    '${thisItem['content']}',
-                                    style: TextStyle(
-                                      fontSize: 15.0,
-                                      fontFamily: 'Poppins-Regular',
-                                    ),
-                                  ),
-                                  SizedBox(height: 5.0),
-                                  Image.network(
-                                    '${thisItem['image']}',
-                                    height: 200.0,
-                                    width: 350.0,
-                                  ),
-                                  SizedBox(height: 16.0),
-                                  Row(
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      IconButton(
-                                        icon: Icon(
-                                          thisItem['isLiked'] == true
-                                              ? Icons.thumb_up
-                                              : Icons.thumb_up_outlined,
-                                          color: thisItem['isLiked'] == true
-                                              ? Color.fromARGB(
-                                                  255, 184, 192, 125)
-                                              : null,
+                                      Text(
+                                        'Comments',
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontFamily: 'Poppins-Bold',
                                         ),
-                                        onPressed: () async {
-                                          final FirebaseAuth auth =
-                                              FirebaseAuth.instance;
-                                          final User? user = auth.currentUser;
-
-                                          if (user != null) {
-                                            final String uid = user.uid;
-                                            final String postId =
-                                                documentSnapshot.id;
-
-                                            // Check if the user has already liked the post
-                                            if (thisItem['isLiked'] == true) {
-                                              // If already liked, remove like
-                                              thisItem['isLiked'] = false;
-                                              likesCount--;
-
-                                              // Remove the user's ID from the 'likes' array in the forum document
-                                              if (thisItem['likes'] != null) {
-                                                thisItem['likes'].remove(uid);
-                                              }
-                                            } else {
-                                              // If not liked, add like
-                                              thisItem['isLiked'] = true;
-                                              likesCount++;
-
-                                              // Add the user's ID to the 'likes' array in the forum document
-                                              if (thisItem['likes'] == null) {
-                                                thisItem['likes'] = [uid];
-                                              } else {
-                                                thisItem['likes'].add(uid);
-                                              }
-                                            }
-
-                                            // Update the forum post with the new like status and 'likes' array
-                                            _forum.doc(postId).update({
-                                              'isLiked': thisItem['isLiked'],
-                                              'likes': thisItem['likes'],
-                                            }).then((value) {
-                                              print(
-                                                  "Like status and 'likes' array updated successfully");
-                                            }).catchError((error) {
-                                              print(
-                                                  "Error updating like status and 'likes' array: $error");
-                                            });
-
-                                            // Update the UI
-                                            setState(() {});
-                                          }
+                                      ),
+                                      SizedBox(height: 8.0),
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: comments.length,
+                                        itemBuilder: (context, index) {
+                                          final comment = comments[index];
+                                          final String commentText =
+                                              comment['commentText'];
+                                          final String dateCommented =
+                                              comment['dateCommented'];
+                                          return ListTile(
+                                            contentPadding: EdgeInsets.all(0),
+                                            leading: CircleAvatar(
+                                              radius: 15.0,
+                                              backgroundImage:
+                                                  AssetImage('assets/user.png'),
+                                            ),
+                                            title: Text(commentText),
+                                            subtitle: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Visibility(
+                                                  visible:
+                                                      false, // Change this condition as needed
+                                                  child: Text(
+                                                      comment.commenterUid),
+                                                ),
+                                                Text(
+                                                  (dateCommented),
+                                                  style:
+                                                      TextStyle(fontSize: 14.0),
+                                                ),
+                                              ],
+                                            ),
+                                            trailing: Text(
+                                              dateCommented,
+                                              style: TextStyle(
+                                                  fontSize: 12.0,
+                                                  color: Colors.grey),
+                                            ),
+                                          );
                                         },
                                       ),
-                                      Text(
-                                        likesCount
-                                            .toString(), // Display the number of likes
-                                        style: TextStyle(
-                                          fontSize: 14.0,
-                                          fontFamily: 'Poppins-Regular',
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Comments',
-                                    style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontFamily: 'Poppins-Bold',
-                                    ),
-                                  ),
-                                  SizedBox(height: 8.0),
-                                  ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemCount: comments.length,
-                                    itemBuilder: (context, index) {
-                                      final comment = comments[index];
-                                      final String commentText =
-                                          comment['commentText'];
-                                      final String dateCommented =
-                                          comment['dateCommented'];
-                                      return ListTile(
-                                        contentPadding: EdgeInsets.all(0),
-                                        leading: CircleAvatar(
-                                          radius: 15.0,
-                                          backgroundImage:
-                                              AssetImage('assets/user.png'),
-                                        ),
-                                        title: Text(commentText),
-                                        subtitle: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Visibility(
-                                              visible:
-                                                  false, // Change this condition as needed
-                                              child: Text(comment.commenterUid),
-                                            ),
-                                            Text(
-                                              (dateCommented),
-                                              style: TextStyle(fontSize: 14.0),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: Text(
-                                          dateCommented,
-                                          style: TextStyle(
-                                              fontSize: 12.0,
-                                              color: Colors.grey),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(height: 16.0),
-                                  Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 15.0,
-                                        backgroundImage:
-                                            AssetImage('assets/user.png'),
-                                      ),
-                                      SizedBox(width: 8.0),
-                                      Expanded(
-                                        child: TextField(
-                                          decoration: InputDecoration(
-                                            hintText: 'Write a comment...',
+                                      SizedBox(height: 16.0),
+                                      Row(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 15.0,
+                                            backgroundImage:
+                                                AssetImage('assets/user.png'),
                                           ),
-                                          onSubmitted: (reply) {
-                                            print('Reply: $reply');
-                                          },
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.send),
-                                        onPressed: () {},
+                                          SizedBox(width: 8.0),
+                                          Expanded(
+                                            child: TextField(
+                                              decoration: InputDecoration(
+                                                hintText: 'Write a comment...',
+                                              ),
+                                              onSubmitted: (reply) {
+                                                print('Reply: $reply');
+                                              },
+                                            ),
+                                          ),
+                                          IconButton(
+                                            icon: Icon(Icons.send),
+                                            onPressed: () {},
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      );
-                    });
-              }
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }));
+                          );
+                        });
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                })));
   }
 }

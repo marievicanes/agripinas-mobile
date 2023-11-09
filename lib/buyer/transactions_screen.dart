@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:capstone/buyer/buyer_language.dart';
 import 'package:capstone/buyer/buyer_transactiondetails.dart';
+import 'package:capstone/buyer/forum_activity.dart';
 import 'package:capstone/buyer/message.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -102,19 +103,32 @@ class _TransactionBuyerState extends State<TransactionBuyer>
     });
   }
 
-  Future uploadFile() async {
+  Future<void> uploadFile() async {
     if (file == null) return;
     String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
 
+    // Get the current user UID
+    String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+
     Reference referenceRoot = FirebaseStorage.instance.ref();
     Reference referenceDirImages = referenceRoot.child('images');
-
     Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
 
     try {
       await referenceImageToUpload.putFile(File(file!.path));
-      imageUrl = await referenceImageToUpload.getDownloadURL();
-    } catch (error) {}
+      String imageUrl = await referenceImageToUpload.getDownloadURL();
+
+      // Update the current user's document with the image URL
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(currentUserUid)
+          .update({
+        'profileImageUrl': imageUrl,
+      });
+    } catch (error) {
+      // Handle error
+      print("Error uploading image: $error");
+    }
   }
 
   final CollectionReference _transaction =
@@ -158,7 +172,14 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  var data = snapshot.data!.docs[0];
+                  var document = snapshot.data!.docs[0];
+
+                  // Check if the 'profileImageUrl' field exists in the document
+                  var data = document.data() as Map<String, dynamic>;
+                  var profileImageUrl = data.containsKey('profileImageUrl')
+                      ? data['profileImageUrl']
+                      : null;
+
                   return ListView(
                     padding: EdgeInsets.zero,
                     children: <Widget>[
@@ -171,7 +192,11 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                           },
                           child: CircleAvatar(
                             radius: 10.0,
-                            backgroundImage: AssetImage('assets/user.png'),
+                            backgroundImage: data['profileImageUrl'] != null
+                                ? NetworkImage(profileImageUrl)
+                                    as ImageProvider<Object>?
+                                : AssetImage('assets/user.png')
+                                    as ImageProvider<Object>?,
                           ),
                         ),
                         decoration: BoxDecoration(
@@ -209,6 +234,19 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                               context,
                               MaterialPageRoute(
                                   builder: (context) => ProfileScreen()));
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.forum_outlined),
+                        title: Text(
+                          'Forum Activity',
+                          style: TextStyle(fontFamily: 'Poppins-Medium'),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ForumActivity()));
                         },
                       ),
                       ListTile(
@@ -472,6 +510,24 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                             fit: BoxFit.cover,
                                                             width: 80,
                                                             height: 80,
+                                                            errorBuilder:
+                                                                (context, error,
+                                                                    stackTrace) {
+                                                              return Container(
+                                                                color: Colors
+                                                                    .grey, // Customize the color
+                                                                width: 80,
+                                                                height: 80,
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    'Image Error',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
                                                           ),
                                                         ),
                                                       ],
@@ -566,7 +622,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               ),
                                                             ),
                                                             Text(
-                                                              '${cartItem['price']}',
+                                                              '₱${cartItem['price']}',
                                                               style: TextStyle(
                                                                 fontSize: 14.5,
                                                               ),
@@ -623,7 +679,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               ),
                                                             ),
                                                             Text(
-                                                              '${cartItem['totalCost']}',
+                                                              '₱${cartItem['totalCost']}',
                                                               style: TextStyle(
                                                                 fontSize: 14.5,
                                                               ),
@@ -716,6 +772,24 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                             fit: BoxFit.cover,
                                                             width: 80,
                                                             height: 80,
+                                                            errorBuilder:
+                                                                (context, error,
+                                                                    stackTrace) {
+                                                              return Container(
+                                                                color: Colors
+                                                                    .grey, // Customize the color
+                                                                width: 80,
+                                                                height: 80,
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    'Image Error',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
                                                           ),
                                                         ),
                                                       ],
@@ -810,7 +884,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               ),
                                                             ),
                                                             Text(
-                                                              '${cartItem['price']}',
+                                                              '₱${cartItem['price']}',
                                                               style: TextStyle(
                                                                 fontSize: 14.5,
                                                               ),
@@ -848,7 +922,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               ),
                                                             ),
                                                             Text(
-                                                              '${cartItem['totalCost']}',
+                                                              '₱${cartItem['totalCost']}',
                                                               style: TextStyle(
                                                                 fontSize: 14.5,
                                                               ),
@@ -949,6 +1023,24 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                             fit: BoxFit.cover,
                                                             width: 80,
                                                             height: 80,
+                                                            errorBuilder:
+                                                                (context, error,
+                                                                    stackTrace) {
+                                                              return Container(
+                                                                color: Colors
+                                                                    .grey, // Customize the color
+                                                                width: 80,
+                                                                height: 80,
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    'Image Error',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
                                                           ),
                                                         ),
                                                       ],
@@ -1043,7 +1135,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               ),
                                                             ),
                                                             Text(
-                                                              '${cartItem['price']}',
+                                                              '₱${cartItem['price']}',
                                                               style: TextStyle(
                                                                 fontSize: 14.5,
                                                               ),
@@ -1081,7 +1173,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               ),
                                                             ),
                                                             Text(
-                                                              '${cartItem['totalCost']}',
+                                                              '₱${cartItem['totalCost']}',
                                                               style: TextStyle(
                                                                 fontSize: 14.5,
                                                               ),

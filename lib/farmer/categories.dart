@@ -2,11 +2,39 @@ import 'package:capstone/farmer/category_fertilizer.dart';
 import 'package:capstone/farmer/category_fruits.dart';
 import 'package:capstone/farmer/category_ofproducts.dart';
 import 'package:capstone/farmer/category_veggies.dart';
+import 'package:capstone/farmer/dashboard_screen.dart';
 import 'package:capstone/farmer/product_details.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: CategoriesScreen(),
+    );
+  }
+}
 
 class CategoryItem {
   final String title;
@@ -32,19 +60,19 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   final List<CategoryItem> items = [
     CategoryItem(
-      title: 'Fruits',
+      title: "farmerPageCategoryText1".tr(),
       imageUrl: 'assets/fruits.png',
     ),
     CategoryItem(
-      title: 'Vegetables',
+      title: "farmerPageCategoryText2".tr(),
       imageUrl: 'assets/veggies.png',
     ),
     CategoryItem(
-      title: 'Fertilizers',
+      title: "farmerPageCategoryText3".tr(),
       imageUrl: 'assets/fertilizer.png',
     ),
     CategoryItem(
-      title: 'Other Farm Products',
+      title: "farmerPageCategoryText4".tr(),
       imageUrl: 'assets/products.png',
     ),
   ];
@@ -65,6 +93,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         centerTitle: true,
         title: Row(
           children: [
+            IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DashboardScreen()),
+                );
+              },
+            ),
             Image.asset(
               'assets/logo.png',
               height: 32.0,
@@ -91,10 +128,18 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               ),
               child: TextField(
                 controller: _searchController,
+                onChanged: (value) {
+                  setState(() {
+                    _searchText = value;
+                  });
+                },
                 decoration: InputDecoration(
                   hintText: 'Search',
                   prefixIcon: Icon(Icons.search),
                   border: InputBorder.none,
+                  hintStyle: TextStyle(
+                    fontFamily: 'Poppins-Regular',
+                  ),
                 ),
               ),
             ),
@@ -112,7 +157,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   Padding(
                     padding: EdgeInsets.all(2.0),
                     child: Text(
-                      'Marketplace',
+                      "farmerPageNavgationText2".tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontFamily: 'Poppins-Bold',
@@ -131,7 +176,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     Padding(
                       padding: EdgeInsets.all(10.0),
                       child: Text(
-                        'Categories',
+                        "farmerPageCategory".tr(),
                         style: TextStyle(
                           fontSize: 15,
                           fontFamily: 'Poppins-Regular',
@@ -157,53 +202,54 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               itemBuilder: (context, index) {
                 final item = items[index];
                 return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: routes[index],
-                        ),
-                      );
-                    },
-                    child: Card(
-                      child: Stack(children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Center(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.asset(
-                                    item.imageUrl,
-                                    fit: BoxFit.cover,
-                                    width: 250,
-                                    height: 250,
-                                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: routes[index],
+                      ),
+                    );
+                  },
+                  child: Card(
+                    child: Stack(children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Center(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.asset(
+                                  item.imageUrl,
+                                  fit: BoxFit.cover,
+                                  width: 250,
+                                  height: 250,
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Center(
-                                    child: Text(
-                                      item.title,
-                                      style: TextStyle(
-                                        fontSize: 12.2,
-                                        fontFamily: 'Poppins',
-                                      ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Center(
+                                  child: Text(
+                                    item.title,
+                                    style: TextStyle(
+                                      fontSize: 12.2,
+                                      fontFamily: 'Poppins',
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ]),
-                    ));
+                          ),
+                        ],
+                      ),
+                    ]),
+                  ),
+                );
               },
             ),
             buildMarketplaceSection(),
@@ -240,11 +286,21 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         List<QueryDocumentSnapshot<Object?>>? documents = querySnapshot?.docs;
         List<Map>? items = documents?.map((e) => e.data() as Map).toList();
 
+        List<Map>? filteredItems = items
+            ?.where((item) =>
+                item['cropName']
+                    .toLowerCase()
+                    .contains(_searchText.toLowerCase()) ||
+                item['location']
+                    .toLowerCase()
+                    .contains(_searchText.toLowerCase()))
+            .toList();
+
         return SingleChildScrollView(
           child: GridView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: items?.length ?? 0,
+            itemCount: filteredItems?.length ?? 0,
             padding: EdgeInsets.all(3),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
@@ -253,119 +309,145 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               childAspectRatio: 2.3 / 4,
             ),
             itemBuilder: (BuildContext context, int index) {
-              final Map thisItem = items![index];
+              final Map thisItem = filteredItems![index];
 
               return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProductDetails(thisItem),
-                      ),
-                    );
-                  },
-                  child: Card(
-                    child: Stack(children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Center(
-                              child: Align(
-                                alignment: Alignment.bottomCenter,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
-                                    '${thisItem['image']}',
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    height: 250,
-                                  ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProductDetails(thisItem),
+                    ),
+                  );
+                },
+                child: Card(
+                  child: Stack(children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Center(
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  '${thisItem['image']}',
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: 250,
                                 ),
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Center(
-                                  child: Text(
-                                    '${thisItem['cropName']}',
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: Text(
+                                  '${thisItem['cropName']}',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Text(
+                                    "farmerPagePrice".tr(),
                                     style: TextStyle(
-                                      fontSize: 15,
-                                      fontFamily: 'Poppins',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                ),
-                                SizedBox(height: 4),
-                                Row(
+                                  Text(
+                                    '₱${thisItem['price']}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  StreamBuilder<QuerySnapshot>(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('Users')
+                                        .where('uid',
+                                            isEqualTo: currentUser?.uid)
+                                        .snapshots(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData &&
+                                          snapshot.data!.docs.isNotEmpty) {
+                                        QueryDocumentSnapshot userData =
+                                            snapshot.data!.docs.first;
+                                        String fullName =
+                                            userData.get('fullname').toString();
+
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "farmerPageUserRole".tr(),
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontFamily: 'Poppins',
+                                              ),
+                                            ),
+                                            Text(
+                                              fullName,
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                fontFamily: 'Poppins-Regular',
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      } else {
+                                        return Text("No data available");
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(1.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Price: ',
+                                      "farmerPageCategoriesLocation".tr(),
                                       style: TextStyle(
                                         fontSize: 14,
-                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Poppins',
                                       ),
                                     ),
+                                    SizedBox(height: 4),
                                     Text(
-                                      '${thisItem['price']}',
+                                      '${thisItem['location']}',
                                       style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 13,
+                                        fontFamily: 'Poppins-Regular',
                                       ),
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Farmer: ',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      '${thisItem['fullname']}',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(1.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Location:',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontFamily: 'Poppins',
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        '${thisItem['location']}',
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontFamily: 'Poppins-Regular',
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ]),
-                  ));
+                        ),
+                      ],
+                    ),
+                  ]),
+                ),
+              );
             },
           ),
         );

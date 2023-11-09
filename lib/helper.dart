@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'buyer/buyer_nav.dart';
-import 'farmer/farmer_nav.dart';
+import 'farmer/dashboard_screen.dart';
 import 'main.dart';
 
 class AuthHelper {
@@ -66,7 +66,7 @@ class AuthService {
               email: email.text, password: password.text)
           .then((value) {
         if (auth.currentUser!.emailVerified) {
-          print("Farmer is Logged In");
+          print("Buyer is Logged In");
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => BuyerNavBar()),
@@ -129,7 +129,7 @@ class AuthService {
           print("Farmer is Logged In");
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => BottomNavBar()),
+            MaterialPageRoute(builder: (context) => DashboardScreen()),
             (route) => false,
           );
         } else {

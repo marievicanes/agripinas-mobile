@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:easy_localization/easy_localization.dart';
+
 import 'helper.dart';
 
 void main() async {
@@ -515,23 +516,46 @@ class ForgotPassword extends StatelessWidget {
     final email = _emailController.text.trim();
 
     if (_formKey.currentState?.validate() ?? false) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Success'),
-            content: Text('Password reset email sent successfully.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
+      try {
+        await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Success'),
+              content: Text('Password reset email sent successfully.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      } catch (e) {
+        print("Error sending password reset email: $e");
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Error'),
+              content: Text(
+                  'Failed to send password reset email. Please try again.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
 
@@ -596,27 +620,30 @@ class ForgotPassword extends StatelessWidget {
                 SizedBox(height: 10),
                 Container(
                   width: 350,
-                  child: TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.email,
-                        color: Color(0xFF9DC08B),
-                      ),
-                      labelText: "E-mail",
-                      labelStyle: TextStyle(
-                        color: Colors.black,
-                        fontFamily: 'Poppins-Regular',
-                        fontSize: 13,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(255, 208, 216, 144),
+                  child: Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.email,
+                          color: Color(0xFF9DC08B),
                         ),
-                        borderRadius: BorderRadius.circular(15),
+                        labelText: "E-mail",
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Poppins-Regular',
+                          fontSize: 13,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 208, 216, 144),
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                       ),
+                      validator: _validateEmail,
                     ),
-                    validator: _validateEmail,
                   ),
                 ),
                 SizedBox(height: 20),

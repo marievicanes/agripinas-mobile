@@ -1,5 +1,7 @@
 import 'dart:async' show Timer;
 
+import 'package:capstone/farmer/farmer_nav.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,9 +50,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     "Brgy. San Juan South",
     "Brgy. San Roque",
     "Brgy. San Vicente",
-    "Brgy. Santa Ines",
-    "Brgy. Santa Isabel",
-    "Brgy. Santa Rita",
+    "Brgy. Sta. Ines",
+    "Brgy. Sta. Isabel",
+    "Brgy. Sta. Rita",
     "Brgy. Sinipit",
   ];
 
@@ -128,10 +130,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void updateWeatherForSelectedBarangay() {
-    // Convert the input to lowercase for case-insensitive comparison
     String searchedBarangay = _searchController.text.toLowerCase();
 
-    // Check if the searched barangay is in the list (case-insensitive)
     if (barangays
         .map((barangay) => barangay.toLowerCase())
         .contains(searchedBarangay)) {
@@ -141,7 +141,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         fetchWeather();
       });
     } else {
-      // Handle case where the searched barangay is not in the list
       print("Barangay not found in the list");
     }
   }
@@ -153,192 +152,271 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Color(0xFFA9AF7E),
-          title: Row(
-            children: [
-              Container(
-                height: 32.0,
-                child: Image.asset(
-                  'assets/logo.png',
-                  height: 32.0,
-                ),
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+            body: Stack(children: [
+          Container(
+            height: 690,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/weather.gif'),
+                fit: BoxFit.cover,
               ),
-              SizedBox(width: 8.0),
-              Text(
-                'AgriPinas',
-                style: TextStyle(
-                  fontSize: 17.0,
-                  fontFamily: 'Poppins',
-                  color: Colors.white,
-                ),
-              ),
-            ],
+            ),
           ),
-          actions: [
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Container(
-                width: 220.0,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(25.0),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          hintText: 'Search Barangay',
-                          prefixIcon: Icon(Icons.search),
-                          border: InputBorder.none,
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(60.0),
+                  child: Container(
+                    width: 900.0,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25.0),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        DropdownButton<String>(
+                          value: selectedBarangay,
+                          items: barangays.map((barangay) {
+                            return DropdownMenuItem<String>(
+                              value: barangay,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text(
+                                  barangay,
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins-Regular',
+                                    fontSize: 15.0,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (newValue) {
+                            setState(() {
+                              selectedBarangay = newValue!;
+                              updateWeatherForSelectedBarangay();
+                            });
+                          },
+                          icon: Icon(Icons.arrow_drop_down),
+                          iconSize: 24,
+                          elevation: 16,
+                          style: TextStyle(color: Colors.black),
+                          underline: Container(),
                         ),
-                        onTap: () {
-                          updateWeatherForSelectedBarangay();
-                        },
-                      ),
+                        IconButton(
+                          icon: Icon(Icons.shopping_bag_outlined),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    'Go to Marketplace?',
+                                    style: TextStyle(fontFamily: 'Poppins'),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                BottomNavBar(),
+                                          ),
+                                        );
+                                      },
+                                      child: Text(
+                                        'Yes',
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          color:
+                                              Color(0xFF9DC08B).withAlpha(180),
+                                        ),
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text(
+                                        'No',
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins-Regular',
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          currentWeather != null
+                              ? '${(currentWeather!.temperature?.celsius ?? 0.0).toInt()}°'
+                              : '',
+                          style: TextStyle(
+                              fontSize: 72.0,
+                              fontFamily: 'Poppins',
+                              color: Colors.white),
+                        ),
+                        SizedBox(height: 10.0),
+                        Text(
+                          selectedBarangay,
+                          style: TextStyle(
+                              fontSize: 18.0,
+                              fontFamily: 'Poppins',
+                              color: Colors.white),
+                        ),
+                        SizedBox(height: 10.0),
+                        Text(
+                          DateFormat('MMMM d, EEEE').format(currentDate),
+                          style: TextStyle(
+                              fontSize: 16.0,
+                              fontFamily: 'Poppins',
+                              color: Colors.white),
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 10.0),
+                  ],
+                ),
+                SizedBox(height: 20.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    WeatherInfoCard(
+                      imagePath: 'assets/temperature.png',
+                      label: 'Temperature',
+                      value: currentWeather != null
+                          ? '${(currentWeather!.temperature?.celsius ?? 0.0).toInt()}°'
+                          : 'Loading...',
+                    ),
+                    WeatherInfoCard(
+                      imagePath: 'assets/weather.png',
+                      label: 'Weather',
+                      value: currentWeather != null
+                          ? currentWeather!.weatherDescription ?? 'Loading...'
+                          : 'Loading...',
                     ),
                   ],
                 ),
-              ),
-            ),
-          ],
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Column(
+                if (forecast != null)
+                  Container(
+                    height: 200.0,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        ...forecast!
+                            .asMap()
+                            .entries
+                            .where((entry) =>
+                                entry.key == 0 ||
+                                DateFormat('MMMM d, EEEE')
+                                        .format(entry.value.date!) !=
+                                    DateFormat('MMMM d, EEEE')
+                                        .format(forecast![entry.key - 1].date!))
+                            .take(7)
+                            .map((entry) {
+                          return ForecastCard(
+                            date: entry.key == 0
+                                ? 'Today'
+                                : DateFormat('MMMM d, EEEE')
+                                    .format(entry.value.date!),
+                            imagePath: getWeatherIconPath(entry.key == 0
+                                ? currentWeather!.weatherDescription ??
+                                    'Unknown'
+                                : entry.value.weatherDescription ?? 'Unknown'),
+                            temperature: entry.key == 0
+                                ? '${(currentWeather!.temperature?.celsius ?? 0.0).toInt()}°'
+                                : '${(entry.value.temperature?.celsius ?? 0.0).toInt()}°',
+                            weatherCondition: entry.key == 0
+                                ? currentWeather!.weatherDescription ??
+                                    'Unknown'
+                                : entry.value.weatherDescription ?? 'Unknown',
+                          );
+                        }).toList(),
+                      ],
+                    ),
+                  ),
+                SizedBox(height: 16.0),
+                Card(
+                  margin: EdgeInsets.only(bottom: 1),
+                  child: Column(
                     children: [
                       Text(
-                        currentWeather != null
-                            ? '${(currentWeather!.temperature?.celsius ?? 0.0).toInt()}°'
-                            : '',
+                        'Announcements',
                         style: TextStyle(
-                          fontSize: 72.0,
+                          fontSize: 20.0,
                           fontFamily: 'Poppins',
                         ),
                       ),
-                      SizedBox(height: 10.0),
-                      Text(
-                        selectedBarangay,
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontFamily: 'Poppins',
-                        ),
+                      SizedBox(
+                        height: 10,
                       ),
-                      SizedBox(height: 10.0),
-                      Text(
-                        DateFormat('MMMM d, EEEE').format(currentDate),
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontFamily: 'Poppins',
-                        ),
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('Announcements')
+                            .orderBy('timestamp', descending: true)
+                            .snapshots(),
+                        builder: (context, streamSnapshot) {
+                          if (streamSnapshot.hasError) {
+                            return Center(
+                                child: Text(
+                                    'Some error occurred ${streamSnapshot.error}'));
+                          }
+                          if (streamSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+
+                          List<QueryDocumentSnapshot> documents =
+                              streamSnapshot.data!.docs;
+
+                          return Column(
+                            children: documents.map((document) {
+                              Map<String, dynamic>? data =
+                                  document.data() as Map<String, dynamic>?;
+
+                              return GestureDetector(
+                                onTap: () {
+                                  showAnnouncementDialog(
+                                      context, data?['content']);
+                                },
+                                child: AnnouncementCard(
+                                  title: data?['title'] ?? '',
+                                  content: data?['content'] ?? '',
+                                  timestamp: data?['timestamp'] ?? '',
+                                ),
+                              );
+                            }).toList(),
+                          );
+                        },
                       ),
-                    ],
-                  ),
-                  SizedBox(width: 10.0),
-                ],
-              ),
-              SizedBox(height: 20.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  WeatherInfoCard(
-                    imagePath: 'assets/temperature.png',
-                    label: 'Temperature',
-                    value: currentWeather != null
-                        ? '${(currentWeather!.temperature?.celsius ?? 0.0).toInt()}°'
-                        : 'Loading...',
-                  ),
-                  WeatherInfoCard(
-                    imagePath: 'assets/weather.png',
-                    label: 'Weather',
-                    value: currentWeather != null
-                        ? currentWeather!.weatherDescription ?? 'Loading...'
-                        : 'Loading...',
-                  ),
-                ],
-              ),
-              if (forecast != null)
-                Container(
-                  height: 200.0,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      ...forecast!
-                          .asMap()
-                          .entries
-                          .where((entry) =>
-                              entry.key == 0 ||
-                              DateFormat('MMMM d, EEEE')
-                                      .format(entry.value.date!) !=
-                                  DateFormat('MMMM d, EEEE')
-                                      .format(forecast![entry.key - 1].date!))
-                          .take(7)
-                          .map((entry) {
-                        return ForecastCard(
-                          date: entry.key == 0
-                              ? 'Today'
-                              : DateFormat('MMMM d, EEEE')
-                                  .format(entry.value.date!),
-                          imagePath: getWeatherIconPath(entry.key == 0
-                              ? currentWeather!.weatherDescription ?? 'Unknown'
-                              : entry.value.weatherDescription ?? 'Unknown'),
-                          temperature: entry.key == 0
-                              ? '${(currentWeather!.temperature?.celsius ?? 0.0).toInt()}°'
-                              : '${(entry.value.temperature?.celsius ?? 0.0).toInt()}°',
-                          weatherCondition: entry.key == 0
-                              ? currentWeather!.weatherDescription ?? 'Unknown'
-                              : entry.value.weatherDescription ?? 'Unknown',
-                        );
-                      }).toList(),
                     ],
                   ),
                 ),
-              SizedBox(height: 16.0),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      showAnnouncementDialog(
-                        context,
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                      );
-                    },
-                    child: AnnouncementCard(
-                      adminName: 'Admin',
-                      title: 'Meeting on August 14, 2023',
-                      dateTime: DateTime.now(),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      showAnnouncementDialog(
-                        context,
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                      );
-                    },
-                    child: AnnouncementCard(
-                      adminName: 'Admin',
-                      title: 'Meeting on July 14, 2023',
-                      dateTime: DateTime.now(),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
-    );
+        ])));
   }
 }
 
@@ -347,7 +425,7 @@ String getWeatherIconPath(String condition) {
     case 'broken clouds':
       return 'assets/broken.png';
     case 'few clouds':
-      return 'assets/few.png';
+      return 'assets/broken.png';
     case 'thunderstorm':
       return 'assets/thunderstorm.png';
     case 'cloudy':
@@ -525,23 +603,23 @@ void showAnnouncementDialog(BuildContext context, String message) {
 }
 
 class AnnouncementCard extends StatelessWidget {
-  final String adminName;
   final String title;
-  final DateTime dateTime;
+  final String content;
+  final String timestamp;
 
-  const AnnouncementCard({
-    required this.adminName,
+  AnnouncementCard({
     required this.title,
-    required this.dateTime,
+    required this.content,
+    required this.timestamp,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      margin: EdgeInsets.only(bottom: 16),
+      margin: EdgeInsets.only(bottom: 9),
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(7),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -549,14 +627,14 @@ class AnnouncementCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Posted by $adminName',
+                  'Posted by Admin',
                   style: TextStyle(
                     fontSize: 16,
                     fontFamily: 'Poppins-Regular',
                   ),
                 ),
                 Text(
-                  '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute}',
+                  timestamp,
                   style: TextStyle(
                     fontSize: 12,
                     fontFamily: 'Poppins-Medium',
@@ -573,6 +651,7 @@ class AnnouncementCard extends StatelessWidget {
                 fontFamily: 'Poppins',
               ),
             ),
+            SizedBox(height: 10),
           ],
         ),
       ),
