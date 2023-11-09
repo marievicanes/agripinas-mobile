@@ -12,8 +12,6 @@ void main() {
   );
 }
 
-GlobalKey<AnimatedListState> listKey = GlobalKey();
-
 class AddToCart extends StatefulWidget {
   @override
   _AddToCartState createState() => _AddToCartState();
@@ -28,7 +26,7 @@ class _AddToCartState extends State<AddToCart>
   int totalBoughtQuantity = 0;
   int totalItems = 0;
   double totalAmount = 0.0;
-
+  GlobalKey<AnimatedListState> listKey = GlobalKey();
   final CollectionReference _userCarts =
       FirebaseFirestore.instance.collection('UserCarts');
   final currentUser = FirebaseAuth.instance.currentUser;
@@ -260,7 +258,23 @@ class _AddToCartState extends State<AddToCart>
           }
           if (!streamSnapshot.hasData || streamSnapshot.data!.docs.isEmpty) {
             return Center(
-              child: Text('No data available'),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    'assets/noitem.png', // Add your image path
+                    width: 150,
+                    height: 150,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'There are no items in your cart.',
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
             );
           }
 

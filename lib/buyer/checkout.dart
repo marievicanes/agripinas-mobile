@@ -1,4 +1,4 @@
-import 'package:capstone/buyer/transactions_screen.dart';
+import 'package:capstone/buyer/buyer_pendingtransac.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -31,8 +31,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-GlobalKey<AnimatedListState> listKey = GlobalKey();
-
 class CheckoutScreen extends StatefulWidget {
   @override
   _CheckoutScreenState createState() => _CheckoutScreenState();
@@ -53,7 +51,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   TextEditingController _fullnameController = TextEditingController();
   double totalPayment = 0.0;
   String selectedPaymentMethod = 'Select Payment';
-
+  GlobalKey<AnimatedListState> listKey = GlobalKey();
   bool isPaymentOptionSelected() {
     return selectedPaymentMethod != 'Select Payment';
   }
@@ -94,7 +92,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 }
 
                 if (!snapshot.hasData) {
-                  return Text("No items in your cart.");
+                  return Text("No items available.");
                 }
 
                 // Calculate the totalPayment here when cart items are loaded
@@ -114,10 +112,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
                 // Create a list of widgets for each group (unique uid)
                 List<Widget> cartItemGroups =
-                    groupedCartItems.values.map((cartItems) {
+                    groupedCartItems.values.map((orders) {
                   double groupTotalCost = 0.0;
 
-                  List<Widget> cartItemsWidgets = cartItems
+                  List<Widget> cartItemsWidgets = orders
                       .where((cartItem) => cartItem['isChecked'] == true)
                       .map((cartItem) {
                     double price =
@@ -126,8 +124,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         int.tryParse(cartItem['boughtQuantity'] ?? '0') ?? 0;
 
                     // Calculate the total cost for this item and add it to groupTotalCost.
-                    groupTotalCost += price * itemQuantity;
-
+                    groupTotalCost = price * itemQuantity;
+                    totalPayment += price * itemQuantity;
                     return _buildCartItem(
                         cartItem['cropName'],
                         price,
@@ -141,7 +139,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   }).toList();
 
                   // Accumulate the groupTotalCost
-                  totalPayment += groupTotalCost;
+
                   return Column(
                     children: [
                       // You can add a title here if needed, e.g., 'Farmer: ${cartItems[0]['fullname']}'
@@ -239,7 +237,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       // Valid payment option selected, navigate to TransactionBuyer screen
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => TransactionBuyer(),
+                          builder: (context) => BuyerPendingRequest(),
                         ),
                       );
                     }
@@ -348,18 +346,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     // Get the current date
     DateTime currentDate = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(currentDate);
 
     // Get the cart items to save
     List<Map<String, dynamic>> cartItemsToSave = [];
+    List<String> cartItemIdsToDelete = [];
 
-    final cartItems = await _userCarts
+    final orders = await _userCarts
         .where('buid', isEqualTo: currentUser.uid)
-        .where('cartItems')
+        .where('orders')
         .get();
 
-    if (cartItems.docs.isNotEmpty) {
+    if (orders.docs.isNotEmpty) {
       // Loop through the cart items and add them to cartItemsToSave
-      cartItems.docs.forEach((cartItem) {
+      orders.docs.forEach((cartItem) {
         if (cartItem['isChecked']) {
           // Create a map for the item
           Map<String, dynamic> item = {
@@ -373,13 +373,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             'location': cartItem['location'],
             'fullname': cartItem['fullname'],
             'totalCost': cartItem['totalCost'],
-            'imageUrl': cartItem['image'],
+            'image': cartItem['image'],
             'cropID': cartItem['cropID'],
             'buid': cartItem['buid'],
             'status': 'Pending',
             // Add other item properties here
           };
           cartItemsToSave.add(item);
+          cartItemIdsToDelete.add(cartItem.id);
         }
       });
 
@@ -388,9 +389,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'buid': currentUser.uid,
         'paymentMethod': selectedPaymentMethod,
         'totalPayment': totalPayment,
-        'dateBought': currentDate,
-        'cartItems': cartItemsToSave,
+        'dateBought': formattedDate,
+        'orders': cartItemsToSave,
       });
+      for (String cartItemId in cartItemIdsToDelete) {
+        await _userCarts.doc(cartItemId).delete();
+      }
     }
   }
 }

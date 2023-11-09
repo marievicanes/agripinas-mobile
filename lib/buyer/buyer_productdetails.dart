@@ -673,6 +673,8 @@ class _BuyNowModalState extends State<BuyNowModal> {
         String formattedDate = DateFormat('yyyy-MM-dd').format(currentDate);
         String boughtQuantity = currentBoughtQuantity.toString();
         bool isChecked = true;
+        String totalCost =
+            (currentBoughtQuantity * double.parse(price)).toString();
 
         // Reference to your UserCarts collection
         CollectionReference<Map<String, dynamic>> buyNowRef =
@@ -695,6 +697,7 @@ class _BuyNowModalState extends State<BuyNowModal> {
           'boughtQuantity': boughtQuantity,
           'isChecked': isChecked,
           'archived': archived,
+          'totalCost': totalCost,
           // Add other data you want to transfer
         });
       }

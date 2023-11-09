@@ -61,6 +61,9 @@ dependencies:
   weather: ^3.0.0
   weather_icons: ^3.0.0
   timezone: ^0.9.2
+  provider: ^6.0.5
+  photo_view: ^0.14.0
+  file_picker: ^6.1.1
 
 
 dev_dependencies:
@@ -126,6 +129,7 @@ flutter:
     - assets/overcast.png
     - assets/scattered.png
     - assets/broken.png
+    - assets/noitem.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -1499,6 +1499,8 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                               final String location = _locationController.text;
                               final String description =
                                   _descriptionController.text;
+                              String cropID = const Uuid().v4();
+
                               FirebaseAuth auth = FirebaseAuth.instance;
                               User? user = auth.currentUser;
 
@@ -1506,6 +1508,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                 String? uid = user?.uid;
                                 await _marketplace.add({
                                   "uid": uid,
+                                  "cropID": cropID,
                                   "cropName": cropName,
                                   "unit": unit,
                                   "category": category,
@@ -2294,7 +2297,7 @@ class _CropTrackerScreenState extends State<CropTrackerScreen>
                                                                   sellProduct(
                                                                       documentSnapshot),
                                                               child: Text(
-                                                                'Add Product in Marketplace',
+                                                                ' Sell to Marketplace ',
                                                                 style:
                                                                     TextStyle(
                                                                   fontFamily:

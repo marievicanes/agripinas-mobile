@@ -7,6 +7,7 @@
         "fullname",
         "Scaffoldkey",
         "storedprice",
-        "transferdata"
+        "transferdata",
+        "Zoomable"
     ]
 }

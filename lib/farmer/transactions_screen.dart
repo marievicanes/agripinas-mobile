@@ -43,9 +43,9 @@ class _TransactionsScreenState extends State<TransactionsScreen>
     final DocumentSnapshot document = await documentRef.get();
 
     if (document.exists) {
-      final List<dynamic> cartItems = document['cartItems'] as List;
+      final List<dynamic> orders = document['orders'] as List;
 
-      final updatedCartItems = cartItems.map((cartItem) {
+      final updatedCartItems = orders.map((cartItem) {
         if (cartItem['uid'] == currentUser.currentUser!.uid) {
           if (cartItem['cropID'] == cropID) {
             // Update the status for this specific cart item
@@ -57,7 +57,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
 
       try {
         await _transaction.doc(documentSnapshot.id).update({
-          'cartItems': updatedCartItems,
+          'orders': updatedCartItems,
         });
         print('Status updated successfully');
       } catch (e) {
@@ -202,13 +202,14 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                               streamSnapshot.data!.docs[index];
                           final Map thisItem = items![index];
 
-                          Timestamp dateOrdered = thisItem['dateBought'];
-                          DateTime dateTime = dateOrdered.toDate();
+                          String dateBought = thisItem['dateBought'];
+                          DateTime dateTime =
+                              DateFormat('yyyy-MM-dd').parse(dateBought);
                           String formattedDate =
-                              DateFormat.yMMMMd().format(dateTime);
+                              DateFormat('MMMM d, y').format(dateTime);
 
                           List<Map<dynamic, dynamic>> pendingCartItems =
-                              (thisItem['cartItems'] as List)
+                              (thisItem['orders'] as List)
                                   .where((cartItem) =>
                                       cartItem['uid'] ==
                                       currentUser.currentUser!.uid)
@@ -259,7 +260,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         BorderRadius.circular(
                                                             8),
                                                     child: Image.network(
-                                                      '${cartItem['imageUrl']}',
+                                                      '${cartItem['image']}',
                                                       fit: BoxFit.cover,
                                                       width: 80,
                                                       height: 80,
@@ -370,6 +371,24 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       ),
                                                       Text(
                                                         '${cartItem['boughtQuantity']}',
+                                                        style: TextStyle(
+                                                          fontSize: 14.5,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        'Unit: ',
+                                                        style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        '${cartItem['unit']}',
                                                         style: TextStyle(
                                                           fontSize: 14.5,
                                                         ),
@@ -686,13 +705,14 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                               streamSnapshot.data!.docs[index];
                           final Map thisItem = items![index];
 
-                          Timestamp dateOrdered = thisItem['dateBought'];
-                          DateTime dateTime = dateOrdered.toDate();
+                          String dateBought = thisItem['dateBought'];
+                          DateTime dateTime =
+                              DateFormat('yyyy-MM-dd').parse(dateBought);
                           String formattedDate =
-                              DateFormat.yMMMMd().format(dateTime);
+                              DateFormat('MMMM d, y').format(dateTime);
 
                           List<Map<dynamic, dynamic>> cancelledCartItems =
-                              (thisItem['cartItems'] as List)
+                              (thisItem['orders'] as List)
                                   .where((cartItem) =>
                                       cartItem['uid'] ==
                                       currentUser.currentUser!.uid)
@@ -743,7 +763,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         BorderRadius.circular(
                                                             8),
                                                     child: Image.network(
-                                                      '${cartItem['imageUrl']}',
+                                                      '${cartItem['image']}',
                                                       fit: BoxFit.cover,
                                                       width: 80,
                                                       height: 80,
@@ -863,6 +883,24 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   Row(
                                                     children: [
                                                       Text(
+                                                        'Unit: ',
+                                                        style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        '${cartItem['unit']}',
+                                                        style: TextStyle(
+                                                          fontSize: 14.5,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text(
                                                         'Total Amount: ',
                                                         style: TextStyle(
                                                           fontSize: 15,
@@ -901,13 +939,14 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                 streamSnapshot.data!.docs[index];
                             final Map thisItem = items![index];
 
-                            Timestamp dateOrdered = thisItem['dateBought'];
-                            DateTime dateTime = dateOrdered.toDate();
+                            String dateBought = thisItem['dateBought'];
+                            DateTime dateTime =
+                                DateFormat('yyyy-MM-dd').parse(dateBought);
                             String formattedDate =
-                                DateFormat.yMMMMd().format(dateTime);
+                                DateFormat('MMMM d, y').format(dateTime);
 
                             List<Map<dynamic, dynamic>> completedCartItems =
-                                (thisItem['cartItems'] as List)
+                                (thisItem['orders'] as List)
                                     .where((cartItem) =>
                                         cartItem['uid'] ==
                                         currentUser.currentUser!.uid)
@@ -960,7 +999,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                           BorderRadius.circular(
                                                               8),
                                                       child: Image.network(
-                                                        '${cartItem['imageUrl']}',
+                                                        '${cartItem['image']}',
                                                         fit: BoxFit.cover,
                                                         width: 80,
                                                         height: 80,
@@ -1018,7 +1057,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                           ),
                                                         ),
                                                         Text(
-                                                          '${cartItem['dateBought']}',
+                                                          formattedDate
+                                                              .toString(),
                                                           style: TextStyle(
                                                             fontSize: 14.5,
                                                           ),
@@ -1055,6 +1095,24 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         ),
                                                         Text(
                                                           '${cartItem['boughtQuantity']}',
+                                                          style: TextStyle(
+                                                            fontSize: 14.5,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          'Unit: ',
+                                                          style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          '${cartItem['unit']}',
                                                           style: TextStyle(
                                                             fontSize: 14.5,
                                                           ),

@@ -1,4 +1,4 @@
-import 'package:capstone/buyer/transactions_screen.dart';
+import 'package:capstone/buyer/buyer_pendingtransac.dart';
 import 'package:capstone/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -133,10 +133,10 @@ class _BuyNowCheckoutScreenState extends State<BuyNowCheckoutScreen> {
 
                 // Create a list of widgets for each group (unique uid)
                 List<Widget> cartItemGroups =
-                    groupedCartItems.values.map((cartItems) {
+                    groupedCartItems.values.map((orders) {
                   double groupTotalCost = 0.0;
 
-                  List<Widget> cartItemsWidgets = cartItems
+                  List<Widget> cartItemsWidgets = orders
                       .where((cartItem) => cartItem['isChecked'] == true)
                       .map((cartItem) {
                     double price =
@@ -145,7 +145,7 @@ class _BuyNowCheckoutScreenState extends State<BuyNowCheckoutScreen> {
                         int.tryParse(cartItem['boughtQuantity'] ?? '0') ?? 0;
 
                     // Calculate the total cost for this item and add it to groupTotalCost.
-                    groupTotalCost += price * itemQuantity;
+                    groupTotalCost = price * itemQuantity;
 
                     return _buildCartItem(
                         cartItem['cropName'],
@@ -257,7 +257,7 @@ class _BuyNowCheckoutScreenState extends State<BuyNowCheckoutScreen> {
                 saveOrderToFirestore();
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => TransactionBuyer(),
+                    builder: (context) => BuyerPendingRequest(),
                   ),
                 );
               },
@@ -365,50 +365,54 @@ class _BuyNowCheckoutScreenState extends State<BuyNowCheckoutScreen> {
 
     // Get the current date
     DateTime currentDate = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(currentDate);
 
     // Get the cart items to save
     List<Map<String, dynamic>> cartItemsToSave = [];
+    List<String> cartItemIdsToDelete = [];
 
-    // Create a batch to perform a batched write
-
-    final cartItems = await _buyNow
+    final cartItemsQuery = await _buyNow
         .where('buid', isEqualTo: currentUser.uid)
-        .where('cartItems')
+        .where('isChecked', isEqualTo: true)
         .get();
 
-    if (cartItems.docs.isNotEmpty) {
-      cartItems.docs.forEach((cartItem) {
-        if (cartItem['isChecked']) {
-          // Create a map for the item
-          Map<String, dynamic> item = {
-            'cropName': cartItem['cropName'],
-            'category': cartItem['category'],
-            'uid': cartItem['uid'],
-            'boughtQuantity': cartItem['boughtQuantity'],
-            'price': cartItem['price'],
-            'unit': cartItem['unit'],
-            'quantity': cartItem['quantity'],
-            'location': cartItem['location'],
-            'fullname': cartItem['fullname'],
-            'imageUrl': cartItem['image'],
-            'cropID': cartItem['cropID'],
-            'buid': cartItem['buid'],
-            'status': 'Pending',
-            'dateBought': currentDate,
-            // Add other item properties here
-          };
-          cartItemsToSave.add(item);
-        }
+    if (cartItemsQuery.docs.isNotEmpty) {
+      cartItemsQuery.docs.forEach((cartItem) {
+        // Create a map for the item
+        Map<String, dynamic> item = {
+          'cropName': cartItem['cropName'],
+          'category': cartItem['category'],
+          'uid': cartItem['uid'],
+          'boughtQuantity': cartItem['boughtQuantity'],
+          'price': cartItem['price'],
+          'unit': cartItem['unit'],
+          'quantity': cartItem['quantity'],
+          'location': cartItem['location'],
+          'fullname': cartItem['fullname'],
+          'image': cartItem['image'],
+          'cropID': cartItem['cropID'],
+          'buid': cartItem['buid'],
+          'status': 'Pending',
+          'totalCost': cartItem['totalCost'],
+          // Add other item properties here
+        };
+        cartItemsToSave.add(item);
+        cartItemIdsToDelete.add(cartItem.id);
       });
 
       // Create an order document
-
       await _transaction.add({
         'buid': currentUser.uid,
         'paymentMethod': selectedPaymentMethod,
+        'dateBought': formattedDate,
         'totalPayment': totalPayment,
-        'cartItems': cartItemsToSave,
+        'orders': cartItemsToSave,
       });
+
+      // Delete the cart items
+      for (String cartItemId in cartItemIdsToDelete) {
+        await _buyNow.doc(cartItemId).delete();
+      }
     }
   }
 }

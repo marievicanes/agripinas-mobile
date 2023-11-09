@@ -409,13 +409,14 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                     streamSnapshot.data!.docs[index];
                                 final Map thisItem = items![index];
 
-                                Timestamp dateOrdered = thisItem['dateBought'];
-                                DateTime dateTime = dateOrdered.toDate();
+                                String dateBought = thisItem['dateBought'];
+                                DateTime dateTime =
+                                    DateFormat('yyyy-MM-dd').parse(dateBought);
                                 String formattedDate =
-                                    DateFormat.yMMMMd().format(dateTime);
+                                    DateFormat('MMMM d, y').format(dateTime);
 
                                 List<Map<dynamic, dynamic>> pendingCartItems =
-                                    (thisItem['cartItems'] as List)
+                                    (thisItem['orders'] as List)
                                         .where((cartItem) =>
                                             cartItem['status'] == 'Pending')
                                         .map((cartItem) =>
@@ -467,7 +468,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               BorderRadius
                                                                   .circular(8),
                                                           child: Image.network(
-                                                            '${cartItem['imageUrl']}',
+                                                            '${cartItem['image']}',
                                                             fit: BoxFit.cover,
                                                             width: 80,
                                                             height: 80,
@@ -594,6 +595,25 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                         Row(
                                                           children: [
                                                             Text(
+                                                              'Unit: ',
+                                                              style: TextStyle(
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              '${cartItem['unit']}',
+                                                              style: TextStyle(
+                                                                fontSize: 14.5,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Text(
                                                               'Total Amount: ',
                                                               style: TextStyle(
                                                                 fontSize: 15,
@@ -633,13 +653,14 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                     streamSnapshot.data!.docs[index];
                                 final Map thisItem = items![index];
 
-                                Timestamp dateOrdered = thisItem['dateBought'];
-                                DateTime dateTime = dateOrdered.toDate();
+                                String dateBought = thisItem['dateBought'];
+                                DateTime dateTime =
+                                    DateFormat('yyyy-MM-dd').parse(dateBought);
                                 String formattedDate =
-                                    DateFormat.yMMMMd().format(dateTime);
+                                    DateFormat('MMMM d, y').format(dateTime);
 
                                 List<Map<dynamic, dynamic>> cancelledCartItems =
-                                    (thisItem['cartItems'] as List)
+                                    (thisItem['orders'] as List)
                                         .where((cartItem) =>
                                             cartItem['status'] == 'Cancelled')
                                         .map((cartItem) =>
@@ -691,7 +712,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               BorderRadius
                                                                   .circular(8),
                                                           child: Image.network(
-                                                            '${cartItem['imageUrl']}',
+                                                            '${cartItem['image']}',
                                                             fit: BoxFit.cover,
                                                             width: 80,
                                                             height: 80,
@@ -857,13 +878,14 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                     streamSnapshot.data!.docs[index];
                                 final Map thisItem = items![index];
 
-                                Timestamp dateOrdered = thisItem['dateBought'];
-                                DateTime dateTime = dateOrdered.toDate();
+                                String dateBought = thisItem['dateBought'];
+                                DateTime dateTime =
+                                    DateFormat('yyyy-MM-dd').parse(dateBought);
                                 String formattedDate =
-                                    DateFormat.yMMMMd().format(dateTime);
+                                    DateFormat('MMMM d, y').format(dateTime);
 
                                 List<Map<dynamic, dynamic>> completedCartItems =
-                                    (thisItem['cartItems'] as List)
+                                    (thisItem['orders'] as List)
                                         .where((cartItem) =>
                                             cartItem['status'] == 'Completed')
                                         .map((cartItem) =>
@@ -923,7 +945,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               BorderRadius
                                                                   .circular(8),
                                                           child: Image.network(
-                                                            '${cartItem['imageUrl']}',
+                                                            '${cartItem['image']}',
                                                             fit: BoxFit.cover,
                                                             width: 80,
                                                             height: 80,

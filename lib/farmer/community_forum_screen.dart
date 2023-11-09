@@ -182,7 +182,8 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
 
                             DateTime currentDate = DateTime.now();
                             String formattedDate =
-                                DateFormat('yyyy-MM-dd').format(currentDate);
+                                DateFormat('MM-dd-yyyy HH:mm:ss a')
+                                    .format(currentDate);
 
                             FirebaseAuth auth = FirebaseAuth.instance;
                             User? user = auth.currentUser;
@@ -197,6 +198,7 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                 "fullname": fullname,
                                 "timestamp": formattedDate,
                                 "image": imageUrl,
+                                "comment": [],
                               });
                               _titleController.text = '';
                               _contentController.text = '';
@@ -382,8 +384,9 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
                                           Text(
                                             '${thisItem['fullname']}',
                                             style: TextStyle(
-                                              fontSize: 12.0,
+                                              fontSize: 14.0,
                                               color: Colors.grey,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                           Text(
@@ -555,72 +558,6 @@ class _CommunityForumScreenState extends State<CommunityForumScreen> {
     );
   }
 
-  void _showCommentDialog(documentSnapshot) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("Add a Comment"),
-          content: TextField(
-            controller: _commentController,
-            decoration: InputDecoration(
-              hintText: "Enter your comment...",
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text("Cancel"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text("Submit"),
-              onPressed: () {
-                final String comment = _commentController.text;
-                if (comment.isNotEmpty) {
-                  final FirebaseAuth auth = FirebaseAuth.instance;
-                  final User? user = auth.currentUser;
-                  final String uid = user?.uid ?? '';
-                  final String fullname = user?.displayName ?? '';
-
-                  final commentData = {
-                    'uid': uid,
-                    'fullname': fullname,
-                    'comment': comment,
-                    'dateCommented': DateTime.now().toUtc().toIso8601String(),
-                  };
-
-                  final String postID = documentSnapshot.id;
-                  final String commentText =
-                      _commentController.text; // Get the comment text
-
-                  // Update the comments in the Firestore document for the specific forum post
-                  _forum.doc(postID).update({
-                    'comments': FieldValue.arrayUnion([
-                      {
-                        'uid': uid,
-                        'dateCommented':
-                            DateTime.now().toUtc().toIso8601String(),
-                        'commentText': commentText,
-                      }
-                    ])
-                  }).then((value) {
-                    print("Comment added to the post");
-                  }).catchError((error) {
-                    print("Error adding comment: $error");
-                  });
-
-                  Navigator.of(context).pop(); // Close the dialog
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _UshowPicker(context) {
     showModalBottomSheet(
         context: context,
@@ -695,19 +632,12 @@ class PostDetailScreen extends StatefulWidget {
 class _PostDetailScreenState extends State<PostDetailScreen> {
   final CollectionReference _forum =
       FirebaseFirestore.instance.collection('CommunityForum');
-  final CollectionReference _like =
-      FirebaseFirestore.instance.collection('Likes');
+  final CollectionReference _users = FirebaseFirestore.instance
+      .collection('Users'); // Collection for user information
   final currentUser = FirebaseAuth.instance.currentUser;
   final TextEditingController _commentController = TextEditingController();
-  List<dynamic> comments =
-      []; // Declare and initialize comments as an empty list
-
-  @override
-  void initState() {
-    super.initState();
-    // Initialize comments with the comments data from widget.thisItem
-    comments = widget.thisItem['comments'] ?? [];
-  }
+  List<Map<String, dynamic>> comments = [];
+  String fullname = '';
 
   @override
   Widget build(BuildContext context) {
@@ -733,261 +663,133 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             ],
           ),
         ),
-        body: StreamBuilder(
-            stream:
-                _forum.where('postID', isEqualTo: widget.postID).snapshots(),
-            builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-              if (streamSnapshot.hasError) {
-                return Center(
-                    child: Text('Some error occurred ${streamSnapshot.error}'));
+        body: StreamBuilder<DocumentSnapshot>(
+            stream: _forum.doc(widget.postID).snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
               }
-              if (streamSnapshot.hasData) {
-                QuerySnapshot<Object?>? querySnapshot = streamSnapshot.data;
-                List<QueryDocumentSnapshot<Object?>>? documents =
-                    querySnapshot?.docs;
-                List<Map>? items =
-                    documents?.map((e) => e.data() as Map).toList();
 
-                return ListView.builder(
-                    itemCount: streamSnapshot.data?.docs.length ?? 0,
-                    itemBuilder: (BuildContext context, int index) {
-                      final DocumentSnapshot documentSnapshot =
-                          streamSnapshot.data!.docs[index];
-                      final Map thisItem = items![index];
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
 
-                      int likesCount = thisItem['likes'] != null
-                          ? thisItem['likes'].length
-                          : 0;
+              final postDocument = snapshot.data;
 
-                      SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      SizedBox(height: 30.0),
-                                      CircleAvatar(
-                                        radius: 15.0,
-                                        backgroundImage:
-                                            AssetImage('assets/user.png'),
-                                      ),
-                                      SizedBox(width: 8.0),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            '',
-                                            style: TextStyle(
-                                              fontSize: 16.5,
-                                              fontFamily: 'Poppins',
-                                            ),
-                                          ),
-                                          Text(
-                                            '',
-                                            style: TextStyle(
-                                              fontSize: 12.0,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 10.0),
-                                  Text(
-                                    '${thisItem['title']}',
-                                    style: TextStyle(
-                                      fontSize: 20.0,
-                                      fontFamily: 'Poppins-Bold',
-                                    ),
-                                  ),
-                                  SizedBox(height: 8.0),
-                                  Text(
-                                    '${thisItem['content']}',
-                                    style: TextStyle(
-                                      fontSize: 15.0,
-                                      fontFamily: 'Poppins-Regular',
-                                    ),
-                                  ),
-                                  SizedBox(height: 5.0),
-                                  Image.network(
-                                    '${thisItem['image']}',
-                                    height: 200.0,
-                                    width: 350.0,
-                                  ),
-                                  SizedBox(height: 16.0),
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(
-                                          thisItem['isLiked'] == true
-                                              ? Icons.thumb_up
-                                              : Icons.thumb_up_outlined,
-                                          color: thisItem['isLiked'] == true
-                                              ? Color.fromARGB(
-                                                  255, 184, 192, 125)
-                                              : null,
-                                        ),
-                                        onPressed: () async {
-                                          final FirebaseAuth auth =
-                                              FirebaseAuth.instance;
-                                          final User? user = auth.currentUser;
+              if (postDocument == null || !postDocument.exists) {
+                return Center(child: Text('Post not found.'));
+              }
 
-                                          if (user != null) {
-                                            final String uid = user.uid;
-                                            final String postId =
-                                                documentSnapshot.id;
+              List<Map<String, dynamic>> comments =
+                  List<Map<String, dynamic>>.from(postDocument['comments']);
 
-                                            // Check if the user has already liked the post
-                                            if (thisItem['isLiked'] == true) {
-                                              // If already liked, remove like
-                                              thisItem['isLiked'] = false;
-                                              likesCount--;
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Comments',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontFamily: 'Poppins-Bold',
+                      ),
+                    ),
+                    SizedBox(height: 8.0),
+                    // Display the list of comments
+                    ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: comments.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index < comments.length) {
+                            final comment = comments[index];
+                            final String text = comment['text'];
+                            final String fullname = comment['fullname'];
 
-                                              // Remove the user's ID from the 'likes' array in the forum document
-                                              if (thisItem['likes'] != null) {
-                                                thisItem['likes'].remove(uid);
-                                              }
-                                            } else {
-                                              // If not liked, add like
-                                              thisItem['isLiked'] = true;
-                                              likesCount++;
-
-                                              // Add the user's ID to the 'likes' array in the forum document
-                                              if (thisItem['likes'] == null) {
-                                                thisItem['likes'] = [uid];
-                                              } else {
-                                                thisItem['likes'].add(uid);
-                                              }
-                                            }
-
-                                            // Update the forum post with the new like status and 'likes' array
-                                            _forum.doc(postId).update({
-                                              'isLiked': thisItem['isLiked'],
-                                              'likes': thisItem['likes'],
-                                            }).then((value) {
-                                              print(
-                                                  "Like status and 'likes' array updated successfully");
-                                            }).catchError((error) {
-                                              print(
-                                                  "Error updating like status and 'likes' array: $error");
-                                            });
-
-                                            // Update the UI
-                                            setState(() {});
-                                          }
-                                        },
-                                      ),
-                                      Text(
-                                        likesCount
-                                            .toString(), // Display the number of likes
-                                        style: TextStyle(
-                                          fontSize: 14.0,
-                                          fontFamily: 'Poppins-Regular',
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                            return ListTile(
+                              contentPadding: EdgeInsets.all(0),
+                              leading: CircleAvatar(
+                                radius: 15.0,
+                                backgroundImage: AssetImage('assets/user.png'),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Comments',
-                                    style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontFamily: 'Poppins-Bold',
-                                    ),
-                                  ),
-                                  SizedBox(height: 8.0),
-                                  ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemCount: comments.length,
-                                    itemBuilder: (context, index) {
-                                      final comment = comments[index];
-                                      final String commentText =
-                                          comment['commentText'];
-                                      final String dateCommented =
-                                          comment['dateCommented'];
-                                      return ListTile(
-                                        contentPadding: EdgeInsets.all(0),
-                                        leading: CircleAvatar(
-                                          radius: 15.0,
-                                          backgroundImage:
-                                              AssetImage('assets/user.png'),
-                                        ),
-                                        title: Text(commentText),
-                                        subtitle: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Visibility(
-                                              visible:
-                                                  false, // Change this condition as needed
-                                              child: Text(comment.commenterUid),
-                                            ),
-                                            Text(
-                                              (dateCommented),
-                                              style: TextStyle(fontSize: 14.0),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: Text(
-                                          dateCommented,
-                                          style: TextStyle(
-                                              fontSize: 12.0,
-                                              color: Colors.grey),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(height: 16.0),
-                                  Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 15.0,
-                                        backgroundImage:
-                                            AssetImage('assets/user.png'),
-                                      ),
-                                      SizedBox(width: 8.0),
-                                      Expanded(
-                                        child: TextField(
-                                          decoration: InputDecoration(
-                                            hintText: 'Write a comment...',
-                                          ),
-                                          onSubmitted: (reply) {
-                                            print('Reply: $reply');
-                                          },
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.send),
-                                        onPressed: () {},
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                              title: Text(fullname),
+                              subtitle: Text(
+                                text,
+                                style: TextStyle(fontSize: 14.0),
                               ),
-                            ),
-                          ],
+                            );
+                          }
+                          ;
+                        }),
+                    SizedBox(height: 16.0),
+                    // Textfield to allow users to add comments
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 15.0,
+                          backgroundImage: AssetImage('assets/user.png'),
                         ),
-                      );
-                    });
-              }
-              return const Center(
-                child: CircularProgressIndicator(),
+                        SizedBox(width: 8.0),
+                        Expanded(
+                          child: TextField(
+                            controller: _commentController,
+                            decoration: InputDecoration(
+                              hintText: 'Write a comment...',
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.send),
+                          onPressed: () async {
+                            final String text = _commentController.text;
+                            if (text.isNotEmpty) {
+                              final String postId = widget.postID;
+                              final currentUserUid = currentUser!.uid;
+
+                              final userDocSnapshot =
+                                  await _users.doc(currentUserUid).get();
+
+                              if (userDocSnapshot.exists) {
+                                final userDoc = userDocSnapshot.data()
+                                    as Map<String, dynamic>;
+                                final fullname = userDoc['fullname'];
+
+                                // Create a comment map
+                                Map<String, dynamic> commentMap = {
+                                  'text': text,
+                                  'fullname': fullname,
+                                };
+
+                                // Update the comments array in the post document
+                                await _forum.doc(postId).update({
+                                  'comments':
+                                      FieldValue.arrayUnion([commentMap]),
+                                });
+
+                                // Clear the comment text field
+                                _commentController.clear();
+
+                                // Reload the comments
+                                final updatedPost = await _forum
+                                        .doc(postId)
+                                        .get()
+                                    as DocumentSnapshot<Map<String, dynamic>>;
+                                comments = updatedPost
+                                        .data()?['comments']
+                                        ?.cast<Map<String, dynamic>>() ??
+                                    [];
+                                setState(() {});
+                              } else {
+                                print('User document not found');
+                              }
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               );
             }));
   }

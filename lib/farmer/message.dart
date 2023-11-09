@@ -278,62 +278,131 @@ class ChatAgriScreen extends StatelessWidget {
           style: TextStyle(fontFamily: 'Poppins', fontSize: 16.5),
         ),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: messageStream,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
-          }
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: messageStream,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
 
-          final messages = snapshot.data?.docs;
+                  final messages = snapshot.data?.docs;
 
-          return ListView.builder(
-            itemCount: messages?.length,
-            itemBuilder: (context, index) {
-              final message = messages?[index].data() as Map<String, dynamic>;
-              return ListTile(
-                title: Text(message['user']),
-                subtitle: Text(message['text']),
-              );
-            },
-          );
-        },
-      ),
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.all(2.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _messageController,
-                style: TextStyle(fontFamily: 'Poppins-Regular', fontSize: 13.5),
-                decoration: InputDecoration(
-                  hintText: 'Type a message',
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF9DC08B)),
+                  return Column(
+                    children: messages?.map((messageDoc) {
+                          final message =
+                              messageDoc.data() as Map<String, dynamic>;
+                          final isCurrentUser = message['user'] == fullname;
+
+                          return Align(
+                            alignment: isCurrentUser
+                                ? Alignment.centerLeft
+                                : Alignment.centerRight,
+                            child: Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: isCurrentUser
+                                      ? const Color(0xFFA9AF7E)
+                                      : Colors.white,
+                                  width: 1.5,
+                                ),
+                                color: isCurrentUser
+                                    ? Colors.white
+                                    : Color.fromARGB(255, 201, 207, 154),
+                                borderRadius: isCurrentUser
+                                    ? BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10),
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                      )
+                                    : BorderRadius.only(
+                                        topLeft: Radius.circular(8),
+                                        topRight: Radius.circular(8),
+                                        bottomLeft: Radius.circular(0),
+                                        bottomRight: Radius.circular(8),
+                                      ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 5),
+                                  Text(
+                                    message['text'],
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins-Regular',
+                                      fontSize: 14,
+                                      color: isCurrentUser
+                                          ? Colors.black
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList() ??
+                        [],
+                  );
+                },
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.camera_alt_outlined),
+                  onPressed: () {},
+                ),
+                IconButton(
+                  icon: Icon(Icons.attach_file),
+                  onPressed: () {},
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    style: TextStyle(
+                      fontFamily: 'Poppins-Regular',
+                      fontSize: 13.5,
+                    ),
+                    maxLines: null,
+                    decoration: InputDecoration(
+                      hintText: 'Type a message',
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF9DC08B)),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                SizedBox(width: 8.0),
+                ElevatedButton(
+                  onPressed: () {
+                    String newMessage = _messageController.text;
+                    if (newMessage.isNotEmpty) {
+                      sendMessage(newMessage, fullname, roomName);
+                      _messageController.clear();
+                    }
+                  },
+                  child: Text(
+                    'Send',
+                    style: TextStyle(fontFamily: 'Poppins-Regular'),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: Color(0xFFA9AF7E),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(width: 8.0),
-            ElevatedButton(
-              onPressed: () {
-                String newMessage = _messageController.text;
-                if (newMessage.isNotEmpty) {
-                  sendMessage(newMessage, fullname, roomName);
-                  _messageController.clear();
-                }
-              },
-              child: Text(
-                'Send',
-                style: TextStyle(fontFamily: 'Poppins-Regular'),
-              ),
-              style: ElevatedButton.styleFrom(
-                primary: Color(0xFFA9AF7E),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

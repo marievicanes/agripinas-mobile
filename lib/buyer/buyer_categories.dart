@@ -354,7 +354,7 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
                                       ),
                                     ),
                                     Text(
-                                      '${thisItem['price']}',
+                                      '₱${thisItem['price']}',
                                       style: TextStyle(
                                         fontSize: 14,
                                       ),
@@ -362,23 +362,28 @@ class _BuyerCategoriesScreenState extends State<BuyerCategoriesScreen> {
                                   ],
                                 ),
                                 SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "buyerPageUserRole2".tr(),
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: 'Poppins',
+                                Padding(
+                                  padding: const EdgeInsets.all(1.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "buyerPageUserRole2".tr(),
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontFamily: 'Poppins',
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      '${thisItem['fullname']}',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontFamily: 'Poppins-Regular',
+                                      Text(
+                                        '${thisItem['fullname']}',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontFamily: 'Poppins-Regular',
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(1.0),
