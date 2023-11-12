@@ -93,78 +93,62 @@ class _VegetablesScreenState extends State<VegetablesScreen> {
           ),
         ],
       ),
-      body: StreamBuilder(
-        stream: _marketplace
-            .where('archived', isEqualTo: false)
-            .where('category', isEqualTo: 'Vegetables')
-            .snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-          if (streamSnapshot.hasError) {
-            return Center(
-              child: Text('Some error occurred ${streamSnapshot.error}'),
-            );
-          }
-          if (streamSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (!streamSnapshot.hasData || streamSnapshot.data!.docs.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    'assets/browseproduct.png', // Add your image path
-                    width: 150,
-                    height: 150,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'No vegetables available.',
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
+      body: SingleChildScrollView(
+        child: StreamBuilder(
+          stream: _marketplace
+              .where('category', isEqualTo: 'Vegetables')
+              .snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+            if (streamSnapshot.hasError) {
+              return Center(
+                child: Text('Some error occurred ${streamSnapshot.error}'),
+              );
+            }
+            if (streamSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (!streamSnapshot.hasData || streamSnapshot.data!.docs.isEmpty) {
+              return Center(
+                child: Text('No data available'),
+              );
+            }
 
-          QuerySnapshot<Object?>? querySnapshot = streamSnapshot.data;
-          List<QueryDocumentSnapshot<Object?>>? documents = querySnapshot?.docs;
-          List<Map>? items = documents?.map((e) => e.data() as Map).toList();
+            QuerySnapshot<Object?>? querySnapshot = streamSnapshot.data;
+            List<QueryDocumentSnapshot<Object?>>? documents =
+                querySnapshot?.docs;
+            List<Map>? items = documents?.map((e) => e.data() as Map).toList();
 
-          List<Map>? filteredItems = items
-              ?.where((item) =>
-                  item['cropName']
-                      .toLowerCase()
-                      .contains(_searchText.toLowerCase()) ||
-                  item['location']
-                      .toLowerCase()
-                      .contains(_searchText.toLowerCase()))
-              .toList();
+            List<Map>? filteredItems = items
+                ?.where((item) =>
+                    item['cropName']
+                        .toLowerCase()
+                        .contains(_searchText.toLowerCase()) ||
+                    item['location']
+                        .toLowerCase()
+                        .contains(_searchText.toLowerCase()))
+                .toList();
 
-          return ListView(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      "farmerPageCategoryText2".tr(),
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontFamily: 'Poppins',
+            return Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Text(
+                        "buyerPageCategoryText2".tr(),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'Poppins',
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 5.0),
-              Expanded(
-                child: GridView.builder(
+                  ],
+                ),
+                SizedBox(height: 5.0),
+                GridView.builder(
                   itemCount: filteredItems?.length ?? 0,
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
@@ -226,7 +210,7 @@ class _VegetablesScreenState extends State<VegetablesScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          "farmerPagePrice".tr(),
+                                          "buyerPagePrice".tr(),
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontFamily: 'Poppins',
@@ -240,6 +224,7 @@ class _VegetablesScreenState extends State<VegetablesScreen> {
                                         ),
                                       ],
                                     ),
+                                    SizedBox(height: 4),
                                     Padding(
                                       padding: const EdgeInsets.all(1.0),
                                       child: Column(
@@ -247,7 +232,7 @@ class _VegetablesScreenState extends State<VegetablesScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "farmerPageUserRole".tr(),
+                                            "buyerPageUserRole2".tr(),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
@@ -270,7 +255,7 @@ class _VegetablesScreenState extends State<VegetablesScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "farmerPageCategoriesLocation".tr(),
+                                            "buyerPageLocation".tr(),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
@@ -297,10 +282,10 @@ class _VegetablesScreenState extends State<VegetablesScreen> {
                     );
                   },
                 ),
-              )
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

@@ -1,12 +1,38 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('fil', 'PH')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: BuyerCommunityForumScreen(),
+    );
+  }
+}
 
 class BuyerCommunityForumScreen extends StatefulWidget {
   @override
@@ -162,6 +188,9 @@ class _BuyerCommunityForumScreenState extends State<BuyerCommunityForumScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  SizedBox(
+                    height: 40,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -199,7 +228,7 @@ class _BuyerCommunityForumScreenState extends State<BuyerCommunityForumScreen> {
                                 "fullname": fullname,
                                 "timestamp": formattedDate,
                                 "image": imageUrl,
-                                "comments": []
+                                "comments": [],
                               });
                               _titleController.text = '';
                               _contentController.text = '';
@@ -215,7 +244,7 @@ class _BuyerCommunityForumScreenState extends State<BuyerCommunityForumScreen> {
                           ),
                         ),
                         child: Text(
-                          'Post',
+                          "mobfarmerCommunityAddPostButton".tr(),
                           style: TextStyle(fontFamily: 'Poppins-Regular'),
                         ),
                       ),
@@ -253,7 +282,7 @@ class _BuyerCommunityForumScreenState extends State<BuyerCommunityForumScreen> {
                       });
                     },
                     decoration: InputDecoration(
-                      hintText: "Title",
+                      hintText: "mobfarmerCommunityAddPostText1".tr(),
                       labelStyle: TextStyle(
                         fontFamily: 'Poppins-Bold',
                         fontSize: 15.5,
@@ -269,7 +298,7 @@ class _BuyerCommunityForumScreenState extends State<BuyerCommunityForumScreen> {
                       fontSize: 14.0,
                     ),
                     decoration: InputDecoration(
-                      hintText: 'Something in your mind? (Optional)',
+                      hintText: "mobfarmerCommunityAddPostText2".tr(),
                     ),
                   ),
                   SizedBox(height: 16.0),
@@ -326,7 +355,7 @@ class _BuyerCommunityForumScreenState extends State<BuyerCommunityForumScreen> {
         ],
       ),
       body: StreamBuilder(
-        stream: _forum.where('archived', isEqualTo: false).snapshots(),
+        stream: _forum.snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
           if (streamSnapshot.hasError) {
             return Center(
@@ -690,7 +719,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Comments',
+                      "farmerCommunityPostText6".tr(),
                       style: TextStyle(
                         fontSize: 18.0,
                         fontFamily: 'Poppins-Bold',
@@ -736,7 +765,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           child: TextField(
                             controller: _commentController,
                             decoration: InputDecoration(
-                              hintText: 'Write a comment...',
+                              hintText: "mobfarmerCommunityWriteComment".tr(),
                             ),
                           ),
                         ),
@@ -794,10 +823,4 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               );
             }));
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: BuyerCommunityForumScreen(),
-  ));
 }

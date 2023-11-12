@@ -1,9 +1,9 @@
+import 'package:capstone/farmer/dashboard_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'buyer/buyer_nav.dart';
-import 'farmer/dashboard_screen.dart';
 import 'main.dart';
 
 class AuthHelper {
@@ -66,7 +66,7 @@ class AuthService {
               email: email.text, password: password.text)
           .then((value) {
         if (auth.currentUser!.emailVerified) {
-          print("Buyer is Logged In");
+          print("Farmer is Logged In");
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => BuyerNavBar()),

@@ -482,26 +482,32 @@ class _ChatAgriScreenState extends State<ChatAgriScreen> {
                                         bottomRight: Radius.circular(10),
                                       )
                                     : BorderRadius.only(
-                                        topLeft: Radius.circular(8),
-                                        topRight: Radius.circular(8),
-                                        bottomLeft: Radius.circular(0),
-                                        bottomRight: Radius.circular(8),
+                                        topLeft: Radius.circular(15),
+                                        topRight: Radius.circular(15),
+                                        bottomLeft: Radius.circular(15),
+                                        bottomRight: Radius.circular(-20),
                                       ),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   SizedBox(height: 5),
-                                  if (message['text'] !=
-                                      null) // Check if the message has text
-                                    Text(
-                                      message['text'],
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins-Regular',
-                                        fontSize: 14,
-                                        color: isCurrentUser
-                                            ? Colors.black
-                                            : Colors.black,
+                                  if (message['text'] != null)
+                                    Container(
+                                      constraints: BoxConstraints(
+                                        maxWidth: 250,
+                                      ),
+                                      child: Text(
+                                        message['text'],
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins-Regular',
+                                          fontSize: 14,
+                                          color: isCurrentUser
+                                              ? Colors.black
+                                              : Colors.black,
+                                        ),
+                                        maxLines: null,
+                                        overflow: TextOverflow.visible,
                                       ),
                                     ),
                                   if (message['imageUrl'] !=
@@ -520,6 +526,14 @@ class _ChatAgriScreenState extends State<ChatAgriScreen> {
                                         width: 150,
                                         height: 150,
                                       ),
+                                    ),
+                                  if (message['fileUrl'] !=
+                                      null) // Check if the message has a file
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        // Implement logic to download the file
+                                      },
+                                      child: Text('${message['file_name']}'),
                                     ),
                                 ],
                               ),

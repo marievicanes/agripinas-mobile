@@ -1,10 +1,18 @@
+import 'package:capstone/helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(BuyerAgriNotif());
+  runApp(AgriNotification());
 }
 
-class BuyerAgriNotif extends StatelessWidget {
+class AgriNotification extends StatelessWidget {
+  final CollectionReference _notif =
+      FirebaseFirestore.instance.collection('Notification');
+  final currentUser = FirebaseAuth.instance.currentUser;
+  AuthService authService = AuthService();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -22,40 +30,86 @@ class BuyerAgriNotif extends StatelessWidget {
             style: TextStyle(fontFamily: 'Poppins'),
           ),
         ),
-        body: ListView.builder(
-          itemCount: notifications.length,
-          itemBuilder: (context, index) {
-            NotificationItem notification = notifications[index];
-            return Column(
-              children: [
-                SizedBox(height: 20.0),
-                ListTile(
-                  leading: Container(
-                    width: 80.0,
-                    height: 80.0,
-                    child: Image.asset(
-                      notification.icon,
-                      fit: BoxFit.cover,
+        body: StreamBuilder(
+          stream: _notif.where('uid', isEqualTo: currentUser!.uid).snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+            if (streamSnapshot.hasError) {
+              return Center(
+                child: Text('Error: ${streamSnapshot.error}'),
+              );
+            }
+
+            if (streamSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (!streamSnapshot.hasData || streamSnapshot.data!.docs.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      'There are no notifications.',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
                     ),
-                  ),
-                  title: Text(
-                    notification.title,
-                    style:
-                        TextStyle(fontFamily: 'Poppins-Medium', fontSize: 14.5),
-                  ),
-                  subtitle: Text(
-                    notification.description,
-                    style: TextStyle(
-                        fontFamily: 'Poppins-Regular', fontSize: 12.5),
-                  ),
-                  trailing: Text(
-                    notification.time,
-                    style: TextStyle(
-                        fontFamily: 'Poppins-Regular', fontSize: 10.0),
-                  ),
-                  onTap: () {},
+                  ],
                 ),
-              ],
+              );
+            }
+
+            QuerySnapshot<Object?>? querySnapshot = streamSnapshot.data;
+            List<QueryDocumentSnapshot<Object?>>? documents =
+                querySnapshot?.docs;
+            List<Map>? items = documents?.map((e) => e.data() as Map).toList();
+
+            return ListView.builder(
+              itemCount: items?.length ?? 0,
+              itemBuilder: (context, index) {
+                // Access the data from Firestore document
+                final Map notificationData = items![index];
+
+                if (notificationData != null) {
+                  final String title = notificationData['title'];
+                  final String message = notificationData['message'];
+                  final Timestamp timestamp = notificationData['timestamp'];
+
+                  // Format timestamp as a string (you may want to customize the formatting)
+                  final String formattedTimestamp =
+                      timestamp.toDate().toString();
+
+                  return ListTile(
+                    title: Text(
+                      title,
+                      style: TextStyle(
+                        fontFamily: 'Poppins-Medium',
+                        fontSize: 14.5,
+                      ),
+                    ),
+                    subtitle: Text(
+                      message,
+                      style: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 12.5,
+                      ),
+                    ),
+                    trailing: Text(
+                      formattedTimestamp,
+                      style: TextStyle(
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 10.0,
+                      ),
+                    ),
+                    onTap: () {
+                      // Handle notification tap
+                    },
+                  );
+                } else {
+                  return Container(); // Placeholder for empty data
+                }
+              },
             );
           },
         ),
@@ -63,44 +117,3 @@ class BuyerAgriNotif extends StatelessWidget {
     );
   }
 }
-
-class NotificationItem {
-  final String title;
-  final String description;
-  final String icon;
-  final String time;
-
-  NotificationItem({
-    required this.title,
-    required this.description,
-    required this.icon,
-    required this.time,
-  });
-}
-
-List<NotificationItem> notifications = [
-  NotificationItem(
-    title: 'Parcel Delivered',
-    description: 'Parcel for your order has been delivered',
-    icon: 'assets/tomato.png',
-    time: '2 hours ago',
-  ),
-  NotificationItem(
-    title: 'Parcel Delivered',
-    description: 'Parcel for your order has been delivered',
-    icon: 'assets/onion.png',
-    time: '1 day ago',
-  ),
-  NotificationItem(
-    title: 'Parcel Delivered',
-    description: 'Parcel for your order has been delivered',
-    icon: 'assets/pechay.png',
-    time: '2 days ago',
-  ),
-  NotificationItem(
-    title: 'Parcel Delivered',
-    description: 'Parcel for your order has been delivered',
-    icon: 'assets/kalabasa.png',
-    time: '3 days ago',
-  ),
-];

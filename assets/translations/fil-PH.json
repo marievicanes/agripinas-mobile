@@ -197,7 +197,7 @@
   "text168": "Kilogram per unit",
   "text169": "Enter new kilogram",
   "text170": "Upload new image",
-  "text171": "Save",
+  "text171": "I-save",
   "text172": "Cancel",
   "text173": "Delete this Product",
   "text174": "Are you sure you want to delete this?",
@@ -348,7 +348,8 @@
     "registerComponentText7": "Mamili ng Role",
     "registerComponentText8": "Password",
     "registerComponentText9": "I-kumpirma ang Password",
-    "registerComponentText10": "Mayroon nang account? Mag-Login",
+    "registerComponentText10": "Mayroon nang account?",
+    "registerComponentText11": "  Mag-Login",
     "registerRoleFarmer": "Magsasaka",
     "registerRoleBuyer": "Mamimili",
     "registerPasswordCharacters": "Ang password ay dapat na mayroong hindi kukulangin sa 8 na karakter at naglalaman ng kombinasyon ng mga titik, numero, at simbolo.",
@@ -377,10 +378,15 @@
     "farmerPageCategory": "Mga Kategorya",
     "farmerPageCategoryText1": "Prutas",
     "farmerPageCategoryText2": "Gulay",
-    "farmerPageCategoryText3": "Pataba",
-    "farmerPageCategoryText4": "Iba pang produkto",
+    "farmerPageCategoryText3": "Iba pang Produkto",
+    "farmerPageCategoryText4": "Bigas",
     "farmerPageCategoriesLocation": "Lugar: ",
-    
+    "farmerPageCategoriesDOrdered": "Pets ng Inorder: ",
+    "userTransaction": "   Mga Transaksyon",
+    "userFTransaction": "Mga Transaksyon",
+    "userFCrop": "Tracker ng mga Tanim",
+    "userFPostedP": "Mga Pinost na Produkto",
+    "userFTCrop": "     Tracker ng mga Tanim",
 
     "farmerPagePackaging": "Pakete: ",
     "farmerPagePackagingText1": "Sako",
@@ -414,7 +420,7 @@
     "farmerPageButton15": "I-add sa cart",
     "farmerPageButton16": "Bilhin na",
     "farmerPageButton17": "I-checkout",
-    "farmerPageButton18": "Magdagdag",
+    "farmerPageButton18": "I-add",
    
 
     "farmerPageEditText1": "I-edit ang iyong produkto",
@@ -471,7 +477,7 @@
     "farmerCommunityAddPostText5": "Deskripsyon",
     "farmerCommunityAddPostText6": "Ilagay ang deskripsyon",
 
-    "mobfarmerCommunityAddPostText": "Pamagat",
+    "mobfarmerCommunityAddPostText1": "Pamagat",
     "mobfarmerCommunityAddPostText2": "Ano ang nasa isip mo? (Opsyonal)",
     "mobfarmerCommunityAddPostButton": "I-post",
     "mobfarmerCommunityComment": "Mga komento",
@@ -525,7 +531,7 @@
     "userForgotPassword1": "Nakalimutan ang Password",
     "userForgotPassword": "      Ilagay ang iyong rehistradong email sa ibaba \n       upang makatanggap ng tagubilin para sa \n                          pagsasaayos ng password",
     "userSendCode": "I-send ang Link",
-    "farmerCropTrackerNavigationText1": "Mga ani" ,
+    "farmerCropTrackerNavigationText1": "Mga Tanim" ,
     "farmerCropTrackerNavigationText2": "Mga na-ani " ,
 
     "farmerCropTrackerHarvestedSellProductButton": "Ibenta ang Produkto",
@@ -535,6 +541,13 @@
     "farmerCropTrackerETH1": "Inaasahang petsa ng ani: ",
     "farmerCropTrackerHD": "Petsa ng Ani: ",
     "farmerEditCropTracker": "I-edit ang Tanim",
+
+    "farmerEditPostedProducts": "I-edit ang Produkto",
+
+
+
+    "farmerReadytoHarvest": "Pwede na bang i-harvest?",
+    "farmerReadytoHarvest1": "Sigurado ka bang handa na ito para sa anihan? Hindi ito maaaring ibalik at ililipat ito sa Harvested tab.",
 
     "farmerCropTrackerAddProductUnit": "Yunit",
     "farmerCropTrackerAddProductLocation": "Lugar",
@@ -573,7 +586,7 @@
     "farmerTopNavText8": "Mayroon kang bagong mensahe.",
     "farmerTopNavText9": "Lahat ng mensahe",
 
-    "farmerProfileText1": "I-edit ang Profil",
+    "farmerProfileText1": "I-edit ang Profile",
     "farmerProfileText2": "Aking Akawnt",
     "farmerProfileText3": "Profil",
     "farmerProfileText4": "Mga Address",
@@ -609,6 +622,17 @@
     "farmerProfileText34": "Ilagay ang iyong address",
     "farmerProfileText35": "I-set bilang pangkaraniwan na address",
     "farmerProfileText36": "I-delete itong address?",
+
+    "farmerEmailSecVeification": "    Ilagay ang iyong rehistradong email sa ibaba \n    upang makatanggap ng code para baguhin \n                            ang iyong email.",
+    "farmerEmailSendCode": "I-send ang Code",
+    "farmerEmailVerify": "I-verify",
+    "farmerEmailResendLink": "I-resend ang Link",
+    "farmerPassworVeification": "    Ilagay ang iyong rehistradong email sa ibaba \n    upang makatanggap ng code para baguhin \n                            ang iyong email.",
+    "farmerPasswordSendCode": "I-send ang Code",
+    "farmerPasswordResendLink": "I-resend ang Link",
+    "farmerPasswordVerify": "I-verify",
+    "farmerPasswordSecVeification": "   Isinend namin ang code sa iyong email. Mangyaring \n          ilagay ang code na may mga digit na isinend \n                   para kumpirmahin ang iyong account.",
+
 
     "buyerProfileName": "Pangalan",
     "buyerProfileBirthDate": "Araw ng Kapanganakan",
@@ -671,6 +695,11 @@
     "buyerCheckout2": "Detalye ng Pagbabayad:",
     "buyerCheckout3": "Paraan ng Pagbabayad:",
     "buyerCheckout4": "Kabuuang Bayad:",
+
+    "buyerpendingtransac1": "   Matagumpay na naiproseso ang iyong order. ",
+    "buyerpendingtransac2": "   Mayroon kang 24 oras upang kunin ang iyong order;     ",
+    "buyerpendingtransac3": "  kung hindi, ito ay maaaring makansela.",
+    "buyerpendingtransac4": "Iba't ibang Produkto mula sa parehong Magsasaka",
 
 
     "buyerTransactionText1": "Transaksyon",

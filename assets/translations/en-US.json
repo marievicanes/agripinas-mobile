@@ -350,7 +350,8 @@
     "registerComponentText7": "Choose a Role",
     "registerComponentText8": "Password",
     "registerComponentText9": "Confirm Password",
-    "registerComponentText10": "Already have an account? Login",
+    "registerComponentText10": "Already have an account?",
+    "registerComponentText11": "                         Login",
     "registerRoleFarmer": "Farmer",
     "registerRoleBuyer": "Buyer",
     "registerPasswordCharacters": "Password must be at least 8 characters long and contain a combination of letters, numbers, and symbols",
@@ -378,11 +379,18 @@
     "farmerPageCategory": "Categories",
     "farmerPageCategoryText1": "Fruits",
     "farmerPageCategoryText2": "Vegetables",
-    "farmerPageCategoryText3": "Grains",
-    "farmerPageCategoryText4": "Other Farm Products",
+    "farmerPageCategoryText3": "Other Farm Products",
+    "farmerPageCategoryText4": "Rice",
 
 
-    "farmerPageCategoriesLocation": "Location:",
+    "farmerPageCategoriesLocation": "Location: ",
+    "farmerPageCategoriesDOrdered": "Date Ordered: ",
+
+    "userTransaction": "     Transactions",
+    "userFTransaction": "Transactions",
+    "userFCrop": "Crop Tracker",
+    "userFPostedP": "Posted Products",
+    "userFTCrop": "     Crop Tracker",
 
     "farmerPagePackaging": "Package: ",
     "farmerPagePackagingText1": "Sack",
@@ -397,7 +405,7 @@
     "farmerPageDescriptionText1": "I am selling this product as wholesale, chat me...",
     "farmerPageDescriptionText2": "I am selling this product as wholesale, chat me if you need to know more about this product.",
 
-    "farmerPageUserRole": "Farmer:",
+    "farmerPageUserRole": "Farmer: ",
 
     "farmerPageButton1": "Edit",
     "farmerPageButton2": "Delete",
@@ -516,13 +524,13 @@
     "farmerDeleteScaffoldMessage": "You have successfully deleted a product",
 
     "userDelete": "Delete",
-    "userCancel": "Kanselahin",
+    "userCancel": "Cancel",
     "userEdit": "Edit",
 
     "userForgotPassword": "   Enter your registered email below \n to receive password reset instruction",
     "userSendCode": "Send Link",
     "userForgotPassword1": "Forgot Password",
-    "farmerCropTrackerNavigationText1": "Harvest",
+    "farmerCropTrackerNavigationText1": "Crops",
     "farmerCropTrackerNavigationText2": "Harvested",
 
     "farmerCropTrackerHarvestedSellProductButton": "Sell Product",
@@ -532,6 +540,11 @@
     "farmerCropTrackerETH1": "Estimated Date to Harvest: ",
     "farmerCropTrackerHD": "Harvested Date: ",
     "farmerEditCropTracker": "Edit Crop",
+
+    "farmerEditPostedProducts": "Edit Product",
+
+    "farmerReadytoHarvest": "Ready to Harvest?",
+    "farmerReadytoHarvest1": "Are you sure this is ready to harvest? This can't be undone and it will be moved to the Harvested tab.",
 
     "farmerCropTrackerAddProductUnit": "Unit",
     "farmerCropTrackerAddProductLocation": "Location",
@@ -609,6 +622,16 @@
     "farmerProfileText35": "Set as default address",
     "farmerProfileText36": "Delete this address?",
 
+    "farmerEmailSecVeification": "   Enter your registered email below \n to receive a code to change your email",
+    "farmerEmailSendCode": "Send Code",
+    "farmerEmailVerify": "Verify",
+    "farmerEmailResendLink": "Resend Link",
+    "farmerPassworVeification": "   Enter your registered email below \n to receive password reset instruction",
+    "farmerPasswordSendCode": "Send Code",
+    "farmerPasswordResendLink": "Resend Link",
+    "farmerPasswordVerify": "Verify",
+    "farmerPasswordSecVeification": "   We sent a code to your email. Please enter the \n           digit code sent to confirm your account",
+    
     "buyerProfileName": "Name",
     "buyerProfileBirthDate": "Birth Date",
     "buyerProfileAdd": "Address",
@@ -659,7 +682,7 @@
     "buyerCartText8": "Corn",
     "buyerCartText9": "Category",
     "buyerCartText10": "Package",
-    "buyerCartText11": "Other Products",
+    "buyerCartText11": "Other Farm Products",
     "buyerCartText12": "Tomato",
     "buyerCartText13": "Onion",
     "buyerCartText14": "Rice",
@@ -674,6 +697,10 @@
     "buyerCheckout3": "Payment Method:",
     "buyerCheckout4": "Total Payment:",
 
+    "buyerpendingtransac1": "   Your order has been successfully placed.",
+    "buyerpendingtransac2": "   You have 24 hours to pick up your order;    ",
+    "buyerpendingtransac3": "  otherwise, it will be cancelled.",
+    "buyerpendingtransac4": "Other Products from the same Farmer",
 
     
 

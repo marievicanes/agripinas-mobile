@@ -59,17 +59,7 @@ class _ProfileWallState extends State<ProfileWall> {
       if (pickedFile != null) {
         file = XFile(pickedFile.path);
 
-        uploadFile().then((imageUrl) {
-          if (imageUrl != null) {
-            setState(() {
-              // Update the imageUrl in Firestore
-              updateProfileImageUrl(imageUrl);
-
-              // Set the imageUrl for displaying
-              this.imageUrl = imageUrl;
-            });
-          }
-        });
+        uploadFile();
       } else {
         print('No image selected.');
       }
@@ -111,39 +101,38 @@ class _ProfileWallState extends State<ProfileWall> {
       if (pickedFile != null) {
         file = XFile(pickedFile.path);
 
-        uploadFile().then((imageUrl) {
-          if (imageUrl != null) {
-            setState(() {
-              // Update the imageUrl in Firestore
-              updateProfileImageUrl(imageUrl);
-
-              // Set the imageUrl for displaying
-              this.imageUrl = imageUrl;
-            });
-          }
-        });
+        uploadFile();
       } else {
         print('No image selected.');
       }
     });
   }
 
-  Future<String?> uploadFile() async {
-    if (file == null) return null;
+  Future<void> uploadFile() async {
+    if (file == null) return;
     String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    // Get the current user UID
+    String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
 
     Reference referenceRoot = FirebaseStorage.instance.ref();
     Reference referenceDirImages = referenceRoot.child('images');
-
     Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
 
     try {
       await referenceImageToUpload.putFile(File(file!.path));
       String imageUrl = await referenceImageToUpload.getDownloadURL();
-      return imageUrl;
+
+      // Update the current user's document with the image URL
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(currentUserUid)
+          .update({
+        'profileImageUrl': imageUrl,
+      });
     } catch (error) {
-      print('Error uploading image: $error');
-      return null;
+      // Handle error
+      print("Error uploading image: $error");
     }
   }
 

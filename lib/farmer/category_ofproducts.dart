@@ -31,10 +31,10 @@ class MyApp extends StatelessWidget {
 
 class OFProductScreen extends StatefulWidget {
   @override
-  _OFProductsScreenState createState() => _OFProductsScreenState();
+  _OFProductScreenState createState() => _OFProductScreenState();
 }
 
-class _OFProductsScreenState extends State<OFProductScreen> {
+class _OFProductScreenState extends State<OFProductScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
 
@@ -53,11 +53,11 @@ class _OFProductsScreenState extends State<OFProductScreen> {
               'assets/logo.png',
               height: 32.0,
             ),
-            SizedBox(width: 8.0),
+            SizedBox(width: 4.0),
             Text(
               'AgriPinas',
               style: TextStyle(
-                fontSize: 18.0,
+                fontSize: 15.0,
                 fontFamily: 'Poppins',
                 color: Colors.white,
               ),
@@ -93,78 +93,61 @@ class _OFProductsScreenState extends State<OFProductScreen> {
           ),
         ],
       ),
-      body: StreamBuilder(
-        stream: _marketplace
-            .where('archived', isEqualTo: false)
-            .where('category', isEqualTo: 'Others')
-            .snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-          if (streamSnapshot.hasError) {
-            return Center(
-              child: Text('Some error occurred ${streamSnapshot.error}'),
-            );
-          }
-          if (streamSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (!streamSnapshot.hasData || streamSnapshot.data!.docs.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    'assets/browseproduct.png', // Add your image path
-                    width: 150,
-                    height: 150,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'No other farm products available.',
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
+      body: SingleChildScrollView(
+        child: StreamBuilder(
+          stream:
+              _marketplace.where('category', isEqualTo: 'Others').snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+            if (streamSnapshot.hasError) {
+              return Center(
+                child: Text('Some error occurred ${streamSnapshot.error}'),
+              );
+            }
+            if (streamSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (!streamSnapshot.hasData || streamSnapshot.data!.docs.isEmpty) {
+              return Center(
+                child: Text('No data available'),
+              );
+            }
 
-          QuerySnapshot<Object?>? querySnapshot = streamSnapshot.data;
-          List<QueryDocumentSnapshot<Object?>>? documents = querySnapshot?.docs;
-          List<Map>? items = documents?.map((e) => e.data() as Map).toList();
+            QuerySnapshot<Object?>? querySnapshot = streamSnapshot.data;
+            List<QueryDocumentSnapshot<Object?>>? documents =
+                querySnapshot?.docs;
+            List<Map>? items = documents?.map((e) => e.data() as Map).toList();
 
-          List<Map>? filteredItems = items
-              ?.where((item) =>
-                  item['cropName']
-                      .toLowerCase()
-                      .contains(_searchText.toLowerCase()) ||
-                  item['location']
-                      .toLowerCase()
-                      .contains(_searchText.toLowerCase()))
-              .toList();
+            List<Map>? filteredItems = items
+                ?.where((item) =>
+                    item['cropName']
+                        .toLowerCase()
+                        .contains(_searchText.toLowerCase()) ||
+                    item['location']
+                        .toLowerCase()
+                        .contains(_searchText.toLowerCase()))
+                .toList();
 
-          return ListView(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      "farmerPageCategoryText4".tr(),
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontFamily: 'Poppins',
+            return Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Text(
+                        "farmerPageCategoryText4".tr(),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'Poppins',
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 5.0),
-              Expanded(
-                child: GridView.builder(
+                  ],
+                ),
+                SizedBox(height: 5.0),
+                GridView.builder(
                   itemCount: filteredItems?.length ?? 0,
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
@@ -176,7 +159,7 @@ class _OFProductsScreenState extends State<OFProductScreen> {
                     childAspectRatio: 2.3 / 4,
                   ),
                   itemBuilder: (BuildContext context, int index) {
-                    final Map thisItem = items![index];
+                    final Map thisItem = filteredItems![index];
 
                     return InkWell(
                       onTap: () {
@@ -226,7 +209,7 @@ class _OFProductsScreenState extends State<OFProductScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          "farmerPagePrice".tr(),
+                                          "buyerPagePrice".tr(),
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontFamily: 'Poppins',
@@ -248,7 +231,7 @@ class _OFProductsScreenState extends State<OFProductScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "farmerPageUserRole".tr(),
+                                            "buyerPageUserRole2".tr(),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
@@ -271,7 +254,7 @@ class _OFProductsScreenState extends State<OFProductScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "farmerPageCategoriesLocation".tr(),
+                                            "buyerPageLocation".tr(),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
@@ -298,10 +281,10 @@ class _OFProductsScreenState extends State<OFProductScreen> {
                     );
                   },
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

@@ -101,6 +101,7 @@ class _AddToCartState extends State<AddToCart>
   void updateTotals() {
     double updatedTotalAmount = 0.0;
     int updatedTotalBoughtQuantity = 0;
+    double totalCost = 0.0;
 
     for (final item in items!) {
       bool isChecked = item['isChecked'] ?? false;

@@ -67,7 +67,7 @@ class ProductDetails extends StatelessWidget {
         String uid = marketplaceDoc['uid'] ?? '';
         bool archived = marketplaceDoc['archived'] ?? false;
 
-        String totalCost = '0';
+        String totalCost = price;
         String totalAmount = '0';
         String totalBoughtQuantity = '0';
         String boughtQuantity = '1';

@@ -15,16 +15,16 @@ void main() async {
       path: 'assets/translations',
       fallbackLocale: Locale('en', 'US'),
       child: MyApp(
-        cartItem: {},
+        orders: {},
       ),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  final Map cartItem;
+  final Map orders;
 
-  MyApp({required this.cartItem});
+  MyApp({required this.orders});
 
   @override
   Widget build(BuildContext context) {
@@ -33,15 +33,15 @@ class MyApp extends StatelessWidget {
       supportedLocales: context.supportedLocales,
       locale: context.locale,
       home: BuyerTransactionDetails(
-        cartItem,
+        orders,
       ),
     );
   }
 }
 
 class BuyerTransactionDetails extends StatefulWidget {
-  final Map cartItem;
-  const BuyerTransactionDetails(this.cartItem);
+  final Map orders;
+  const BuyerTransactionDetails(this.orders);
 
   @override
   _BuyerTransactionDetailsState createState() =>
@@ -69,7 +69,7 @@ class _BuyerTransactionDetailsState extends State<BuyerTransactionDetails> {
   void initState() {
     super.initState();
     // Replace 'yourTransactionId' with the actual transaction ID associated with the cartItem
-    final cropID = widget.cartItem['cropID'];
+    final cropID = widget.orders['cropID'];
 
     // Retrieve the payment method from the transaction collection
     _transaction.doc(cropID).get().then((transactionSnapshot) {
@@ -82,10 +82,10 @@ class _BuyerTransactionDetailsState extends State<BuyerTransactionDetails> {
   }
 
   Future<void> _report([DocumentSnapshot? documentSnapshot]) async {
-    String cropID = widget.cartItem['cropID'];
-    String cropName = widget.cartItem['cropName'];
-    String sellerFullname = widget.cartItem['fullname'];
-    String selleruid = widget.cartItem['uid'];
+    String cropID = widget.orders['cropID'];
+    String cropName = widget.orders['cropName'];
+    String sellerFullname = widget.orders['fullname'];
+    String selleruid = widget.orders['uid'];
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -249,9 +249,9 @@ class _BuyerTransactionDetailsState extends State<BuyerTransactionDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final Map cartItem = widget.cartItem;
-    double price = double.tryParse(cartItem['price']) ?? 0.0;
-    int boughtQuantity = int.tryParse(cartItem['boughtQuantity']) ?? 0;
+    final Map orders = widget.orders;
+    double price = double.tryParse(orders['price']) ?? 0.0;
+    int boughtQuantity = int.tryParse(orders['boughtQuantity']) ?? 0;
     double orderTotal = price * boughtQuantity;
     return Scaffold(
       appBar: AppBar(
@@ -315,7 +315,7 @@ class _BuyerTransactionDetailsState extends State<BuyerTransactionDetails> {
               ),
               Divider(),
               Text(
-                'Seller: ${cartItem['fullname']}',
+                'Seller: ${orders['fullname']}',
                 style: TextStyle(fontFamily: 'Poppins', fontSize: 18),
               ),
               Card(
@@ -324,10 +324,10 @@ class _BuyerTransactionDetailsState extends State<BuyerTransactionDetails> {
                 child: Column(
                   children: [
                     _buildCartItem(
-                      cartItem['cropName'],
-                      cartItem['price'],
-                      cartItem['boughtQuantity'],
-                      cartItem['imageUrl'],
+                      orders['cropName'],
+                      orders['price'],
+                      orders['boughtQuantity'],
+                      orders['image'],
                       'Poppins-Regular',
                     ),
                   ],
@@ -404,12 +404,12 @@ class _BuyerTransactionDetailsState extends State<BuyerTransactionDetails> {
   }
 
   Widget _buildCartItem(String name, String price, String boughtQuantity,
-      String imageUrl, String fontFamily) {
+      String image, String fontFamily) {
     double parsedPrice = double.tryParse(price) ?? 0.0;
     int parsedBoughtQuantity = int.tryParse(boughtQuantity) ?? 0;
     return ListTile(
       leading: Image.network(
-        imageUrl,
+        image,
         width: 60,
         height: 60,
         fit: BoxFit.cover,

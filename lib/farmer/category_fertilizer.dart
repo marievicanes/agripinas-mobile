@@ -94,10 +94,8 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
         ],
       ),
       body: StreamBuilder(
-        stream: _marketplace
-            .where('archived', isEqualTo: false)
-            .where('category', isEqualTo: 'Fertilizer')
-            .snapshots(),
+        stream:
+            _marketplace.where('category', isEqualTo: 'Fertilizer').snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
           if (streamSnapshot.hasError) {
             return Center(
@@ -111,23 +109,7 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
           }
           if (!streamSnapshot.hasData || streamSnapshot.data!.docs.isEmpty) {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    'assets/browseproduct.png', // Add your image path
-                    width: 150,
-                    height: 150,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'No fertilizers available.',
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
+              child: Text('No data available'),
             );
           }
 
@@ -145,26 +127,26 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                       .contains(_searchText.toLowerCase()))
               .toList();
 
-          return ListView(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      "farmerPageCategoryText3".tr(),
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontFamily: 'Poppins',
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Text(
+                        "farmerPageCategoryText3".tr(),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'Poppins',
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 5.0),
-              Expanded(
-                child: GridView.builder(
+                  ],
+                ),
+                SizedBox(height: 5.0),
+                GridView.builder(
                   itemCount: filteredItems?.length ?? 0,
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
@@ -176,7 +158,7 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                     childAspectRatio: 2.3 / 4,
                   ),
                   itemBuilder: (BuildContext context, int index) {
-                    final Map thisItem = items![index];
+                    final Map thisItem = filteredItems![index];
 
                     return InkWell(
                       onTap: () {
@@ -226,7 +208,7 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          "farmerPagePrice".tr(),
+                                          "buyerPagePrice".tr(),
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontFamily: 'Poppins',
@@ -248,7 +230,7 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "farmerPageUserRole".tr(),
+                                            "buyerPageUserRole2".tr(),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
@@ -271,7 +253,7 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "farmerPageCategoriesLocation".tr(),
+                                            "buyerPageLocation".tr(),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
@@ -298,8 +280,8 @@ class _FertilizersScreenState extends State<FertilizersScreen> {
                     );
                   },
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),

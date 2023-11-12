@@ -136,12 +136,12 @@ class _TransactionsScreenState extends State<TransactionsScreen>
         child: Scaffold(
             appBar: AppBar(
               leading: IconButton(
-                icon: Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               ),
-              backgroundColor: Color(0xFFA9AF7E),
+              backgroundColor: const Color(0xFFA9AF7E),
               centerTitle: true,
               title: Row(
                 children: [
@@ -149,8 +149,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                     'assets/logo.png',
                     height: 32.0,
                   ),
-                  SizedBox(width: 7.0),
-                  Text(
+                  const SizedBox(width: 7.0),
+                  const Text(
                     'AgriPinas',
                     style: TextStyle(
                       fontSize: 17.0,
@@ -171,7 +171,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                             'Some error occurred ${streamSnapshot.error}'));
                   }
                   if (!streamSnapshot.hasData) {
-                    return Center(
+                    return const Center(
                         child:
                             CircularProgressIndicator()); // Loading indicator
                   }
@@ -182,7 +182,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                       documents?.map((e) => e.data() as Map).toList();
 
                   return Column(children: [
-                    TabBar(
+                    const TabBar(
                       indicatorColor: Color(0xFF557153),
                       tabs: [
                         Tab(
@@ -211,7 +211,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                         ),
                       ],
                     ),
-                    Row(
+                    const Row(
                       children: [
                         Expanded(
                           child: Text(
@@ -224,7 +224,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                         ),
                       ],
                     ),
-                    Row(
+                    const Row(
                       children: [
                         Expanded(
                           child: Text(
@@ -235,7 +235,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                         ),
                       ],
                     ),
-                    Row(
+                    const Row(
                       children: [
                         Expanded(
                           child: Text(
@@ -251,7 +251,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                     Expanded(
                         child: TabBarView(children: [
                       ListView.builder(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         itemCount: streamSnapshot.data?.docs.length ?? 0,
                         itemBuilder: (BuildContext context, int index) {
                           // Get the item at this index from streamSnapshot
@@ -284,7 +284,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                               // Use another ListView.builder to display pending cart items
                               ListView.builder(
                                 shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
+                                physics: const NeverScrollableScrollPhysics(),
                                 itemCount: pendingCartItems.length,
                                 itemBuilder:
                                     (BuildContext context, int cartIndex) {
@@ -293,7 +293,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                     onTap: () {},
                                     child: Card(
                                       child: Padding(
-                                        padding: EdgeInsets.all(8),
+                                        padding: const EdgeInsets.all(8),
                                         child: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -306,12 +306,12 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                 children: [
                                                   Text(
                                                     '${cartItem['cropName']}',
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontSize: 16,
                                                       fontFamily: 'Poppins',
                                                     ),
                                                   ),
-                                                  SizedBox(height: 8),
+                                                  const SizedBox(height: 8),
                                                   ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -328,7 +328,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                               .grey, // Customize the color
                                                           width: 80,
                                                           height: 80,
-                                                          child: Center(
+                                                          child: const Center(
                                                             child: Text(
                                                               'Image Error',
                                                               style: TextStyle(
@@ -343,14 +343,14 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                 ],
                                               ),
                                             ),
-                                            SizedBox(width: 6),
+                                            const SizedBox(width: 6),
                                             Expanded(
                                               child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  SizedBox(height: 8),
-                                                  Text(
+                                                  const SizedBox(height: 8),
+                                                  const Text(
                                                     '',
                                                     style: TextStyle(
                                                       fontWeight:
@@ -358,10 +358,10 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       color: Color(0xFF718C53),
                                                     ),
                                                   ),
-                                                  SizedBox(height: 2),
+                                                  const SizedBox(height: 2),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         "Farmer's Name: ",
                                                         style: TextStyle(
                                                           fontSize: 15,
@@ -371,16 +371,16 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       ),
                                                       Text(
                                                         '${cartItem['fullname']}',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 14.5,
                                                         ),
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(height: 2),
+                                                  const SizedBox(height: 2),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         "Location: ",
                                                         style: TextStyle(
                                                           fontSize: 15,
@@ -390,7 +390,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       ),
                                                       Text(
                                                         '${cartItem['location']}',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 14.5,
                                                         ),
                                                       ),
@@ -398,7 +398,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Date Ordered: ',
                                                         style: TextStyle(
                                                           fontSize: 15,
@@ -409,7 +409,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       Text(
                                                         formattedDate
                                                             .toString(),
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 14.5,
                                                         ),
                                                       ),
@@ -417,7 +417,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Price: ',
                                                         style: TextStyle(
                                                           fontSize: 15,
@@ -427,7 +427,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       ),
                                                       Text(
                                                         '₱${cartItem['price']}',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 14.5,
                                                         ),
                                                       ),
@@ -435,7 +435,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Quantity: ',
                                                         style: TextStyle(
                                                           fontSize: 15,
@@ -445,7 +445,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       ),
                                                       Text(
                                                         '${cartItem['boughtQuantity']}',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 14.5,
                                                         ),
                                                       ),
@@ -453,7 +453,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Unit: ',
                                                         style: TextStyle(
                                                           fontSize: 15,
@@ -463,7 +463,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       ),
                                                       Text(
                                                         '${cartItem['unit']}',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 14.5,
                                                         ),
                                                       ),
@@ -471,7 +471,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Total Amount: ',
                                                         style: TextStyle(
                                                           fontSize: 15,
@@ -481,7 +481,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       ),
                                                       Text(
                                                         '₱${cartItem['totalCost']}',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 14.5,
                                                         ),
                                                       ),
@@ -494,7 +494,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                               top: 0,
                                               right: 8,
                                               child: PopupMenuButton<String>(
-                                                icon: Icon(
+                                                icon: const Icon(
                                                   Icons.more_horiz,
                                                   color: Color(0xFF9DC08B),
                                                 ),
@@ -510,12 +510,13 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       children: [
                                                         Icon(
                                                           Icons.edit,
-                                                          color: Color(
+                                                          color: const Color(
                                                                   0xFF9DC08B)
                                                               .withAlpha(180),
                                                         ),
-                                                        SizedBox(width: 8),
-                                                        Text(
+                                                        const SizedBox(
+                                                            width: 8),
+                                                        const Text(
                                                           'Status',
                                                           style: TextStyle(
                                                             fontFamily:
@@ -525,7 +526,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       ],
                                                     ),
                                                   ),
-                                                  PopupMenuItem<String>(
+                                                  const PopupMenuItem<String>(
                                                     value: 'delete',
                                                     child: Row(
                                                       children: [
@@ -553,7 +554,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       builder: (BuildContext
                                                           context) {
                                                         return AlertDialog(
-                                                            title: Center(
+                                                            title: const Center(
                                                               child: Text(
                                                                 'Edit Details',
                                                                 style: TextStyle(
@@ -568,19 +569,19 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                   MainAxisSize
                                                                       .min,
                                                               children: [
-                                                                Row(
+                                                                const Row(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .center,
                                                                   children: [],
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                     height:
                                                                         16.0),
                                                                 DropdownButtonFormField<
                                                                     String>(
                                                                   decoration:
-                                                                      InputDecoration(
+                                                                      const InputDecoration(
                                                                     labelText:
                                                                         'Status',
                                                                     labelStyle: TextStyle(
@@ -621,7 +622,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                           Text(
                                                                         value,
                                                                         style:
-                                                                            TextStyle(
+                                                                            const TextStyle(
                                                                           fontFamily:
                                                                               'Poppins-Regular',
                                                                         ),
@@ -629,7 +630,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                     );
                                                                   }).toList(),
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                     height:
                                                                         16.0),
                                                                 Row(
@@ -644,7 +645,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                             .pop();
                                                                       },
                                                                       child:
-                                                                          Text(
+                                                                          const Text(
                                                                         'Cancel',
                                                                         style: TextStyle(
                                                                             color:
@@ -667,7 +668,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                             .pop();
                                                                       },
                                                                       child:
-                                                                          Text(
+                                                                          const Text(
                                                                         'Save',
                                                                         style:
                                                                             TextStyle(
@@ -677,7 +678,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                       ),
                                                                       style: TextButton
                                                                           .styleFrom(
-                                                                        backgroundColor: Color.fromRGBO(
+                                                                        backgroundColor: const Color
+                                                                            .fromRGBO(
                                                                             157,
                                                                             192,
                                                                             139,
@@ -699,7 +701,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       builder: (BuildContext
                                                           context) {
                                                         return AlertDialog(
-                                                          title: Text(
+                                                          title: const Text(
                                                             'Delete Transaction?',
                                                             style: TextStyle(
                                                                 fontFamily:
@@ -708,7 +710,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                     FontWeight
                                                                         .bold),
                                                           ),
-                                                          content: Text(
+                                                          content: const Text(
                                                             "This can't be undone and it will be removed from your transactions.",
                                                             style: TextStyle(
                                                               fontFamily:
@@ -718,7 +720,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                           ),
                                                           actions: [
                                                             TextButton(
-                                                              child: Text(
+                                                              child: const Text(
                                                                 'Cancel',
                                                                 style:
                                                                     TextStyle(
@@ -744,7 +746,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                    color: Color(
+                                                                    color: const Color(
                                                                             0xFF9DC08B)
                                                                         .withAlpha(
                                                                             180),
@@ -778,7 +780,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                         },
                       ),
                       ListView.builder(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         itemCount: streamSnapshot.data?.docs.length ?? 0,
                         itemBuilder: (BuildContext context, int index) {
                           // Get the item at this index from streamSnapshot
@@ -811,7 +813,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                               // Use another ListView.builder to display pending cart items
                               ListView.builder(
                                 shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
+                                physics: const NeverScrollableScrollPhysics(),
                                 itemCount: cancelledCartItems.length,
                                 itemBuilder:
                                     (BuildContext context, int cartIndex) {
@@ -820,7 +822,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                     onTap: () {},
                                     child: Card(
                                       child: Padding(
-                                        padding: EdgeInsets.all(8),
+                                        padding: const EdgeInsets.all(8),
                                         child: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -833,12 +835,12 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                 children: [
                                                   Text(
                                                     '${cartItem['cropName']}',
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontSize: 16,
                                                       fontFamily: 'Poppins',
                                                     ),
                                                   ),
-                                                  SizedBox(height: 8),
+                                                  const SizedBox(height: 8),
                                                   ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -855,7 +857,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                               .grey, // Customize the color
                                                           width: 80,
                                                           height: 80,
-                                                          child: Center(
+                                                          child: const Center(
                                                             child: Text(
                                                               'Image Error',
                                                               style: TextStyle(
@@ -870,14 +872,14 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                 ],
                                               ),
                                             ),
-                                            SizedBox(width: 6),
+                                            const SizedBox(width: 6),
                                             Expanded(
                                               child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  SizedBox(height: 8),
-                                                  Text(
+                                                  const SizedBox(height: 8),
+                                                  const Text(
                                                     '',
                                                     style: TextStyle(
                                                       fontWeight:
@@ -885,10 +887,10 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       color: Color(0xFF718C53),
                                                     ),
                                                   ),
-                                                  SizedBox(height: 2),
+                                                  const SizedBox(height: 2),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         "Farmer's Name: ",
                                                         style: TextStyle(
                                                           fontSize: 15,
@@ -898,16 +900,16 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       ),
                                                       Text(
                                                         '${cartItem['fullname']}',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 14.5,
                                                         ),
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(height: 2),
+                                                  const SizedBox(height: 2),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         "Location: ",
                                                         style: TextStyle(
                                                           fontSize: 15,
@@ -917,7 +919,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       ),
                                                       Text(
                                                         '${cartItem['location']}',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 14.5,
                                                         ),
                                                       ),
@@ -925,7 +927,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Date Ordered: ',
                                                         style: TextStyle(
                                                           fontSize: 15,
@@ -936,7 +938,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       Text(
                                                         formattedDate
                                                             .toString(),
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 14.5,
                                                         ),
                                                       ),
@@ -944,7 +946,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Price: ',
                                                         style: TextStyle(
                                                           fontSize: 15,
@@ -954,7 +956,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       ),
                                                       Text(
                                                         '₱${cartItem['price']}',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 14.5,
                                                         ),
                                                       ),
@@ -962,7 +964,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Quantity: ',
                                                         style: TextStyle(
                                                           fontSize: 15,
@@ -972,7 +974,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       ),
                                                       Text(
                                                         '${cartItem['boughtQuantity']}',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 14.5,
                                                         ),
                                                       ),
@@ -980,7 +982,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Unit: ',
                                                         style: TextStyle(
                                                           fontSize: 15,
@@ -990,7 +992,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       ),
                                                       Text(
                                                         '${cartItem['unit']}',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 14.5,
                                                         ),
                                                       ),
@@ -998,7 +1000,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   ),
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Total Amount: ',
                                                         style: TextStyle(
                                                           fontSize: 15,
@@ -1008,7 +1010,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                       ),
                                                       Text(
                                                         '₱${cartItem['totalCost']}',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 14.5,
                                                         ),
                                                       ),
@@ -1029,7 +1031,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                         },
                       ),
                       ListView.builder(
-                          padding: EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(10),
                           itemCount: streamSnapshot.data?.docs.length ?? 0,
                           itemBuilder: (BuildContext context, int index) {
                             // Get the item at this index from streamSnapshot
@@ -1061,7 +1063,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                               // Use another ListView.builder to display pending cart items
                               ListView.builder(
                                   shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   itemCount: completedCartItems.length,
                                   itemBuilder:
                                       (BuildContext context, int cartIndex) {
@@ -1072,7 +1074,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                       onTap: () {},
                                       child: Card(
                                         child: Padding(
-                                          padding: EdgeInsets.all(8),
+                                          padding: const EdgeInsets.all(1),
                                           child: Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -1085,13 +1087,13 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   children: [
                                                     Text(
                                                       '${cartItem['cropName']}',
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         fontSize: 16,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                       ),
                                                     ),
-                                                    SizedBox(height: 8),
+                                                    const SizedBox(height: 8),
                                                     ClipRRect(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1108,7 +1110,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                 .grey, // Customize the color
                                                             width: 80,
                                                             height: 80,
-                                                            child: Center(
+                                                            child: const Center(
                                                               child: Text(
                                                                 'Image Error',
                                                                 style: TextStyle(
@@ -1123,7 +1125,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 6,
                                               ),
                                               Expanded(
@@ -1131,8 +1133,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    SizedBox(height: 8),
-                                                    Text(
+                                                    const SizedBox(height: 8),
+                                                    const Text(
                                                       '',
                                                       style: TextStyle(
                                                         fontWeight:
@@ -1141,11 +1143,11 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                             Color(0xFF718C53),
                                                       ),
                                                     ),
-                                                    SizedBox(height: 2),
-                                                    SizedBox(height: 4),
+                                                    const SizedBox(height: 2),
+                                                    const SizedBox(height: 4),
                                                     Row(
                                                       children: [
-                                                        Text(
+                                                        const Text(
                                                           'Buyer Name: ',
                                                           style: TextStyle(
                                                             fontSize: 15,
@@ -1155,7 +1157,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         ),
                                                         Text(
                                                           '${cartItem['fullname']}',
-                                                          style: TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             fontSize: 14.5,
                                                           ),
                                                         ),
@@ -1163,7 +1166,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                     ),
                                                     Row(
                                                       children: [
-                                                        Text(
+                                                        const Text(
                                                           'Date Ordered: ',
                                                           style: TextStyle(
                                                             fontSize: 15,
@@ -1174,7 +1177,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         Text(
                                                           formattedDate
                                                               .toString(),
-                                                          style: TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             fontSize: 14.5,
                                                           ),
                                                         ),
@@ -1182,7 +1186,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                     ),
                                                     Row(
                                                       children: [
-                                                        Text(
+                                                        const Text(
                                                           'Price: ',
                                                           style: TextStyle(
                                                             fontSize: 15,
@@ -1192,7 +1196,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         ),
                                                         Text(
                                                           '₱${cartItem['price']}',
-                                                          style: TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             fontSize: 14.5,
                                                           ),
                                                         ),
@@ -1200,7 +1205,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                     ),
                                                     Row(
                                                       children: [
-                                                        Text(
+                                                        const Text(
                                                           'Quantity: ',
                                                           style: TextStyle(
                                                             fontSize: 15,
@@ -1210,7 +1215,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         ),
                                                         Text(
                                                           '${cartItem['boughtQuantity']}',
-                                                          style: TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             fontSize: 14.5,
                                                           ),
                                                         ),
@@ -1218,7 +1224,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                     ),
                                                     Row(
                                                       children: [
-                                                        Text(
+                                                        const Text(
                                                           'Unit: ',
                                                           style: TextStyle(
                                                             fontSize: 15,
@@ -1228,7 +1234,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         ),
                                                         Text(
                                                           '${cartItem['unit']}',
-                                                          style: TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             fontSize: 14.5,
                                                           ),
                                                         ),
@@ -1236,7 +1243,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                     ),
                                                     Row(
                                                       children: [
-                                                        Text(
+                                                        const Text(
                                                           'Total Amount: ',
                                                           style: TextStyle(
                                                             fontSize: 15,
@@ -1246,7 +1253,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         ),
                                                         Text(
                                                           '₱${cartItem['totalCost']}',
-                                                          style: TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             fontSize: 14.5,
                                                           ),
                                                         ),
@@ -1259,7 +1267,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                 top: 0,
                                                 right: 8,
                                                 child: PopupMenuButton<String>(
-                                                  icon: Icon(
+                                                  icon: const Icon(
                                                     Icons.more_horiz,
                                                     color: Color(0xFF9DC08B),
                                                   ),
@@ -1271,7 +1279,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                   itemBuilder:
                                                       (BuildContext context) =>
                                                           [
-                                                    PopupMenuItem<String>(
+                                                    const PopupMenuItem<String>(
                                                       value: 'delete',
                                                       child: Row(
                                                         children: [
@@ -1299,7 +1307,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                         builder: (BuildContext
                                                             context) {
                                                           return AlertDialog(
-                                                            title: Text(
+                                                            title: const Text(
                                                               'Delete Transaction?',
                                                               style: TextStyle(
                                                                   fontFamily:
@@ -1308,7 +1316,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                       FontWeight
                                                                           .bold),
                                                             ),
-                                                            content: Text(
+                                                            content: const Text(
                                                               "This can't be undone and it will be removed from your transactions",
                                                               style: TextStyle(
                                                                 fontFamily:
@@ -1318,7 +1326,8 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                             ),
                                                             actions: [
                                                               TextButton(
-                                                                child: Text(
+                                                                child:
+                                                                    const Text(
                                                                   'Cancel',
                                                                   style:
                                                                       TextStyle(
@@ -1344,7 +1353,7 @@ class _TransactionsScreenState extends State<TransactionsScreen>
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .bold,
-                                                                      color: Color(
+                                                                      color: const Color(
                                                                               0xFF9DC08B)
                                                                           .withAlpha(
                                                                               180),

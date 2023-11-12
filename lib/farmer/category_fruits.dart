@@ -1,4 +1,4 @@
-import 'package:capstone/farmer/product_details.dart';
+import 'package:capstone/buyer/buyer_productdetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -93,78 +93,61 @@ class _FruitsScreenState extends State<FruitsScreen> {
           ),
         ],
       ),
-      body: StreamBuilder(
-        stream: _marketplace
-            .where('archived', isEqualTo: false)
-            .where('category', isEqualTo: 'Fruits')
-            .snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-          if (streamSnapshot.hasError) {
-            return Center(
-              child: Text('Some error occurred ${streamSnapshot.error}'),
-            );
-          }
-          if (streamSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (!streamSnapshot.hasData || streamSnapshot.data!.docs.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    'assets/browseproduct.png', // Add your image path
-                    width: 150,
-                    height: 150,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'No fruits available.',
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
+      body: SingleChildScrollView(
+        child: StreamBuilder(
+          stream:
+              _marketplace.where('category', isEqualTo: 'Fruits').snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+            if (streamSnapshot.hasError) {
+              return Center(
+                child: Text('Some error occurred ${streamSnapshot.error}'),
+              );
+            }
+            if (streamSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (!streamSnapshot.hasData || streamSnapshot.data!.docs.isEmpty) {
+              return Center(
+                child: Text('No data available'),
+              );
+            }
 
-          QuerySnapshot<Object?>? querySnapshot = streamSnapshot.data;
-          List<QueryDocumentSnapshot<Object?>>? documents = querySnapshot?.docs;
-          List<Map>? items = documents?.map((e) => e.data() as Map).toList();
+            QuerySnapshot<Object?>? querySnapshot = streamSnapshot.data;
+            List<QueryDocumentSnapshot<Object?>>? documents =
+                querySnapshot?.docs;
+            List<Map>? items = documents?.map((e) => e.data() as Map).toList();
 
-          List<Map>? filteredItems = items
-              ?.where((item) =>
-                  item['cropName']
-                      .toLowerCase()
-                      .contains(_searchText.toLowerCase()) ||
-                  item['location']
-                      .toLowerCase()
-                      .contains(_searchText.toLowerCase()))
-              .toList();
+            List<Map>? filteredItems = items
+                ?.where((item) =>
+                    item['cropName']
+                        .toLowerCase()
+                        .contains(_searchText.toLowerCase()) ||
+                    item['location']
+                        .toLowerCase()
+                        .contains(_searchText.toLowerCase()))
+                .toList();
 
-          return ListView(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      "farmerPageCategoryText1".tr(),
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontFamily: 'Poppins',
+            return Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Text(
+                        "buyerPageCategoryText1".tr(),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'Poppins',
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 5.0),
-              Expanded(
-                child: GridView.builder(
+                  ],
+                ),
+                SizedBox(height: 5.0),
+                GridView.builder(
                   itemCount: filteredItems?.length ?? 0,
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
@@ -226,7 +209,7 @@ class _FruitsScreenState extends State<FruitsScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          "farmerPagePrice".tr(),
+                                          "buyerPagePrice".tr(),
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontFamily: 'Poppins',
@@ -240,6 +223,7 @@ class _FruitsScreenState extends State<FruitsScreen> {
                                         ),
                                       ],
                                     ),
+                                    SizedBox(height: 4),
                                     Padding(
                                       padding: const EdgeInsets.all(1.0),
                                       child: Column(
@@ -247,7 +231,7 @@ class _FruitsScreenState extends State<FruitsScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "farmerPageUserRole".tr(),
+                                            "buyerPageUserRole2".tr(),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
@@ -270,7 +254,7 @@ class _FruitsScreenState extends State<FruitsScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "farmerPageCategoriesLocation".tr(),
+                                            "buyerPageLocation".tr(),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Poppins',
@@ -297,10 +281,10 @@ class _FruitsScreenState extends State<FruitsScreen> {
                     );
                   },
                 ),
-              )
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

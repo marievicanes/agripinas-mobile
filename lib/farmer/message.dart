@@ -1,8 +1,14 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:capstone/farmer/farmer_vieworders.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:photo_view/photo_view.dart';
 
 class Message extends StatefulWidget {
   @override
@@ -216,18 +222,46 @@ class _MessageState extends State<Message> {
   }
 }
 
-class ChatAgriScreen extends StatelessWidget {
+class ChatAgriScreen extends StatefulWidget {
   final String currentUserUid;
   final String buyerUid;
   final String fullname;
   final String roomName;
-  final TextEditingController _messageController = TextEditingController();
+  final TextEditingController messageController = TextEditingController();
 
   ChatAgriScreen(
       {required this.fullname,
       required this.roomName,
       required this.currentUserUid,
       required this.buyerUid});
+
+  @override
+  _ChatAgriScreenState createState() => _ChatAgriScreenState(
+        fullname: fullname,
+        roomName: roomName,
+        messageController: messageController,
+        currentUserUID: '',
+        image: '',
+        files: '',
+      );
+}
+
+class _ChatAgriScreenState extends State<ChatAgriScreen> {
+  final String fullname;
+  final String roomName;
+  final String currentUserUID;
+  final String image;
+  final String files;
+  final TextEditingController messageController;
+
+  _ChatAgriScreenState({
+    required this.currentUserUID,
+    required this.image,
+    required this.files,
+    required this.fullname,
+    required this.roomName,
+    required this.messageController,
+  });
 
   Stream<QuerySnapshot> getMessageStream(String roomName) {
     return FirebaseFirestore.instance
@@ -267,6 +301,130 @@ class ChatAgriScreen extends StatelessWidget {
     }
   }
 
+  String imageUrl = '';
+  String fileUrl = '';
+  XFile? file;
+  final ImagePicker _picker = ImagePicker();
+
+  Future imgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile(currentUserUID, roomName, image);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future UimgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile(currentUserUID, roomName, image);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future UimgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile(currentUserUID, roomName, image);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future imgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        file = XFile(pickedFile.path);
+
+        uploadFile(currentUserUID, roomName, image);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future uploadFile(
+      String currentUserUID, String roomName, String image) async {
+    String userFirstName = await getUserFirstName(currentUserUID);
+
+    if (file == null) return;
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+
+    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+
+    try {
+      await referenceImageToUpload.putFile(File(file!.path));
+      imageUrl = await referenceImageToUpload.getDownloadURL();
+      FirebaseFirestore.instance.collection('messages').add({
+        'createdAt': FieldValue.serverTimestamp(),
+        'user': userFirstName,
+        'room': roomName,
+        'imageUrl': imageUrl,
+      });
+    } catch (error) {}
+  }
+
+  Future pickAndUploadFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: false, // Set to true if you want to allow multiple files
+      type: FileType.custom, // Specify the allowed file types
+      allowedExtensions: ['pdf', 'doc', 'docx'], // Add the allowed extensions
+    );
+
+    if (result != null) {
+      PlatformFile file = result.files.first;
+      String? userFirstName = await getUserFirstName(currentUserUID);
+
+      if (file.name != null) {
+        String uniqueFileName =
+            DateTime.now().millisecondsSinceEpoch.toString();
+        String fileName = file.name; // Get the file name
+
+        Reference referenceRoot = FirebaseStorage.instance.ref();
+        Reference referenceDirFiles = referenceRoot.child('files');
+        Reference referenceFileToUpload =
+            referenceDirFiles.child('$uniqueFileName$fileName');
+
+        try {
+          await referenceFileToUpload.putFile(File(file.path!));
+          fileUrl = await referenceFileToUpload.getDownloadURL();
+
+          FirebaseFirestore.instance.collection('messages').add({
+            'createdAt': FieldValue.serverTimestamp(),
+            'user': userFirstName,
+            'room': roomName,
+            'file_name': fileName, // Store the file name in the database
+            'fileUrl': fileUrl, // Store the file URL in the database
+          });
+        } catch (error) {
+          print("Error uploading file: $error");
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> messageStream = getMessageStream(roomName);
@@ -277,6 +435,20 @@ class ChatAgriScreen extends StatelessWidget {
           fullname,
           style: TextStyle(fontFamily: 'Poppins', fontSize: 16.5),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.view_comfy_rounded),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      FarmerViewOrders(), // Replace YourNextPage() with the actual widget for your next page
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -303,7 +475,7 @@ class ChatAgriScreen extends StatelessWidget {
                                 : Alignment.centerRight,
                             child: Container(
                               margin: EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 10),
+                                  vertical: 5, horizontal: 5),
                               padding: EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                 border: Border.all(
@@ -323,26 +495,65 @@ class ChatAgriScreen extends StatelessWidget {
                                         bottomRight: Radius.circular(10),
                                       )
                                     : BorderRadius.only(
-                                        topLeft: Radius.circular(8),
-                                        topRight: Radius.circular(8),
-                                        bottomLeft: Radius.circular(0),
-                                        bottomRight: Radius.circular(8),
+                                        topLeft: Radius.circular(15),
+                                        topRight: Radius.circular(15),
+                                        bottomLeft: Radius.circular(
+                                            15), // Increase the value to make it longer
+                                        bottomRight: Radius.circular(
+                                            -20), // Negative value for a sharper corner
                                       ),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   SizedBox(height: 5),
-                                  Text(
-                                    message['text'],
-                                    style: TextStyle(
-                                      fontFamily: 'Poppins-Regular',
-                                      fontSize: 14,
-                                      color: isCurrentUser
-                                          ? Colors.black
-                                          : Colors.black,
+                                  if (message['text'] !=
+                                      null) // Check if the message has text
+                                    Container(
+                                      constraints: BoxConstraints(
+                                        maxWidth:
+                                            250, // Adjust the maximum width as needed
+                                      ),
+                                      child: Text(
+                                        message['text'],
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins-Regular',
+                                          fontSize: 14,
+                                          color: isCurrentUser
+                                              ? Colors.black
+                                              : Colors.black,
+                                        ),
+                                        maxLines:
+                                            null, // Remove this line if you want to limit the number of lines
+                                        overflow: TextOverflow
+                                            .visible, // Add this line to add ellipsis (...) for long messages
+                                      ),
                                     ),
-                                  ),
+                                  if (message['imageUrl'] !=
+                                      null) // Check if the message has an image
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                          return ZoomableImage(
+                                              message['imageUrl']);
+                                        }));
+                                      },
+                                      child: Image.network(
+                                        message['imageUrl'],
+                                        width: 150,
+                                        height: 150,
+                                      ),
+                                    ),
+                                  if (message['fileUrl'] !=
+                                      null) // Check if the message has a file
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        // Implement logic to download the file
+                                      },
+                                      child: Text('${message['file_name']}'),
+                                    ),
                                 ],
                               ),
                             ),
@@ -360,22 +571,26 @@ class ChatAgriScreen extends StatelessWidget {
               children: [
                 IconButton(
                   icon: Icon(Icons.camera_alt_outlined),
-                  onPressed: () {},
+                  onPressed: () {
+                    _showPicker(context);
+                  },
                 ),
                 IconButton(
                   icon: Icon(Icons.attach_file),
-                  onPressed: () {},
+                  onPressed: () {
+                    pickAndUploadFile();
+                  },
                 ),
                 Expanded(
                   child: TextField(
-                    controller: _messageController,
+                    controller: messageController,
                     style: TextStyle(
                       fontFamily: 'Poppins-Regular',
                       fontSize: 13.5,
                     ),
                     maxLines: null,
                     decoration: InputDecoration(
-                      hintText: 'Type a message',
+                      hintText: 'Type a message...',
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Color(0xFF9DC08B)),
                       ),
@@ -385,10 +600,10 @@ class ChatAgriScreen extends StatelessWidget {
                 SizedBox(width: 8.0),
                 ElevatedButton(
                   onPressed: () {
-                    String newMessage = _messageController.text;
+                    String newMessage = messageController.text;
                     if (newMessage.isNotEmpty) {
                       sendMessage(newMessage, fullname, roomName);
-                      _messageController.clear();
+                      messageController.clear();
                     }
                   },
                   child: Text(
@@ -403,6 +618,90 @@ class ChatAgriScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _UshowPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Gallery'),
+                      onTap: () {
+                        UimgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      UimgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Gallery'),
+                      onTap: () {
+                        imgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      imgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+}
+
+class ZoomableImage extends StatelessWidget {
+  final String imageUrl;
+
+  ZoomableImage(this.imageUrl);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFFA9AF7E),
+        title: Text(
+          'Image',
+          style: TextStyle(fontFamily: 'Poppins', fontSize: 16.5),
+        ),
+      ),
+      body: PhotoView(
+        imageProvider: NetworkImage(imageUrl),
+        minScale: PhotoViewComputedScale.contained,
+        maxScale: PhotoViewComputedScale.covered * 2,
       ),
     );
   }

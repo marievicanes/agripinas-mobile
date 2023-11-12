@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:capstone/buyer/buyer_language.dart';
+import 'package:capstone/buyer/buyer_notif.dart';
 import 'package:capstone/buyer/buyer_transactiondetails.dart';
 import 'package:capstone/buyer/forum_activity.dart';
 import 'package:capstone/buyer/message.dart';
@@ -13,7 +14,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import 'about_us.dart';
-import 'buyer_notif.dart';
 import 'buyer_profilepage.dart';
 import 'contact_us.dart';
 
@@ -209,7 +209,8 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => BuyerAgriNotif()));
+                                      builder: (context) =>
+                                          AgriNotification()));
                             },
                           ),
                           IconButton(
@@ -978,7 +979,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                       itemCount: completedCartItems.length,
                                       itemBuilder: (BuildContext context,
                                           int cartIndex) {
-                                        Map cartItem =
+                                        Map orders =
                                             completedCartItems[cartIndex];
                                         return InkWell(
                                           onTap: () {
@@ -987,7 +988,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       BuyerTransactionDetails(
-                                                          cartItem),
+                                                          orders),
                                                 ));
                                           },
                                           child: Card(
@@ -1006,7 +1007,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               .start,
                                                       children: [
                                                         Text(
-                                                          '${cartItem['cropName']}',
+                                                          '${orders['cropName']}',
                                                           style: TextStyle(
                                                             fontSize: 16,
                                                             fontFamily:
@@ -1019,7 +1020,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               BorderRadius
                                                                   .circular(8),
                                                           child: Image.network(
-                                                            '${cartItem['image']}',
+                                                            '${orders['image']}',
                                                             fit: BoxFit.cover,
                                                             width: 80,
                                                             height: 80,
@@ -1076,7 +1077,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               ),
                                                             ),
                                                             Text(
-                                                              '${cartItem['fullname']}',
+                                                              '${orders['fullname']}',
                                                               style: TextStyle(
                                                                 fontSize: 14.5,
                                                               ),
@@ -1096,7 +1097,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               ),
                                                             ),
                                                             Text(
-                                                              '${cartItem['location']}',
+                                                              '${orders['location']}',
                                                               style: TextStyle(
                                                                 fontSize: 14.5,
                                                               ),
@@ -1135,7 +1136,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               ),
                                                             ),
                                                             Text(
-                                                              '₱${cartItem['price']}',
+                                                              '₱${orders['price']}',
                                                               style: TextStyle(
                                                                 fontSize: 14.5,
                                                               ),
@@ -1154,7 +1155,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               ),
                                                             ),
                                                             Text(
-                                                              '${cartItem['boughtQuantity']}',
+                                                              '${orders['boughtQuantity']}',
                                                               style: TextStyle(
                                                                 fontSize: 14.5,
                                                               ),
@@ -1173,7 +1174,7 @@ class _TransactionBuyerState extends State<TransactionBuyer>
                                                               ),
                                                             ),
                                                             Text(
-                                                              '₱${cartItem['totalCost']}',
+                                                              '₱${orders['totalCost']}',
                                                               style: TextStyle(
                                                                 fontSize: 14.5,
                                                               ),
